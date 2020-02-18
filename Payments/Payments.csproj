@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{16227C0B-A231-4168-A30A-25AFF84B8C93}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Payments</RootNamespace>
+    <AssemblyName>Payments</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\192.168.1.110\Programas\Resources INTELOGIX\Applications\Payments\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>32.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>97C92EDB5D38B2A713F2FFEAE109BF1076947061</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Payments_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevExpress.Data.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Printing.v19.1.Core, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Utils.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraEditors.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGrid.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraLayout.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPrinting.v19.1, Version=19.1.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="GemBox.Pdf, Version=13.0.35.1074, Culture=neutral, PublicKeyToken=b1b72c69714d4847, processorArchitecture=MSIL">
+      <HintPath>..\packages\GemBox.Pdf.13.0.0.1074\lib\net35\GemBox.Pdf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp.1.50.5147\lib\net20\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DB.cs" />
+    <Compile Include="SecurePassword.cs" />
+    <Compile Include="Views\Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\MainViewModel.cs" />
+    <Compile Include="Models\T_ListOfFiles.cs" />
+    <Compile Include="Models\T_SubBussines.cs" />
+    <Compile Include="Models\T_transactions.cs" />
+    <Compile Include="Views\AssingSubBussines.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\AssingSubBussines.Designer.cs">
+      <DependentUpon>AssingSubBussines.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChangeFileToNewBussiness.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ChangeFileToNewBussiness.Designer.cs">
+      <DependentUpon>ChangeFileToNewBussiness.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FinishedTransactions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\FinishedTransactions.Designer.cs">
+      <DependentUpon>FinishedTransactions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MakingPayment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\MakingPayment.Designer.cs">
+      <DependentUpon>MakingPayment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PaymentCaptured.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\PaymentCaptured.Designer.cs">
+      <DependentUpon>PaymentCaptured.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Signed.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\Signed.Designer.cs">
+      <DependentUpon>Signed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\T_Comments.cs" />
+    <Compile Include="Models\T_Files.cs" />
+    <Compile Include="Models\T_Status.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\newMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\newMain.Designer.cs">
+      <DependentUpon>newMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SplitPDF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SplitPDF.Designer.cs">
+      <DependentUpon>SplitPDF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubBussinessAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\SubBussinessAdd.Designer.cs">
+      <DependentUpon>SubBussinessAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserAddView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\UserAddView.Designer.cs">
+      <DependentUpon>UserAddView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ViewPDF.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\ViewPDF.Designer.cs">
+      <DependentUpon>ViewPDF.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Views\Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\AssingSubBussines.resx">
+      <DependentUpon>AssingSubBussines.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ChangeFileToNewBussiness.resx">
+      <DependentUpon>ChangeFileToNewBussiness.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\FinishedTransactions.resx">
+      <DependentUpon>FinishedTransactions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\MakingPayment.resx">
+      <DependentUpon>MakingPayment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\PaymentCaptured.resx">
+      <DependentUpon>PaymentCaptured.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\Signed.resx">
+      <DependentUpon>Signed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Views\newMain.resx">
+      <DependentUpon>newMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SplitPDF.resx">
+      <DependentUpon>SplitPDF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\SubBussinessAdd.resx">
+      <DependentUpon>SubBussinessAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserAddView.resx">
+      <DependentUpon>UserAddView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\ViewPDF.resx">
+      <DependentUpon>ViewPDF.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Payments_TemporaryKey.pfx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AcroPDFLib">
+      <Guid>{05BFD3F1-6319-4F30-B752-C7A22889BCC4}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="AxAcroPDFLib">
+      <Guid>{05BFD3F1-6319-4F30-B752-C7A22889BCC4}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Intelogix XCross Logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-payment-history-100.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
