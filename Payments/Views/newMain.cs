@@ -21,7 +21,6 @@ namespace Payments.Views
         private T_Files[] allRecords;
         private T_Status[] allRecordsStatus;
         private readonly SqlConnection connection;
-        private List<T_Files> listAllRecords = new List<T_Files>();
         private string status;
 
         #endregion Attributes
@@ -36,13 +35,12 @@ namespace Payments.Views
                 createToolStripMenuItem.Enabled = false;
             }
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            deactivateButtons();
+            DeactivateButtons();
         }
 
         #endregion Constructor
 
         #region Methods
-
 
         public string LastElement(string splitme)
         {
@@ -57,7 +55,6 @@ namespace Payments.Views
                        20, StringSplitOptions.None);
             return strlist[strlist.Length - 2].ToString();
         }
-
 
         public void LoadTable(string queryString)
         {
@@ -85,7 +82,7 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
-        public void obtainFiles(string path)
+        public void ObtainFiles(string path)
         {
             string[] Bussiness = Directory.GetDirectories(path, "*.*", SearchOption.TopDirectoryOnly);
             foreach (var item in Bussiness)
@@ -101,16 +98,11 @@ namespace Payments.Views
                         url = url.Remove(url.LastIndexOf('\\') + 1);
                         status = url.TrimEnd('\\');
                         status = LastElement(status);
-                        char[] spearator = { '\\' };
-                        Int32 count = 20;
-                        // Using the Method
-                        String[] strlist = fileName.Split(spearator,
-                               count, StringSplitOptions.None);
+                        string[] strlist = fileName.Split(new char[] { '\\' },
+                               20, StringSplitOptions.None);
                         for (int i = 0; i < strlist.Length; i++)
                         {
-                            char c = (char)39;
-                            string replaceMe = c.ToString();
-                            strlist[i] = strlist[i].Replace(replaceMe, "");
+                            strlist[i] = strlist[i].Replace(((char)39).ToString(), "");
                             if (Path.GetExtension(strlist[i]) == ".pdf")
                             {
                                 //Condicion para revisar si ya existe el archivo
@@ -136,15 +128,14 @@ namespace Payments.Views
                     }
                 }
             }
-            // Display all the files.
         }
 
-        private void checkIfStatesFoldersExists()
+        private void CheckIfStatesFoldersExists()
         {
             string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
-            foreach (var item in dirs)
+            foreach (var dir in dirs)
             {
-                string[] toScanFolders = Directory.GetDirectories(item.ToString(), "*", SearchOption.TopDirectoryOnly);
+                string[] toScanFolders = Directory.GetDirectories(dir.ToString(), "*", SearchOption.TopDirectoryOnly);
                 if (toScanFolders.Length > 0)
                 {
                     foreach (var item2 in toScanFolders)
@@ -153,48 +144,35 @@ namespace Payments.Views
                         folderToCheck = LastElement(folderToCheck);
                         if (!(folderToCheck == "incoming"))
                         {
-                            System.IO.Directory.CreateDirectory(item + "\\incoming");
+                            System.IO.Directory.CreateDirectory(dir + "\\incoming");
                         }
                         if (!(folderToCheck == "waiting-auth"))
                         {
-                            System.IO.Directory.CreateDirectory(item + "\\waiting-auth");
+                            System.IO.Directory.CreateDirectory(dir + "\\waiting-auth");
                         }
                         if (!(folderToCheck == "signed"))
                         {
-                            System.IO.Directory.CreateDirectory(item + "\\signed");
+                            System.IO.Directory.CreateDirectory(dir + "\\signed");
                         }
                         if (!(folderToCheck == "making-payment"))
                         {
-                            System.IO.Directory.CreateDirectory(item + "\\making-payment");
+                            System.IO.Directory.CreateDirectory(dir + "\\making-payment");
                         }
                         if (!(folderToCheck == "payment-captured"))
                         {
-                            System.IO.Directory.CreateDirectory(item + "\\payment-captured");
+                            System.IO.Directory.CreateDirectory(dir + "\\payment-captured");
                         }
                     }
                 }
                 else
                 {
-                    System.IO.Directory.CreateDirectory(item + "\\incoming");
-                    System.IO.Directory.CreateDirectory(item + "\\waiting-auth");
-                    System.IO.Directory.CreateDirectory(item + "\\signed");
-                    System.IO.Directory.CreateDirectory(item + "\\making-payment");
-                    System.IO.Directory.CreateDirectory(item + "\\payment-captured");
+                    System.IO.Directory.CreateDirectory(dir + "\\incoming");
+                    System.IO.Directory.CreateDirectory(dir + "\\waiting-auth");
+                    System.IO.Directory.CreateDirectory(dir + "\\signed");
+                    System.IO.Directory.CreateDirectory(dir + "\\making-payment");
+                    System.IO.Directory.CreateDirectory(dir + "\\payment-captured");
                 }
             }
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            deactivateButtons();
-            nameBussiness = comboBox1.SelectedItem.ToString();
-            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
-            nameBussiness = $"{newpath}\\{nameBussiness}\\";
-            nameBussiness = nameBussiness.Replace(@"\\", @"\");
-            deleteRegistersFromFilesThatWasRemoved(nameBussiness);
-            queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
-            lblTitleResult.Text = (countFiles(nameBussiness).ToString());
-            LoadTable(queryString);
         }
 
         private int countFiles(string path)
@@ -211,7 +189,6 @@ namespace Payments.Views
             }
             return counter;
         }
-
 
         private void deleteRegistersFromFilesThatWasRemoved(string path)
         {
@@ -255,7 +232,6 @@ namespace Payments.Views
                     DeleteRegisters(querydelete3);
                 }
             }
-
         }
 
         private void DeleteRegisters(string query)
@@ -263,17 +239,17 @@ namespace Payments.Views
             SqlCommand commandDelete = new SqlCommand(query, connection);
             lock (commandDelete)
             {
-                commandDelete.Connection.Open(); 
+                commandDelete.Connection.Open();
                 commandDelete.ExecuteNonQuery();
                 commandDelete.Connection.Close();
             }
         }
 
-        private void fillStatusTable()
+        private void FillStatusTable()
         {
             allRecords = null;
-            string sql = "select * from [prueba1].[dbo].[t_files];";
-            using (var command = new SqlCommand(sql, connection))
+            string query = "select * from [prueba1].[dbo].[t_files];";
+            using (var command = new SqlCommand(query, connection))
             {
                 command.Connection.Open();
                 using (var reader = command.ExecuteReader())
@@ -284,73 +260,23 @@ namespace Payments.Views
                     allRecords = list.ToArray();
                     reader.Close();
                 }
-                command.Connection.Close();
                 foreach (T_Files record in allRecords)
                 {
-                    string queryobtainid = "select * from [prueba1].[dbo].[t_status] where id_file = '" + record.Id + "';";
-                    SqlCommand commandid = new SqlCommand(queryobtainid, connection);
-                    if (commandid.Connection.State != ConnectionState.Open)
+                    string queryObtainId = "select * from [prueba1].[dbo].[t_status] where id_file = '" + record.Id + "';";
+                    command.CommandText = queryObtainId;
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (!reader.Read())
                     {
-                        commandid.Connection.Close();
-                        commandid.Connection.Open();
-                    }
-                    int row = commandid.ExecuteNonQuery();
-                    SqlDataReader readerid = commandid.ExecuteReader();
-                    if (!readerid.Read())
-                    {
+                        reader.Close();
                         var timeStamp = DateTime.Now;
-                        string querystringstatus = "insert into [prueba1].[dbo].[t_status]([id],[name_status],[id_file],[name_file],[date])" +
+                        string queryStringStatus = "insert into [prueba1].[dbo].[t_status]([id],[name_status],[id_file],[name_file],[date])" +
                                            " values( newid(),'" + record.Status + "','" + record.Id + "','" + record.Name + "','" + timeStamp + "')";
-                        commandid.Connection.Close();
-                        SqlCommand commandstatus = new SqlCommand(querystringstatus, connection);
-                        commandstatus.Connection.Open();
-                        commandstatus.ExecuteNonQuery();
-                        commandstatus.Connection.Close();
-                        commandid.Connection.Close();
-                        command.Connection.Close();
+                        command.CommandText = queryStringStatus;
+                        command.ExecuteNonQuery();
                     }
-                    commandid.Connection.Close();
-                    command.Connection.Close();
+                    else reader.Close();
                 }
                 command.Connection.Close();
-            }
-        }
-
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
-        {
-            GridView gv = gridView1;
-            lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-            string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
-            try
-            {
-                if (status == "incoming")
-                {
-                    deactivateButtons();
-                    btnCapture.Enabled = true;
-                }
-                if (status == "waiting-auth")
-                {
-                    deactivateButtons();
-                    btnSigned.Enabled = true;
-                }
-                if (status == "signed")
-                {
-                    deactivateButtons();
-                    btnMakePayment.Enabled = true;
-                }
-                if (status == "making-payment")
-                {
-                    deactivateButtons();
-                    btnPaymentCaptured.Enabled = true;
-                }
-                if (status == "payment-captured")
-                {
-                    deactivateButtons();
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Please select a bussines and a file");
             }
         }
 
@@ -358,37 +284,29 @@ namespace Payments.Views
         {
             comboBox1.Items.Clear();
             string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
-            foreach (var item in dirs)
+            foreach (var dir in dirs)
             {
-                char[] spearator = { '\\' };
-                Int32 count = 20;
-                String[] strlist = item.Split(spearator, count, StringSplitOptions.None);
+                string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
                 string queryString = "SELECT * FROM[PRUEBA1].[dbo].[t_bussiness] WHERE nameBussiness = '"
                     + strlist[strlist.Length - 1] + "';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.Read())
+                if (!reader.Read())
                 {
-                    command.Connection.Close();
-                }
-                else
-                {
-                    command.Connection.Close();
+                    reader.Close();
                     string queryString2 = "INSERT INTO [PRUEBA1].[dbo].[t_bussiness]([id],[nameBussiness])" +
                                                        " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "')";
-                    SqlCommand command3 = new SqlCommand(queryString2, connection);
-
-                    command3.Connection.Open();
-                    command3.ExecuteNonQuery();
-                    command3.Connection.Close();
+                    command.CommandText = queryString2;
+                    command.ExecuteNonQuery();
                 }
+                else reader.Close();
                 for (int i = strlist.Length - 1; i < strlist.Length; i++)
                 {
                     comboBox1.Items.Add(strlist[i]);
                 }
+                command.Connection.Close();
             }
         }
 
@@ -433,41 +351,34 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
-        private void obtainFolders(string newpath)
+        private void ObtainFolders(string newpath)
         {
             try
             {
                 string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
                 foreach (string dir in dirs)
                 {
-                    char[] spearator = { '\\' };
-                    Int32 count = 20;
-                    String[] strlist = dir.Split(spearator, count, StringSplitOptions.None);
+                    string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
                     string queryString = "SELECT * FROM[PRUEBA1].[dbo].[t_folders] WHERE folderName = '"
                         + strlist[strlist.Length - 1] + "' AND path ='" + newpath + "\\';";
                     SqlCommand command = new SqlCommand(queryString, connection);
                     command.Connection.Open();
                     command.ExecuteNonQuery();
                     SqlDataReader reader = command.ExecuteReader();
-
-                    if (reader.Read())
+                    if (!reader.Read())
                     {
-                        command.Connection.Close();
-                    }
-                    else
-                    {
-                        command.Connection.Close();
+                        reader.Close();
                         string queryString3 = "INSERT INTO [PRUEBA1].[dbo].[t_folders]([id],[folderName],[path],[fullpath])" +
                                                    " VALUES( NEWID(),'" + strlist[strlist.Length - 1]
                                                    + "','" + newpath + "\\','" + newpath + "\\" + strlist[strlist.Length - 1]
                                                    + "\\')";
-                        SqlCommand command3 = new SqlCommand(queryString3, connection);
-
-                        command3.Connection.Open();
-                        command3.ExecuteNonQuery();
-                        command3.Connection.Close();
-                        obtainFolders(dir);
+                        command.CommandText = queryString3;
+                        command.ExecuteNonQuery();
+                        command.Connection.Close();
+                        ObtainFolders(dir);
                     }
+                    else reader.Close();
+                    command.Connection.Close();
                 }
             }
             catch (Exception e)
@@ -517,18 +428,77 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
+        public void fullRefresh()
+        {
+            ObtainFiles(newpath);
+            ObtainFolders(newpath);
+            CheckIfStatesFoldersExists();
+            FillStatusTable();
+            UpdateFilesForIdStatus(newpath);
+            UpdateFilesForTransactionId(newpath);
+            queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
+            lblTitleResult.Text = (countFiles(nameBussiness).ToString());
+            LoadTable(queryString);
+        }
+
+        private void DeactivateButtons()
+        {
+            btnMakePayment.Enabled = false;
+            btnPaymentCaptured.Enabled = false;
+            btnSigned.Enabled = false;
+            btnCapture.Enabled = false;
+        }
+
         #endregion Methods
 
         #region Clicks
 
-        public void fullRefresh()
+        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
-            obtainFiles(newpath);
-            obtainFolders(newpath);
-            checkIfStatesFoldersExists();
-            fillStatusTable();
-            UpdateFilesForIdStatus(newpath);
-            UpdateFilesForTransactionId(newpath);
+            GridView gv = gridView1;
+            lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
+            string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
+            try
+            {
+                if (status == "incoming")
+                {
+                    DeactivateButtons();
+                    btnCapture.Enabled = true;
+                }
+                if (status == "waiting-auth")
+                {
+                    DeactivateButtons();
+                    btnSigned.Enabled = true;
+                }
+                if (status == "signed")
+                {
+                    DeactivateButtons();
+                    btnMakePayment.Enabled = true;
+                }
+                if (status == "making-payment")
+                {
+                    DeactivateButtons();
+                    btnPaymentCaptured.Enabled = true;
+                }
+                if (status == "payment-captured")
+                {
+                    DeactivateButtons();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please select a bussines and a file");
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DeactivateButtons();
+            nameBussiness = comboBox1.SelectedItem.ToString();
+            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
+            nameBussiness = $"{newpath}\\{nameBussiness}\\";
+            nameBussiness = nameBussiness.Replace(@"\\", @"\");
+            deleteRegistersFromFilesThatWasRemoved(nameBussiness);
             queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
             lblTitleResult.Text = (countFiles(nameBussiness).ToString());
             LoadTable(queryString);
@@ -600,7 +570,6 @@ namespace Payments.Views
                 else MainViewModel.GetInstance().signed.BringToFront();
             }
         }
-
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -699,14 +668,6 @@ namespace Payments.Views
             }
         }
 
-        private void deactivateButtons()
-        {
-            btnMakePayment.Enabled = false;
-            btnPaymentCaptured.Enabled = false;
-            btnSigned.Enabled = false;
-            btnCapture.Enabled = false;
-        }
-
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Hope you have a nice day!");
@@ -734,7 +695,51 @@ namespace Payments.Views
             else MainViewModel.GetInstance().addUser.BringToFront();
         }
 
+        private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Please create a folder with the desired Business name in the root path:" +
+                "\n" + newpath);
+        }
+
+        private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = "C:\\Users";
+            dialog.IsFolderPicker = true;
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                newpath = dialog.FileName;
+                lblTitleResult.Text = (countFiles(newpath).ToString());
+                ObtainFiles(newpath);
+                ObtainFolders(newpath);
+                InitializeComboboxBussines();
+                CheckIfStatesFoldersExists();
+                FillStatusTable();
+                UpdateFilesForIdStatus(newpath);
+                UpdateFilesForTransactionId(newpath);
+                DeactivateButtons();
+                gridControl1.DataSource = null;
+                gridControl1.RefreshDataSource();
+                lblSelectedFile.Text = "Select a file.";
+                lblNameBuss.Text = "Select a business.";
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
+            {
+                MessageBox.Show("Current Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
+            }
+            else
+            {
+                MessageBox.Show("Not currently deployed.");
+            }
+        }
+
         #endregion Clicks
+
+        #region Events
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
@@ -799,46 +804,6 @@ namespace Payments.Views
             }
         }
 
-        private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Please create a folder with the desired Business name in the root path:" +
-                "\n" + newpath);
-        }
-
-        private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = "C:\\Users";
-            dialog.IsFolderPicker = true;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                newpath = dialog.FileName;
-                lblTitleResult.Text = (countFiles(newpath).ToString());
-                obtainFiles(newpath);
-                obtainFolders(newpath);
-                InitializeComboboxBussines();
-                checkIfStatesFoldersExists();
-                fillStatusTable();
-                UpdateFilesForIdStatus(newpath);
-                UpdateFilesForTransactionId(newpath);
-                deactivateButtons();
-                gridControl1.DataSource = null;
-                gridControl1.RefreshDataSource();
-                lblSelectedFile.Text = "Select a file.";
-                lblNameBuss.Text = "Select a business.";
-            }
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
-            {
-                MessageBox.Show("Current Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
-            }
-            else
-            {
-                MessageBox.Show("Not currently deployed.");
-            }
-        }
+        #endregion Events
     }
 }
