@@ -49,8 +49,11 @@ namespace Payments.Views
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<Transactions>();
-                while (reader.Read())
-                    list.Add(new Transactions { Id = reader.GetString(1), TransactionQB = reader.GetString(0) });
+                do
+                {
+                    while (reader.Read())
+                        list.Add(new Transactions { Id = reader[1].ToString(), TransactionQB = reader[0].ToString() });
+                } while (reader.NextResult());
                 allSubs = list.ToArray();
                 reader.Close();
             }
@@ -58,12 +61,15 @@ namespace Payments.Views
             foreach (Transactions record in allSubs)
             {
                 string queryobtain = "select * from [prueba1].[dbo].[t_files] where transId ='" + record.Id + "';";
-                command.CommandText = queryobtainid;
+                command.CommandText = queryobtain;
                 using (var reader = command.ExecuteReader())
                 {
                     var list = new List<T_Files>();
-                    while (reader.Read())
-                        list.Add(new T_Files { Id = reader.GetString(0), Name = reader.GetString(1), Fullroute = reader.GetString(2) });
+                    do
+                    {
+                        while (reader.Read())
+                            list.Add(new T_Files { Id = reader[0].ToString(), Name = reader[1].ToString(), Fullroute = reader[2].ToString() }); ;
+                    } while (reader.NextResult());
                     files = list.ToArray();
                     reader.Close();
                 }
