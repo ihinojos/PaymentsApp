@@ -11,18 +11,14 @@ namespace Payments.Views
     {
         #region Attributes
 
-        public string isActive = "1";
-        private SqlConnection cn;
-        private int hi;
+        private readonly SqlConnection connection;
         public DataTable FullDT;
-        private string idFileSelected;
-        private string pathfileSelected;
-        private string queryString;
-        private string selectedBussines;
+        private readonly string idFileSelected;
+        private readonly string pathfileSelected;
+        private readonly string queryString;
         private string idTansaction;
         private string queryStringSubBussinesFiles;
         private string pathToThisBussinesWaitingAuth;
-        private int currentNumberOfSubsOftheFile;
 
         #endregion Attributes
 
@@ -31,18 +27,17 @@ namespace Payments.Views
         public AssingSubBussines(string fileSelected, string pathToFile, string bussinessSelected, string id)
         {
             InitializeComponent();
-            cn = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            selectedBussines = bussinessSelected;
+            connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             queryString = "SELECT * FROM [PRUEBA1].[dbo].[t_subbussiness] WHERE idBussiness = '" + bussinessSelected + "';";
             lblFileSelected.Text = fileSelected;
-            loadCombo(queryString);
+            LoadCombo(queryString);
             idFileSelected = id;
             pathfileSelected = pathToFile;
             axAcroPDF1.src = pathToFile;
             try
             {
                 queryStringSubBussinesFiles = "SELECT * FROM [PRUEBA1].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "';";
-                loadTable(queryStringSubBussinesFiles);
+                LoadTable(queryStringSubBussinesFiles);
             }
             catch (Exception ex)
             {
@@ -54,61 +49,19 @@ namespace Payments.Views
 
         #region Methods
 
-        #region Clicks
-
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        public string LastElement(string splitme)
         {
-            GridView gv = gridView1;
-            lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "idSubBussiness").ToString();
+            string[] strlist = splitme.Split(new char[] { '\\' },
+                       20, StringSplitOptions.None);
+            return strlist[strlist.Length - 1].ToString();
         }
 
-        private void btnAssingTo_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                string queryStringNew = "SELECT * FROM[PRUEBA1].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "' AND idSubBussiness ='" + comboBoxSubBussiness.SelectedItem.ToString() + "';";
-                SqlCommand command = new SqlCommand(queryStringNew, cn);
-                if (command.Connection.State != ConnectionState.Open)
-                {
-                    command.Connection.Close();
-                    command.Connection.Open();
-                }
-                int row = command.ExecuteNonQuery();
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
-                {
-                    MessageBox.Show("The sub-bussiness already exists");
-                    command.Connection.Close();
-                }
-                else
-                {
-                    command.Connection.Close();
-                    string newSub = lblSubSelected.Text;
-                    string queryString2 = "INSERT INTO [PRUEBA1].[dbo].[t_filesSubs]([id],[idFile],[idSubBussiness])" +
-                                                           " VALUES( NEWID(),'" + idFileSelected
-                                                           + "','" + comboBoxSubBussiness.SelectedItem.ToString()
-                                                                   + "')";
-                    SqlCommand command2 = new SqlCommand(queryString2, cn);
-                    command2.Connection.Open();
-                    command2.ExecuteNonQuery();
-                    command2.Connection.Close();
-                    loadTable(queryStringSubBussinesFiles);
-                    MessageBox.Show("Assignation sucessful for the file: " + lblFileSelected.Text + " for the sub-bussiness: " + comboBoxSubBussiness.SelectedItem.ToString());
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        #endregion Clicks
-
-        private void loadTable(string queryString)
+        private void LoadTable(string queryString)
         {
             gridControl1.DataSource = null;
-            SqlCommand command = new SqlCommand(queryString, cn);
+            SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
-            currentNumberOfSubsOftheFile = command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
             FullDT = new DataTable();
             using (SqlDataAdapter DA = new SqlDataAdapter(command))
             {
@@ -126,12 +79,11 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
-        private void loadCombo(string queryString)
+        private void LoadCombo(string queryString)
         {
             comboBoxSubBussiness.Items.Clear();
-            SqlCommand command = new SqlCommand(queryString, cn);
+            SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             do
             {
@@ -140,55 +92,32 @@ namespace Payments.Views
                     comboBoxSubBussiness.Items.Add(reader.GetValue(1).ToString());
                 }
             } while (reader.NextResult());
+            reader.Close();
             command.Connection.Close();
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-        }
-
-        #region Split array
-
-        public string lastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
-
-        public string secondlastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 2].ToString();
-        }
-
-        #endregion Split array
-
         #endregion Methods
+
+        #region Clicks
 
         private void btnCapture_Click(object sender, EventArgs e)
         {
+            int subBussiness = 0;
             Cursor.Current = Cursors.WaitCursor;
             queryStringSubBussinesFiles = "SELECT COUNT (id) FROM [PRUEBA1].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "';";
-            SqlCommand commandFormat1 = new SqlCommand(queryStringSubBussinesFiles, cn);
-            if (commandFormat1.Connection.State != ConnectionState.Open)
-            {
-                commandFormat1.Connection.Close();
-                commandFormat1.Connection.Open();
-            }
-            currentNumberOfSubsOftheFile = commandFormat1.ExecuteNonQuery();
-            SqlDataReader reader = commandFormat1.ExecuteReader();
+            SqlCommand command = new SqlCommand(queryStringSubBussinesFiles, connection);
+            command.Connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
             do
             {
                 while (reader.Read())
                 {
-                    hi = Convert.ToInt32(reader.GetValue(0));
+                    subBussiness = Convert.ToInt32(reader.GetValue(0));
                 }
             } while (reader.NextResult());
+            reader.Close();
 
-            commandFormat1.Connection.Close();
-            if (textBoxTransaction.Text == "" || hi <= 0)
+            if (textBoxTransaction.Text == "" || subBussiness <= 0)
             {
                 MessageBox.Show("Verify if file has sub_bussiness or there is a transacion Id");
             }
@@ -198,12 +127,8 @@ namespace Payments.Views
                 var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                 var formatDate = dateTimeOffset.ToUnixTimeSeconds();
                 string newFormat = formatDate + "_" + "waitingAuth" + "_" + textBoxTransaction.Text.ToString() + ".pdf";
-                char[] spearator = { '\\' };
-                Int32 count = 20;
-
-                // Using the Method
-                String[] strlist = pathfileSelected.Split(spearator,
-                       count, StringSplitOptions.None);
+                string[] strlist = pathfileSelected.Split(new char[] { '\\' },
+                       20, StringSplitOptions.None);
                 for (int i = 0; i < strlist.Length - 2; i++)
                 {
                     if (i == 0)
@@ -221,59 +146,93 @@ namespace Payments.Views
 
                 try
                 {
-
                     //Insertar nueva transaccion
                     string queryStringformat1 = "INSERT INTO [PRUEBA1].[dbo].[t_transactions]([id],[transactionId])" +
                                                                " VALUES( NEWID(),'" + textBoxTransaction.Text
                                                                + "')";
-                    SqlCommand commandFormat12 = new SqlCommand(queryStringformat1, cn);
-                    commandFormat12.Connection.Open();
-                    int rowsAffected = commandFormat12.ExecuteNonQuery();
-                    commandFormat12.Connection.Close();
+                    command.CommandText = queryStringformat1;
+                    command.ExecuteNonQuery();
                     //Fin Insertar nueva transaccion
 
                     //Obtener el id creado en el paso anterior para posteriormente indexarlo a la tabla t_files
                     string queryObtainNewId = "select * from [PRUEBA1].[dbo].[t_transactions] where transactionId ='" + textBoxTransaction.Text + "';";
-                    SqlCommand commandObtainNewId = new SqlCommand(queryObtainNewId, cn);
-                    commandObtainNewId.Connection.Open();
-                    int row = commandObtainNewId.ExecuteNonQuery();
-                    SqlDataReader readerNewId = commandObtainNewId.ExecuteReader();
-                    if (readerNewId.Read())
+                    command.CommandText = queryObtainNewId;
+                    reader = command.ExecuteReader();
+                    if (reader.Read())
                     {
-                        idTansaction = readerNewId[1].ToString();
-                        string transactionNumber = readerNewId[0].ToString();
+                        idTansaction = reader[1].ToString();
+                        string transactionNumber = reader[0].ToString();
                     }
-                    commandObtainNewId.Connection.Close();
+                    reader.Close();
+
                     //Fin obtener el id creado en el paso anterior para posteriormente indexarlo a la tabla t_files
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                     string queryStringDelete1 = "UPDATE [PRUEBA1].[dbo].[t_files] SET " +
-                        "fileName = '" + lastElement(newPathForRename) + "', " +
+                        "fileName = '" + LastElement(newPathForRename) + "', " +
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "transId = '" + idTansaction + "', " +
                         "status_name = 'waiting-auth'" +
                         " WHERE id = '" + idFileSelected + "';";
-                    SqlCommand commandDelete1 = new SqlCommand(queryStringDelete1, cn);
-                    commandDelete1.Connection.Open();
-                    int row3 = commandDelete1.ExecuteNonQuery();
-                    commandDelete1.Connection.Close();
+                    command.CommandText = queryStringDelete1;
+                    command.ExecuteNonQuery();
 
                     System.IO.File.Move(pathfileSelected, newPathForRename);
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                     MessageBox.Show("Invoice captured correctly");
                     MainViewModel.GetInstance().NewMain.fullRefresh();
-                    MainViewModel.GetInstance().NewMain.LoadTable(MainViewModel.GetInstance().NewMain.queryString);
-                    MainViewModel.GetInstance().NewMain.gridControl1.Update();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show( ex.Message);
+                    MessageBox.Show(ex.Message);
                 }
-                
+                command.Connection.Close();
                 Cursor.Current = Cursors.Default;
                 this.Close();
             }
         }
+
+        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        {
+            GridView gv = gridView1;
+            lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "idSubBussiness").ToString();
+        }
+
+        private void btnAssingTo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string queryStringNew = "SELECT * FROM[PRUEBA1].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "' AND idSubBussiness ='" + comboBoxSubBussiness.SelectedItem.ToString() + "';";
+                SqlCommand command = new SqlCommand(queryStringNew, connection);
+                command.Connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    MessageBox.Show("The sub-bussiness already exists");
+                    reader.Close();
+                    command.Connection.Close();
+                }
+                else
+                {
+                    reader.Close();
+                    string newSub = lblSubSelected.Text;
+                    string queryString2 = "INSERT INTO [PRUEBA1].[dbo].[t_filesSubs]([id],[idFile],[idSubBussiness])" +
+                                                           " VALUES( NEWID(),'" + idFileSelected
+                                                           + "','" + comboBoxSubBussiness.SelectedItem.ToString()
+                                                                   + "')";
+                    command.CommandText = queryString2;
+                    command.ExecuteNonQuery();
+                    command.Connection.Close();
+                    LoadTable(queryStringSubBussinesFiles);
+                    MessageBox.Show("Assignation sucessful for the file: " + lblFileSelected.Text + " for the sub-bussiness: " + comboBoxSubBussiness.SelectedItem.ToString());
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        #endregion Clicks
     }
 }

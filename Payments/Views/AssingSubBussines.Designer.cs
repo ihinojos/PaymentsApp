@@ -127,7 +127,6 @@
             this.comboBoxSubBussiness.Name = "comboBoxSubBussiness";
             this.comboBoxSubBussiness.Size = new System.Drawing.Size(123, 21);
             this.comboBoxSubBussiness.TabIndex = 12;
-            this.comboBoxSubBussiness.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // label3
             // 

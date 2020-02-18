@@ -703,9 +703,11 @@ namespace Payments.Views
 
         private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = "C:\\Users";
-            dialog.IsFolderPicker = true;
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog
+            {
+                InitialDirectory = "C:\\Users",
+                IsFolderPicker = true
+            };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 newpath = dialog.FileName;
@@ -729,7 +731,7 @@ namespace Payments.Views
         {
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                MessageBox.Show("Current Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
+                MessageBox.Show("Intelogix México © 2020\nCurrent Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
             }
             else
             {
