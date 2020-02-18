@@ -6,20 +6,21 @@ namespace Payments.Models
     {
         #region Properties
 
-        public NewMain newmain { get; set; }
-        public AssingSubBussines assing { get; set; }
-        public ViewPDF pdf { get; set; }
-        public Signed signed { get; set; }
-        public SplitPDF splitPDF { get; set; }
-        public Login login { get; set; }
-        public MakingPayment payment { get; set; }
-        public PaymentCaptured captured { get; set; }
-        public FinishedTransactions transaction { get; set; }
-        public ChangeFileToNewBussiness changeBussines { get; set; }
-        public UserAddView addUser { get; set; }
-        public SubBussinessAdd addSub { get; set; }
+        private static MainViewModel instance;
+        public NewMain NewMain { get; set; }
+        public AssingSubBussines AssingSubBussiness { get; set; }
+        public ViewPDF ViewPdf { get; set; }
+        public Signed SignDoc { get; set; }
+        public SplitPDF SplitPdf { get; set; }
+        public Login Login { get; set; }
+        public MakingPayment MakePayment { get; set; }
+        public PaymentCaptured CapturePayment { get; set; }
+        public FinishedTransactions FinishedTransaction { get; set; }
+        public ChangeFileToNewBussiness ChangeBussines { get; set; }
+        public UserAddView AddUser { get; set; }
+        public SubBussinessAdd AddSubBussiness { get; set; }
 
-        #endregion Properties
+        #endregion 
 
         #region Constructor
 
@@ -32,8 +33,6 @@ namespace Payments.Models
 
         #region Singleton
 
-        private static MainViewModel instance;
-
         public static MainViewModel GetInstance()
         {
             if (instance == null)
@@ -44,5 +43,6 @@ namespace Payments.Models
         }
 
         #endregion Singleton
+
     }
 }

@@ -508,19 +508,19 @@ namespace Payments.Views
         {
             try
             {
-                if (MainViewModel.GetInstance().assing == null)
+                if (MainViewModel.GetInstance().AssingSubBussiness == null)
                 {
                     GridView gv = gridView1;
                     string path = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
                     string name = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
                     string id = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
                     path += name;
-                    MainViewModel.GetInstance().assing = new AssingSubBussines(name, path, comboBox1.SelectedItem.ToString(), id);
-                    MainViewModel.GetInstance().assing.FormClosed += FormClosed;
-                    MainViewModel.GetInstance().assing.Show();
-                    MainViewModel.GetInstance().assing.BringToFront();
+                    MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, comboBox1.SelectedItem.ToString(), id);
+                    MainViewModel.GetInstance().AssingSubBussiness.FormClosed += FormClosed;
+                    MainViewModel.GetInstance().AssingSubBussiness.Show();
+                    MainViewModel.GetInstance().AssingSubBussiness.BringToFront();
                 }
-                else MainViewModel.GetInstance().assing.BringToFront();
+                else MainViewModel.GetInstance().AssingSubBussiness.BringToFront();
             }
             catch (Exception)
             {
@@ -536,17 +536,17 @@ namespace Payments.Views
             }
             else
             {
-                if (MainViewModel.GetInstance().captured == null)
+                if (MainViewModel.GetInstance().CapturePayment == null)
                 {
                     GridView gv = gridView1;
                     string name = lblNameBuss.Text;
                     string id = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
 
-                    MainViewModel.GetInstance().captured = new PaymentCaptured(name, id);
-                    MainViewModel.GetInstance().captured.FormClosed += FormClosed;
-                    MainViewModel.GetInstance().captured.Show();
+                    MainViewModel.GetInstance().CapturePayment = new PaymentCaptured(name, id);
+                    MainViewModel.GetInstance().CapturePayment.FormClosed += FormClosed;
+                    MainViewModel.GetInstance().CapturePayment.Show();
                 }
-                else MainViewModel.GetInstance().captured.BringToFront();
+                else MainViewModel.GetInstance().CapturePayment.BringToFront();
             }
         }
 
@@ -558,16 +558,16 @@ namespace Payments.Views
             }
             else
             {
-                if (MainViewModel.GetInstance().signed == null)
+                if (MainViewModel.GetInstance().SignDoc == null)
                 {
                     GridView gv = gridView1;
                     string name = lblNameBuss.Text;
                     string id = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
-                    MainViewModel.GetInstance().signed = new Signed(name, id);
-                    MainViewModel.GetInstance().signed.FormClosed += FormClosed;
-                    MainViewModel.GetInstance().signed.Show();
+                    MainViewModel.GetInstance().SignDoc = new Signed(name, id);
+                    MainViewModel.GetInstance().SignDoc.FormClosed += FormClosed;
+                    MainViewModel.GetInstance().SignDoc.Show();
                 }
-                else MainViewModel.GetInstance().signed.BringToFront();
+                else MainViewModel.GetInstance().SignDoc.BringToFront();
             }
         }
 
@@ -587,13 +587,13 @@ namespace Payments.Views
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            if (MainViewModel.GetInstance().transaction == null)
+            if (MainViewModel.GetInstance().FinishedTransaction == null)
             {
-                MainViewModel.GetInstance().transaction = new FinishedTransactions();
-                MainViewModel.GetInstance().transaction.FormClosed += FormClosed;
-                MainViewModel.GetInstance().transaction.Show();
+                MainViewModel.GetInstance().FinishedTransaction = new FinishedTransactions();
+                MainViewModel.GetInstance().FinishedTransaction.FormClosed += FormClosed;
+                MainViewModel.GetInstance().FinishedTransaction.Show();
             }
-            else MainViewModel.GetInstance().transaction.BringToFront();
+            else MainViewModel.GetInstance().FinishedTransaction.BringToFront();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -604,15 +604,15 @@ namespace Payments.Views
             }
             else
             {
-                if (MainViewModel.GetInstance().payment == null)
+                if (MainViewModel.GetInstance().MakePayment == null)
                 {
                     GridView gv = gridView1;
                     string transId = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
-                    MainViewModel.GetInstance().payment = new MakingPayment(transId);
-                    MainViewModel.GetInstance().payment.FormClosed += FormClosed;
-                    MainViewModel.GetInstance().payment.Show();
+                    MainViewModel.GetInstance().MakePayment = new MakingPayment(transId);
+                    MainViewModel.GetInstance().MakePayment.FormClosed += FormClosed;
+                    MainViewModel.GetInstance().MakePayment.Show();
                 }
-                else MainViewModel.GetInstance().payment.BringToFront();
+                else MainViewModel.GetInstance().MakePayment.BringToFront();
             }
         }
 
@@ -620,17 +620,17 @@ namespace Payments.Views
         {
             try
             {
-                if (MainViewModel.GetInstance().pdf == null)
+                if (MainViewModel.GetInstance().ViewPdf == null)
                 {
                     GridView gv = gridView1;
                     string path = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
                     string name = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
                     path = path + name;
-                    MainViewModel.GetInstance().pdf = new ViewPDF(path);
-                    MainViewModel.GetInstance().pdf.FormClosed += FormClosed;
-                    MainViewModel.GetInstance().pdf.Show();
+                    MainViewModel.GetInstance().ViewPdf = new ViewPDF(path);
+                    MainViewModel.GetInstance().ViewPdf.FormClosed += FormClosed;
+                    MainViewModel.GetInstance().ViewPdf.Show();
                 }
-                else MainViewModel.GetInstance().pdf.BringToFront();
+                else MainViewModel.GetInstance().ViewPdf.BringToFront();
             }
             catch (Exception)
             {
@@ -646,16 +646,16 @@ namespace Payments.Views
                 string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
                 if (status == "incoming")
                 {
-                    if (MainViewModel.GetInstance().changeBussines == null)
+                    if (MainViewModel.GetInstance().ChangeBussines == null)
                     {
                         string path = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
                         string name = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
                         path = path + name;
-                        MainViewModel.GetInstance().changeBussines = new ChangeFileToNewBussiness(path);
-                        MainViewModel.GetInstance().changeBussines.FormClosed += FormClosed;
-                        MainViewModel.GetInstance().changeBussines.Show();
+                        MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path);
+                        MainViewModel.GetInstance().ChangeBussines.FormClosed += FormClosed;
+                        MainViewModel.GetInstance().ChangeBussines.Show();
                     }
-                    else MainViewModel.GetInstance().changeBussines.BringToFront();
+                    else MainViewModel.GetInstance().ChangeBussines.BringToFront();
                 }
                 else
                 {
@@ -675,24 +675,24 @@ namespace Payments.Views
 
         private void subBussinessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MainViewModel.GetInstance().addSub == null)
+            if (MainViewModel.GetInstance().AddSubBussiness == null)
             {
-                MainViewModel.GetInstance().addSub = new SubBussinessAdd();
-                MainViewModel.GetInstance().addSub.FormClosed += FormClosed;
-                MainViewModel.GetInstance().addSub.Show();
+                MainViewModel.GetInstance().AddSubBussiness = new SubBussinessAdd();
+                MainViewModel.GetInstance().AddSubBussiness.FormClosed += FormClosed;
+                MainViewModel.GetInstance().AddSubBussiness.Show();
             }
-            else MainViewModel.GetInstance().addSub.BringToFront();
+            else MainViewModel.GetInstance().AddSubBussiness.BringToFront();
         }
 
         private void usersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MainViewModel.GetInstance().addUser == null)
+            if (MainViewModel.GetInstance().AddUser == null)
             {
-                MainViewModel.GetInstance().addUser = new UserAddView();
-                MainViewModel.GetInstance().addUser.FormClosed += FormClosed;
-                MainViewModel.GetInstance().addUser.Show();
+                MainViewModel.GetInstance().AddUser = new UserAddView();
+                MainViewModel.GetInstance().AddUser.FormClosed += FormClosed;
+                MainViewModel.GetInstance().AddUser.Show();
             }
-            else MainViewModel.GetInstance().addUser.BringToFront();
+            else MainViewModel.GetInstance().AddUser.BringToFront();
         }
 
         private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
@@ -753,7 +753,7 @@ namespace Payments.Views
                 else if (mboxResult == DialogResult.OK)
                 {
                     e.Cancel = false;
-                    MainViewModel.GetInstance().login.Visible = true;
+                    MainViewModel.GetInstance().Login.Visible = true;
                 }
             }
         }
@@ -763,43 +763,43 @@ namespace Payments.Views
             switch (sender.GetType().ToString())
             {
                 case "Payments.Views.AssingSubBussines":
-                    MainViewModel.GetInstance().assing = null;
+                    MainViewModel.GetInstance().AssingSubBussiness = null;
                     break;
 
                 case "Payments.Views.Signed":
-                    MainViewModel.GetInstance().signed = null;
+                    MainViewModel.GetInstance().SignDoc = null;
                     break;
 
                 case "Payments.Views.MakingPayment":
-                    MainViewModel.GetInstance().payment = null;
+                    MainViewModel.GetInstance().MakePayment = null;
                     break;
 
                 case "Payments.Views.PaymentCaptured":
-                    MainViewModel.GetInstance().captured = null;
+                    MainViewModel.GetInstance().CapturePayment = null;
                     break;
 
                 case "Payments.Views.ChangeFileToNewBussiness":
-                    MainViewModel.GetInstance().changeBussines = null;
+                    MainViewModel.GetInstance().ChangeBussines = null;
                     break;
 
                 case "Payments.Views.ViewPDF":
-                    MainViewModel.GetInstance().pdf = null;
+                    MainViewModel.GetInstance().ViewPdf = null;
                     break;
 
                 case "Payments.Views.FinishedTransactions":
-                    MainViewModel.GetInstance().transaction = null;
+                    MainViewModel.GetInstance().FinishedTransaction = null;
                     break;
 
                 case "Payments.Views.SubBussinessAdd":
-                    MainViewModel.GetInstance().addSub = null;
+                    MainViewModel.GetInstance().AddSubBussiness = null;
                     break;
 
                 case "Payments.Views.UserAddView":
-                    MainViewModel.GetInstance().addUser = null;
+                    MainViewModel.GetInstance().AddUser = null;
                     break;
 
                 case "Payments.Views.SplitPDF":
-                    MainViewModel.GetInstance().splitPDF = null;
+                    MainViewModel.GetInstance().SplitPdf = null;
                     break;
             }
         }

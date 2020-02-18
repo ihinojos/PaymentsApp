@@ -55,10 +55,10 @@ namespace Payments.Views
             switch (name)
             {
                 case "sign":
-                    MainViewModel.GetInstance().signed.putCroppedPdf(pathToPlaceFiles);
+                    MainViewModel.GetInstance().SignDoc.putCroppedPdf(pathToPlaceFiles);
                     break;
                 case "pay":
-                    MainViewModel.GetInstance().captured.putCroppedPdf(pathToPlaceFiles);
+                    MainViewModel.GetInstance().CapturePayment.putCroppedPdf(pathToPlaceFiles);
                     break;
             }
             this.Dispose();

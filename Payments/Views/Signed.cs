@@ -104,7 +104,7 @@ namespace Payments.Views
             string newFormat2 = formatDate + "_" + "Bill-Signed" + "_" + Tid + ".pdf";
             char[] spearator = { '\\' };
             Int32 count = 20;
-            string path = MainViewModel.GetInstance().newmain.newpath;
+            string path = MainViewModel.GetInstance().NewMain.newpath;
             // Using the Method
             String[] strlist = path.Split(spearator,
                    count, StringSplitOptions.None);
@@ -157,9 +157,9 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please check if the file already exists o... " + ex);
             }
-            MainViewModel.GetInstance().newmain.fullRefresh();
-            MainViewModel.GetInstance().newmain.LoadTable(MainViewModel.GetInstance().newmain.queryString);
-            MainViewModel.GetInstance().newmain.gridControl1.Update();
+            MainViewModel.GetInstance().NewMain.fullRefresh();
+            MainViewModel.GetInstance().NewMain.LoadTable(MainViewModel.GetInstance().NewMain.queryString);
+            MainViewModel.GetInstance().NewMain.gridControl1.Update();
 
             
             this.Close();
@@ -196,13 +196,13 @@ namespace Payments.Views
             }
             else
             {
-                if (MainViewModel.GetInstance().splitPDF == null)
+                if (MainViewModel.GetInstance().SplitPdf == null)
                 {
-                    MainViewModel.GetInstance().splitPDF = new SplitPDF(pathToNewFile, "sign");
-                    MainViewModel.GetInstance().splitPDF.FormClosed += MainViewModel.GetInstance().newmain.FormClosed;
-                    MainViewModel.GetInstance().splitPDF.Show();
+                    MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "sign");
+                    MainViewModel.GetInstance().SplitPdf.FormClosed += MainViewModel.GetInstance().NewMain.FormClosed;
+                    MainViewModel.GetInstance().SplitPdf.Show();
                 }
-                else MainViewModel.GetInstance().splitPDF.BringToFront();
+                else MainViewModel.GetInstance().SplitPdf.BringToFront();
             }
         }
 

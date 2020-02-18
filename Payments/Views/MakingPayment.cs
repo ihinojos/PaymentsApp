@@ -182,7 +182,7 @@ namespace Payments.Views
                 }
                 char[] spearator = { '\\' };
                 Int32 count = 20;
-                string path = MainViewModel.GetInstance().newmain.newpath;
+                string path = MainViewModel.GetInstance().NewMain.newpath;
                 // Using the Method
                 String[] strlist = path.Split(spearator,
                        count, StringSplitOptions.None);
@@ -197,8 +197,8 @@ namespace Payments.Views
                         newPathForRenameOld = newPathForRenameOld + "\\" + strlist[i];
                     }
                 }
-                newPathForRenameOld = MainViewModel.GetInstance().newmain.nameBussiness + "making-payment" + "\\" + newFormat;
-                newPathForRenameNew = MainViewModel.GetInstance().newmain.nameBussiness + "making-payment" + "\\" + newFormat2;
+                newPathForRenameOld = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat;
+                newPathForRenameNew = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat2;
 
                 string queryobtainid = "select * from [prueba1].[dbo].[t_transactions] where transactionId='" + lblSelected.Text + "';";
                 SqlCommand commandid = new SqlCommand(queryobtainid, cn);
@@ -243,7 +243,7 @@ namespace Payments.Views
                         string oldRouteUsigned = item.Fullroute + item.Name;
                         System.IO.File.Move(oldRouteUsigned, newPathForRenameOld);
                         string queryFile = "UPDATE [PRUEBA1].[dbo].[t_files] SET fileName = '" + lastElement(newPathForRenameOld)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().newmain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type='1';";
+                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type='1';";
                         SqlCommand commandFile = new SqlCommand(queryFile, cn);
                         if (commandFile.Connection.State != ConnectionState.Open)
                         {
@@ -257,7 +257,7 @@ namespace Payments.Views
                         string oldRouteSigned = item.Fullroute + item.Name;
                         System.IO.File.Move(oldRouteSigned, newPathForRenameNew);
                         string queryFile = "UPDATE[PRUEBA1].[dbo].[t_files] SET fileName = '" + lastElement(newPathForRenameNew)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().newmain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type = '2';";
+                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type = '2';";
                         SqlCommand commandFile = new SqlCommand(queryFile, cn);
                         if (commandFile.Connection.State != ConnectionState.Open)
                         {
@@ -268,9 +268,9 @@ namespace Payments.Views
                     }
                 }
 
-                MainViewModel.GetInstance().newmain.fullRefresh();
-                MainViewModel.GetInstance().newmain.LoadTable(MainViewModel.GetInstance().newmain.queryString);
-                MainViewModel.GetInstance().newmain.gridControl1.Update();
+                MainViewModel.GetInstance().NewMain.fullRefresh();
+                MainViewModel.GetInstance().NewMain.LoadTable(MainViewModel.GetInstance().NewMain.queryString);
+                MainViewModel.GetInstance().NewMain.gridControl1.Update();
 
                 MessageBox.Show("Invoice marked as payment in process");
                 this.Close();

@@ -8,30 +8,40 @@ namespace Payments
 {
     public partial class Login : Form
     {
-        private SqlConnection cn;
+        #region Attributes
+
+        private readonly SqlConnection connection;
+
+        #endregion Attributes
+
+        #region Constructor
 
         public Login()
         {
             InitializeComponent();
-            cn = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
+            connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
         }
 
-        //Checks if user/password entered exist and match in the database.
+        #endregion Constructor
+
+        #region Methods
+
         private void UserLogIn(string user, string password)
         {
             string queryString = "SELECT * FROM [PRUEBA1].[dbo].[t_users] WHERE [user] = '" + user + "'";
-            SqlCommand command = new SqlCommand(queryString, cn);
+            SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
+                string type = reader[3].ToString();
                 string hash = reader[2].ToString();
+                reader.Close();
                 if (SecurePassword.Verify(password, hash))
                 {
                     Cursor.Current = Cursors.WaitCursor;
-                    MainViewModel.GetInstance().newmain = new NewMain(reader[3].ToString());
-                    MainViewModel.GetInstance().newmain.Show();
+                    MainViewModel.GetInstance().NewMain = new NewMain(type);
+                    MainViewModel.GetInstance().NewMain.Show();
                     Cursor.Current = Cursors.Default;
                     Visible = false;
                     textBoxPass.Clear();
@@ -45,16 +55,21 @@ namespace Payments
             }
             else
             {
+                reader.Close();
                 MessageBox.Show("User not found!");
             }
             command.Connection.Close();
         }
 
+        #endregion Methods
+
+        #region Clicks
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(textBoxUser.Text) && !string.IsNullOrEmpty(textBoxPass.Text))
             {
-                if (MainViewModel.GetInstance().newmain != null) MainViewModel.GetInstance().newmain = null;
+                if (MainViewModel.GetInstance().NewMain != null) MainViewModel.GetInstance().NewMain = null;
                 UserLogIn(textBoxUser.Text, textBoxPass.Text);
             }
             else
@@ -62,5 +77,7 @@ namespace Payments
                 MessageBox.Show("There are empty fields!");
             }
         }
+
+        #endregion Clicks
     }
 }

@@ -55,7 +55,7 @@ namespace Payments.Views
 
         private void WhenClosed(object sender, FormClosedEventArgs e)
         {
-            MainViewModel.GetInstance().newmain.Visible = true;
+            MainViewModel.GetInstance().NewMain.Visible = true;
         }
 
         public string lastElement(string splitme)
@@ -186,7 +186,7 @@ namespace Payments.Views
             string newFormat3 = formatDate + "_" + "Payment-Captured-Proof" + "_" + lblTransID.Text + ".pdf";
             char[] spearator = { '\\' };
             Int32 count = 20;
-            string path = MainViewModel.GetInstance().newmain.newpath;
+            string path = MainViewModel.GetInstance().NewMain.newpath;
             String[] strlist = path.Split(spearator,
                    count, StringSplitOptions.None);
             for (int i = 0; i < strlist.Length; i++)
@@ -282,7 +282,7 @@ namespace Payments.Views
 
                     System.IO.File.Move(incomingFile, newPathProof);
                     MessageBox.Show("Invoice marked as paid correctly");
-                    MainViewModel.GetInstance().newmain.fullRefresh();
+                    MainViewModel.GetInstance().NewMain.fullRefresh();
                 }
                 catch (Exception ex2)
                 {
@@ -297,13 +297,13 @@ namespace Payments.Views
         {
             if (!String.IsNullOrEmpty(pathToNewFile))
             {
-                if (MainViewModel.GetInstance().splitPDF == null)
+                if (MainViewModel.GetInstance().SplitPdf == null)
                 {
-                    MainViewModel.GetInstance().splitPDF = new SplitPDF(pathToNewFile, "pay");
-                    MainViewModel.GetInstance().splitPDF.FormClosed += MainViewModel.GetInstance().newmain.FormClosed;
-                    MainViewModel.GetInstance().splitPDF.Show();
+                    MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "pay");
+                    MainViewModel.GetInstance().SplitPdf.FormClosed += MainViewModel.GetInstance().NewMain.FormClosed;
+                    MainViewModel.GetInstance().SplitPdf.Show();
                 }
-                else MainViewModel.GetInstance().splitPDF.BringToFront();
+                else MainViewModel.GetInstance().SplitPdf.BringToFront();
             }
             else MessageBox.Show("Please select a file first");
         }

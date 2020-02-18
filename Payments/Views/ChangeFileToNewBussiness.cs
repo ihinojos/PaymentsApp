@@ -63,7 +63,7 @@ namespace Payments.Views
                 path = path + "\\incoming\\" + lastElement(oldDirectory);
                 System.IO.File.Move(oldDirectory, path);
                 MessageBox.Show("File moved correctly");
-                MainViewModel.GetInstance().newmain.fullRefresh();
+                MainViewModel.GetInstance().NewMain.fullRefresh();
             }
             catch (Exception ex)
             {

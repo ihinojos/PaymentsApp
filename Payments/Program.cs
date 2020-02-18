@@ -16,9 +16,9 @@ namespace Payments
             Application.SetCompatibleTextRenderingDefault(false);
 
             //Creates a singleton for the views.
-            MainViewModel.GetInstance().login = new Login();
+            MainViewModel.GetInstance().Login = new Login();
             //Starts application in the log in view.
-            Application.Run(MainViewModel.GetInstance().login);
+            Application.Run(MainViewModel.GetInstance().Login);
         }
     }
 }
