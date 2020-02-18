@@ -58,7 +58,7 @@ namespace Payments.Views
                     MainViewModel.GetInstance().SignDoc.putCroppedPdf(pathToPlaceFiles);
                     break;
                 case "pay":
-                    MainViewModel.GetInstance().CapturePayment.putCroppedPdf(pathToPlaceFiles);
+                    MainViewModel.GetInstance().CapturePayment.PutCroppedPdf(pathToPlaceFiles);
                     break;
             }
             this.Dispose();
