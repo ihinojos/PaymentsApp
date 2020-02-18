@@ -119,27 +119,18 @@ namespace Payments.Views
                                 command.Connection.Open();
                                 command.ExecuteNonQuery();
                                 SqlDataReader reader = command.ExecuteReader();
-                                if (reader.Read())
+                                if (!reader.Read())
                                 {
-                                    command.Connection.Close();
-                                }
-                                else
-                                {
+                                    reader.Close();
                                     if (SecondlastElement(file) == "incoming")
                                     {
-                                        command.Connection.Close();
                                         string queryString2 = "INSERT INTO [PRUEBA1].[dbo].[t_files]([id],[filename],[folder],[idstatus],[transId],[type])" +
                                                                " VALUES( NEWID(),'" + strlist[i] + "','" + url + "','" + status + "','" + "Not assigned yet',1)";
-                                        SqlCommand command2 = new SqlCommand(queryString2, connection);
-                                        command2.Connection.Open();
-                                        command2.ExecuteNonQuery();
-                                        command2.Connection.Close();
-                                    }
-                                    else
-                                    {
-                                        command.Connection.Close();
+                                        command.CommandText = queryString2;
+                                        command.ExecuteNonQuery();
                                     }
                                 }
+                                command.Connection.Close();
                             }
                         }
                     }
@@ -240,18 +231,18 @@ namespace Payments.Views
             List<string> record = new List<string>();
             List<string> recordId = new List<string>();
             string queryfiles = "SELECT * FROM [PRUEBA1].[dbo].[t_files] WHERE [folder] LIKE '" + nameBussiness + "%';";
-            SqlCommand cmd = new SqlCommand(queryfiles, connection);
-            cmd.Connection.Open();
-            cmd.ExecuteNonQuery();
-            SqlDataReader read = cmd.ExecuteReader();
+            SqlCommand command = new SqlCommand(queryfiles, connection);
+            command.Connection.Open();
+            command.ExecuteNonQuery();
+            SqlDataReader read = command.ExecuteReader();
             while (read.Read())
             {
                 string r = read[2].ToString() + read[1].ToString();
                 record.Add(r);
                 recordId.Add(read[0].ToString());
             }
-            cmd.Connection.Close();
-
+            read.Close();
+            command.Connection.Close();
             for (int i = 0; i < record.Count; i++)
             {
                 if (!allFiles.Contains(record[i]))
@@ -272,7 +263,7 @@ namespace Payments.Views
             SqlCommand commandDelete = new SqlCommand(query, connection);
             lock (commandDelete)
             {
-                commandDelete.Connection.Open();
+                commandDelete.Connection.Open(); 
                 commandDelete.ExecuteNonQuery();
                 commandDelete.Connection.Close();
             }
@@ -284,14 +275,16 @@ namespace Payments.Views
             string sql = "select * from [prueba1].[dbo].[t_files];";
             using (var command = new SqlCommand(sql, connection))
             {
-                connection.Open();
+                command.Connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
                     var list = new List<T_Files>();
                     while (reader.Read())
                         list.Add(new T_Files { Id = reader.GetString(0), Name = reader.GetString(1), Status = reader.GetString(3) });
                     allRecords = list.ToArray();
+                    reader.Close();
                 }
+                command.Connection.Close();
                 foreach (T_Files record in allRecords)
                 {
                     string queryobtainid = "select * from [prueba1].[dbo].[t_status] where id_file = '" + record.Id + "';";
@@ -417,25 +410,25 @@ namespace Payments.Views
                         Status = reader.GetString(3),
                         TransId = reader.GetString(4)
                     });
-                allRecords = list.ToArray();
                 reader.Close();
+                allRecords = list.ToArray();
             }
             foreach (T_Files record in allRecords)
             {
                 string queryStringStatus = "SELECT * FROM [PRUEBA1].[dbo].[t_transactions] WHERE transactionID LIKE '" + record.TransId + "%';";
                 command.CommandText = queryStringStatus;
-                command.Connection.Open();
                 command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
                     string fieldsTableFilesId = reader[1].ToString();
                     string fieldsTableFilesName = reader[0].ToString();
+                    reader.Close();
                     string queryUpdate = "UPDATE [PRUEBA1].[dbo].[t_files] SET transId = '" + fieldsTableFilesId + "' WHERE folder ='" + record.Fullroute + "' AND fileName = '" + record.Name + "';";
-                    //
                     command.CommandText = queryUpdate;
                     command.ExecuteNonQuery();
                 }
+                else reader.Close();
             }
             command.Connection.Close();
         }
@@ -507,12 +500,14 @@ namespace Payments.Views
                 {
                     if (reader[3].ToString() == "incoming")
                     {
+                        reader.Close();
                         string queryUpdate = "UPDATE [PRUEBA1].[dbo].[t_files] SET idstatus = '" + record.Id_file + "', status_name='incoming' WHERE id LIKE '" + record.Id_file + "';";
                         command.CommandText = queryUpdate;
                         command.ExecuteNonQuery();
                     }
                     else
                     {
+                        reader.Close();
                         string queryUpdate = "UPDATE [PRUEBA1].[dbo].[t_files] SET idstatus = '" + record.Id_file + "' WHERE id LIKE '" + record.Id_file + "';";
                         command.CommandText = queryUpdate;
                         command.ExecuteNonQuery();
