@@ -8,59 +8,68 @@ namespace Payments.Views
 {
     public partial class ChangeFileToNewBussiness : Form
     {
-        private string oldDirectory;
-        public String newpath = "C:\\TestFiles";
-        private int count;
-        private List<string> RutasPusibles = new List<string>();
+        #region Attributes
+
+        private readonly string oldDirectory;
+        public string newpath = "C:\\TestFiles";
+        private readonly List<string> RutasPusibles = new List<string>();
+
+        #endregion Attributes
+
+        #region Constructor
 
         public ChangeFileToNewBussiness(string path)
         {
             InitializeComponent();
             oldDirectory = path;
-            count = 0;
             ScanForAvailableBussiness();
         }
+
+        #endregion Constructor
+
+        #region Methods
 
         private void ScanForAvailableBussiness()
         {
             string[] Bussiness = Directory.GetDirectories(newpath, "*.*", SearchOption.TopDirectoryOnly);
             foreach (var item in Bussiness)
             {
-                count = count + 1;
                 RutasPusibles.Add(item);
             }
             foreach (var item in RutasPusibles)
             {
-                if (lastElement(item) != secondlastElement(oldDirectory))
+                if (LastElement(item) != SecondlastElement(oldDirectory))
                 {
                     treeView1.Nodes.Add(item);
                 }
             }
         }
 
-        public string lastElement(string splitme)
+        public string LastElement(string splitme)
         {
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
             return strlist[strlist.Length - 1].ToString();
         }
 
-        public string secondlastElement(string splitme)
+        public string SecondlastElement(string splitme)
         {
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
             return strlist[strlist.Length - 3].ToString();
         }
 
+        #endregion Methods
+
+        #region Clicks
+
         private void button1_Click(object sender, EventArgs e)
         {
-
-            
             try
             {
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + lastElement(oldDirectory);
+                path = path + "\\incoming\\" + LastElement(oldDirectory);
                 System.IO.File.Move(oldDirectory, path);
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.fullRefresh();
@@ -71,5 +80,7 @@ namespace Payments.Views
             }
             this.Dispose();
         }
+
+        #endregion Clicks
     }
 }
