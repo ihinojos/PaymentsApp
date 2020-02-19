@@ -60,7 +60,6 @@ namespace Payments.Views
         {
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             FullDT = new DataTable();
             using (SqlDataAdapter DA = new SqlDataAdapter(command))
             {
@@ -109,7 +108,6 @@ namespace Payments.Views
                                 string queryString = "SELECT [fileName],[folder] FROM[PRUEBA1].[dbo].[t_files] WHERE fileName = '" + strlist[i] + "' AND folder ='" + url + "';";
                                 SqlCommand command = new SqlCommand(queryString, connection);
                                 command.Connection.Open();
-                                command.ExecuteNonQuery();
                                 SqlDataReader reader = command.ExecuteReader();
                                 if (!reader.Read())
                                 {
@@ -175,7 +173,7 @@ namespace Payments.Views
             }
         }
 
-        private int countFiles(string path)
+        private int CountFiles(string path)
 
         {
             string[] files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
@@ -190,7 +188,7 @@ namespace Payments.Views
             return counter;
         }
 
-        private void deleteRegistersFromFilesThatWasRemoved(string path)
+        private void DeleteRegistersFromFilesThatWasRemoved(string path)
         {
             List<string> allFiles = new List<string>();
             string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
@@ -210,7 +208,6 @@ namespace Payments.Views
             string queryfiles = "SELECT * FROM [PRUEBA1].[dbo].[t_files] WHERE [folder] LIKE '" + nameBussiness + "%';";
             SqlCommand command = new SqlCommand(queryfiles, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             SqlDataReader read = command.ExecuteReader();
             while (read.Read())
             {
@@ -291,7 +288,6 @@ namespace Payments.Views
                     + strlist[strlist.Length - 1] + "';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
-                command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 if (!reader.Read())
                 {
@@ -315,7 +311,6 @@ namespace Payments.Views
             string queryObtainId = "SELECT * FROM [PRUEBA1].[dbo].[t_files] where status_name = 'waiting-auth';";
             SqlCommand command = new SqlCommand(queryObtainId, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<T_Files>();
@@ -335,7 +330,6 @@ namespace Payments.Views
             {
                 string queryStringStatus = "SELECT * FROM [PRUEBA1].[dbo].[t_transactions] WHERE transactionID LIKE '" + record.TransId + "%';";
                 command.CommandText = queryStringStatus;
-                command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
@@ -362,7 +356,6 @@ namespace Payments.Views
                         + strlist[strlist.Length - 1] + "' AND path ='" + newpath + "\\';";
                     SqlCommand command = new SqlCommand(queryString, connection);
                     command.Connection.Open();
-                    command.ExecuteNonQuery();
                     SqlDataReader reader = command.ExecuteReader();
                     if (!reader.Read())
                     {
@@ -391,7 +384,6 @@ namespace Payments.Views
             string queryObtainId = "SELECT id,id_file,name_status FROM [PRUEBA1].[dbo].[t_status];";
             SqlCommand command = new SqlCommand(queryObtainId, connection);
             command.Connection.Open();
-            command.ExecuteNonQuery();
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<T_Status>();
@@ -404,7 +396,6 @@ namespace Payments.Views
             {
                 string queryStringStatus = "SELECT * FROM [PRUEBA1].[dbo].[t_files] WHERE id LIKE '" + record.Id_file + "%';";
                 command.CommandText = queryStringStatus;
-                command.ExecuteNonQuery();
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
@@ -427,7 +418,7 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
-        public void fullRefresh()
+        public void FullRefresh()
         {
             ObtainFiles(newpath);
             ObtainFolders(newpath);
@@ -436,7 +427,7 @@ namespace Payments.Views
             UpdateFilesForIdStatus();
             UpdateFilesForTransactionId();
             queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
-            lblTitleResult.Text = (countFiles(nameBussiness).ToString());
+            lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
         }
 
@@ -497,9 +488,9 @@ namespace Payments.Views
             lblNameBuss.Text = comboBox1.SelectedItem.ToString();
             nameBussiness = $"{newpath}\\{nameBussiness}\\";
             nameBussiness = nameBussiness.Replace(@"\\", @"\");
-            deleteRegistersFromFilesThatWasRemoved(nameBussiness);
+            DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
             queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
-            lblTitleResult.Text = (countFiles(nameBussiness).ToString());
+            lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
         }
 
@@ -575,7 +566,7 @@ namespace Payments.Views
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
-                fullRefresh();
+                FullRefresh();
                 Cursor.Current = Cursors.Default;
             }
             catch (Exception)
@@ -710,7 +701,7 @@ namespace Payments.Views
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 newpath = dialog.FileName;
-                lblTitleResult.Text = (countFiles(newpath).ToString());
+                lblTitleResult.Text = (CountFiles(newpath).ToString());
                 ObtainFiles(newpath);
                 ObtainFolders(newpath);
                 InitializeComboboxBussines();
