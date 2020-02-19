@@ -35,14 +35,16 @@ namespace Payments.Views
 
         #region Methods
 
-        private void Split(List<int> pages, List<int> pagesComplement)
+        private void Split(List<int> pages)
         {
             // Open the output document
-            PdfDocument outputDocument = new PdfDocument();
-            //PdfDocument outputDocument2 = new PdfDocument();
+            PdfDocument outputDocument = new PdfDocument
+            {
+                //PdfDocument outputDocument2 = new PdfDocument();
 
-            // Show consecutive pages facing. Requires Acrobat 5 or higher.
-            outputDocument.PageLayout = PdfPageLayout.OneColumn;
+                // Show consecutive pages facing. Requires Acrobat 5 or higher.
+                PageLayout = PdfPageLayout.OneColumn
+            };
             //outputDocument2.PageLayout = PdfPageLayout.OneColumn;
 
             // Open the document to import pages from it.
@@ -65,7 +67,7 @@ namespace Payments.Views
             switch (name)
             {
                 case "sign":
-                    MainViewModel.GetInstance().SignDoc.putCroppedPdf(pathToPlaceFiles);
+                    MainViewModel.GetInstance().SignDoc.PutCroppedPdf(pathToPlaceFiles);
                     break;
 
                 case "pay":
@@ -92,7 +94,7 @@ namespace Payments.Views
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Split(pages, pagesComplement);
+            Split(pages);
             MessageBox.Show("File creation was successfull");
         }
 

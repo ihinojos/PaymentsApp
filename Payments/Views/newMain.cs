@@ -310,7 +310,7 @@ namespace Payments.Views
             }
         }
 
-        private void UpdateFilesForTransactionId(string path)
+        private void UpdateFilesForTransactionId()
         {
             string queryObtainId = "SELECT * FROM [PRUEBA1].[dbo].[t_files] where status_name = 'waiting-auth';";
             SqlCommand command = new SqlCommand(queryObtainId, connection);
@@ -340,7 +340,6 @@ namespace Payments.Views
                 if (reader.Read())
                 {
                     string fieldsTableFilesId = reader[1].ToString();
-                    string fieldsTableFilesName = reader[0].ToString();
                     reader.Close();
                     string queryUpdate = "UPDATE [PRUEBA1].[dbo].[t_files] SET transId = '" + fieldsTableFilesId + "' WHERE folder ='" + record.Fullroute + "' AND fileName = '" + record.Name + "';";
                     command.CommandText = queryUpdate;
@@ -387,7 +386,7 @@ namespace Payments.Views
             }
         }
 
-        private void UpdateFilesForIdStatus(string path)
+        private void UpdateFilesForIdStatus()
         {
             string queryObtainId = "SELECT id,id_file,name_status FROM [PRUEBA1].[dbo].[t_status];";
             SqlCommand command = new SqlCommand(queryObtainId, connection);
@@ -434,8 +433,8 @@ namespace Payments.Views
             ObtainFolders(newpath);
             CheckIfStatesFoldersExists();
             FillStatusTable();
-            UpdateFilesForIdStatus(newpath);
-            UpdateFilesForTransactionId(newpath);
+            UpdateFilesForIdStatus();
+            UpdateFilesForTransactionId();
             queryString = "SELECT f.*, t.content FROM [PRUEBA1].[dbo].[t_files] f,[PRUEBA1].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.idstatus DESC;";
             lblTitleResult.Text = (countFiles(nameBussiness).ToString());
             LoadTable(queryString);
@@ -625,7 +624,7 @@ namespace Payments.Views
                     GridView gv = gridView1;
                     string path = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
                     string name = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-                    path = path + name;
+                    path += name;
                     MainViewModel.GetInstance().ViewPdf = new ViewPDF(path);
                     MainViewModel.GetInstance().ViewPdf.FormClosed += FormClosed;
                     MainViewModel.GetInstance().ViewPdf.Show();
@@ -650,7 +649,7 @@ namespace Payments.Views
                     {
                         string path = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
                         string name = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-                        path = path + name;
+                        path += name;
                         MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path);
                         MainViewModel.GetInstance().ChangeBussines.FormClosed += FormClosed;
                         MainViewModel.GetInstance().ChangeBussines.Show();
@@ -717,8 +716,8 @@ namespace Payments.Views
                 InitializeComboboxBussines();
                 CheckIfStatesFoldersExists();
                 FillStatusTable();
-                UpdateFilesForIdStatus(newpath);
-                UpdateFilesForTransactionId(newpath);
+                UpdateFilesForIdStatus();
+                UpdateFilesForTransactionId();
                 DeactivateButtons();
                 gridControl1.DataSource = null;
                 gridControl1.RefreshDataSource();
