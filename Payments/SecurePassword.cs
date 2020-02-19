@@ -7,6 +7,8 @@ namespace Payments
 {
     public static class SecurePassword
     {
+        #region Attributes
+
         /// <summary>
         /// Size of salt.
         /// </summary>
@@ -16,6 +18,10 @@ namespace Payments
         /// Size of hash.
         /// </summary>
         private const int HashSize = 20;
+
+        #endregion Attributes
+
+        #region Methods
 
         /// <summary>
         /// Creates a hash from a password.
@@ -129,5 +135,7 @@ namespace Payments
             else MessageBox.Show("Password must contain at least 8 digits");
             return secure;
         }
+
+        #endregion Methods
     }
 }
