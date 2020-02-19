@@ -11,7 +11,7 @@ namespace Payments.Views
     {
         #region Attributes
 
-        private SqlConnection cn;
+        private readonly SqlConnection connection;
         public DataTable FullDT;
 
         #endregion Attributes
@@ -21,29 +21,25 @@ namespace Payments.Views
         public FinishedTransactions()
         {
             InitializeComponent();
-            cn = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
+            connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             string query2 = "Select transactionId,t.id from [PRUEBA1].[dbo].[t_transactions] t inner join [PRUEBA1].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
-            loadTable(query2);
+            LoadTable(query2);
         }
 
         #endregion Constructor
 
         #region Methods
 
-        public void loadTable(string queryString)
+        public void LoadTable(string queryString)
         {
-            SqlCommand command = new SqlCommand(queryString, cn);
-            if (command.Connection.State != ConnectionState.Open)
-            {
-                command.Connection.Close();
-                command.Connection.Open();
-            }
-            int row = command.ExecuteNonQuery();
+            SqlCommand command = new SqlCommand(queryString, connection);
             FullDT = new DataTable();
+            command.Connection.Open();
             using (SqlDataAdapter DA = new SqlDataAdapter(command))
             {
                 DA.Fill(FullDT);
             }
+            command.Connection.Close();
             gridControl1.RefreshDataSource();
             GridView gv = gridView1;
             gridControl1.DataSource = null;
@@ -53,8 +49,11 @@ namespace Payments.Views
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
-            command.Connection.Close();
         }
+
+        #endregion Methods
+
+        #region Clicks
 
         private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
@@ -65,18 +64,15 @@ namespace Payments.Views
             lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transactionId").ToString();
 
             string query3 = "Select * from [PRUEBA1].[dbo].[t_files] f inner join [PRUEBA1].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
-            SqlCommand command = new SqlCommand(query3, cn);
-            if (command.Connection.State != ConnectionState.Open)
-            {
-                command.Connection.Close();
-                command.Connection.Open();
-            }
-            int row = command.ExecuteNonQuery();
+            SqlCommand command = new SqlCommand(query3, connection);
+            command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 treeView1.Nodes.Add(reader[2].ToString() + reader[1].ToString());
             }
+            reader.Close();
+            command.Connection.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -97,10 +93,6 @@ namespace Payments.Views
             }
         }
 
-
-        #endregion Methods
-
-
-   
+        #endregion Clicks
     }
 }

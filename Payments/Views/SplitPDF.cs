@@ -9,10 +9,16 @@ namespace Payments.Views
 {
     public partial class SplitPDF : Form
     {
-        private string name;
-        private string pathToPlaceFiles;
-        private List<int> pages = new List<int>();
-        private List<int> pagesComplement = new List<int>();
+        #region Attributes
+
+        private readonly string name;
+        private readonly string pathToPlaceFiles;
+        private readonly List<int> pages = new List<int>();
+        private readonly List<int> pagesComplement = new List<int>();
+
+        #endregion Attributes
+
+        #region Constructor
 
         public SplitPDF(string pathToPutPDF, string name)
         {
@@ -21,11 +27,15 @@ namespace Payments.Views
             axAcroPDF1.src = "";
             axAcroPDF1.src = pathToPutPDF;
             pathToPlaceFiles = pathToPutPDF;
-            fillComboBox();
+            FillComboBox();
             this.FormClosed += new FormClosedEventHandler(WhenClosed);
         }
 
-        private void splitPDF(List<int> pages, List<int> pagesComplement)
+        #endregion Constructor
+
+        #region Methods
+
+        private void Split(List<int> pages, List<int> pagesComplement)
         {
             // Open the output document
             PdfDocument outputDocument = new PdfDocument();
@@ -57,6 +67,7 @@ namespace Payments.Views
                 case "sign":
                     MainViewModel.GetInstance().SignDoc.putCroppedPdf(pathToPlaceFiles);
                     break;
+
                 case "pay":
                     MainViewModel.GetInstance().CapturePayment.PutCroppedPdf(pathToPlaceFiles);
                     break;
@@ -64,13 +75,7 @@ namespace Payments.Views
             this.Dispose();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            splitPDF(pages, pagesComplement);
-            MessageBox.Show("File creation was successfull");
-        }
-
-        private void fillComboBox()
+        private void FillComboBox()
         {
             PdfDocument inputDocument = PdfReader.Open(pathToPlaceFiles, PdfDocumentOpenMode.Import);
             int count = inputDocument.PageCount;
@@ -79,6 +84,16 @@ namespace Payments.Views
                 comboBox1.Items.Add(i + 1);
                 pagesComplement.Add(i);
             }
+        }
+
+        #endregion Methods
+
+        #region Clicks
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Split(pages, pagesComplement);
+            MessageBox.Show("File creation was successfull");
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -97,9 +112,15 @@ namespace Payments.Views
             }
         }
 
+        #endregion Clicks
+
+        #region Events
+
         private void WhenClosed(object sender, FormClosedEventArgs e)
         {
             this.axAcroPDF1.Dispose();
         }
+
+        #endregion Events
     }
 }

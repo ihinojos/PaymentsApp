@@ -6,31 +6,33 @@ namespace Payments.Views
 {
     public partial class UserAddView : Form
     {
-        private SqlConnection con;
+        #region Attributes
+
+        private readonly SqlConnection connection;
+
+        #endregion Attributes
+
+        #region Constructor
 
         public UserAddView()
         {
             InitializeComponent();
             typeBox.Items.Add("admin");
             typeBox.Items.Add("capture");
-            con = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
+            connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             MessageBox.Show("Password requirements: \n1.- At least 8 digits.\n2.- At least 1 uppercase letter\n3.- At least 1 number");
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (emptyCheck() && passwordCheck(passTextBox.Text, passConfirm.Text))
-            {
-                saveUser();
-            }
-        }
+        #endregion Constructor
 
-        private bool passwordCheck(string p1, string p2)
+        #region Methods
+
+        private bool PasswordCheck(string p1, string p2)
         {
             return p1.Equals(p2);
         }
 
-        private bool emptyCheck()
+        private bool EmptyCheck()
         {
             string box;
             try
@@ -50,7 +52,7 @@ namespace Payments.Views
             return true;
         }
 
-        private void saveUser()
+        private void SaveUser()
         {
             string user = userTextBox.Text;
             string pass = passTextBox.Text;
@@ -60,7 +62,7 @@ namespace Payments.Views
                 pass = SecurePassword.Hash(pass);
                 string query = "INSERT INTO [PRUEBA1].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', '" + type + "')";
 
-                SqlCommand command = new SqlCommand(query, con);
+                SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
                 try
                 {
@@ -82,5 +84,19 @@ namespace Payments.Views
                 this.Dispose();
             }
         }
+
+        #endregion Methods
+
+        #region Clicks
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (EmptyCheck() && PasswordCheck(passTextBox.Text, passConfirm.Text))
+            {
+                SaveUser();
+            }
+        }
+
+        #endregion Clicks
     }
 }
