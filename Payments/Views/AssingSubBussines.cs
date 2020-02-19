@@ -181,7 +181,7 @@ namespace Payments.Views
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                     MessageBox.Show("Invoice captured correctly");
-                    MainViewModel.GetInstance().NewMain.fullRefresh();
+                    MainViewModel.GetInstance().NewMain.FullRefresh();
                 }
                 catch (Exception ex)
                 {

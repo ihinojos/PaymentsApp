@@ -213,7 +213,7 @@ namespace Payments.Views
                     command.Connection.Close();
                     System.IO.File.Move(incomingFile, newPathProof);
                     MessageBox.Show("Invoice marked as paid correctly");
-                    MainViewModel.GetInstance().NewMain.fullRefresh();
+                    MainViewModel.GetInstance().NewMain.FullRefresh();
                 }
                 catch (Exception ex2)
                 {

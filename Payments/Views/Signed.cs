@@ -134,7 +134,7 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please check if the file already exists o... " + ex);
             }
-            MainViewModel.GetInstance().NewMain.fullRefresh();
+            MainViewModel.GetInstance().NewMain.FullRefresh();
             this.Close();
         }
 

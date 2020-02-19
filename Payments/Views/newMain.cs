@@ -65,6 +65,7 @@ namespace Payments.Views
             {
                 DA.Fill(FullDT);
             }
+            command.Connection.Close();
             GridView gv = gridView1;
             gridControl1.DataSource = null;
             gridControl1.DataSource = FullDT;
@@ -78,7 +79,6 @@ namespace Payments.Views
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
-            command.Connection.Close();
         }
 
         public void ObtainFiles(string path)
