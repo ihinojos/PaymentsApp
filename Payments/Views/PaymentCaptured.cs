@@ -113,14 +113,14 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select * from [PAYMENTS].[dbo].[t_filesSubs] where idFile = '" + id + "';";
+            string queryobtainid = "select f.*, s.nameSub  from [PAYMENTS].[dbo].[t_filesSubs] f, [PAYMENTS].[dbo].[t_subbussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<T_SubBussines>();
                 while (reader.Read())
-                    list.Add(new T_SubBussines {  IdFile = reader[0].ToString(), IdSubBussiness = reader[1].ToString() }); ;
+                    list.Add(new T_SubBussines {Id= reader[1].ToString(),  IdFile = reader[0].ToString(), IdSubBussiness = reader[2].ToString() }); ;
                 allSubs = list.ToArray();
                 reader.Close();
             }

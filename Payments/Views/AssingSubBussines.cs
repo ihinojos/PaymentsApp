@@ -202,10 +202,20 @@ namespace Payments.Views
         {
             try
             {
-                string queryStringNew = "SELECT * FROM[PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "' AND idSubBussiness ='" + comboBoxSubBussiness.SelectedItem.ToString() + "';";
-                SqlCommand command = new SqlCommand(queryStringNew, connection);
+                string subBussiness = comboBoxSubBussiness.SelectedItem.ToString();
+                string idSubBussiness = "";
+                string query = "SELECT * FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE [nameSub] = '" + subBussiness + "';";
+                SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
+                if (reader.Read())
+                {
+                    idSubBussiness = reader[0].ToString();
+                }
+                reader.Close();
+                string queryStringNew = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "' AND idSubBussiness ='" + idSubBussiness + "';";
+                command.CommandText = queryStringNew;
+                reader = command.ExecuteReader();
                 if (reader.Read())
                 {
                     MessageBox.Show("The sub-bussiness already exists");
@@ -218,7 +228,7 @@ namespace Payments.Views
                     string newSub = lblSubSelected.Text;
                     string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_filesSubs]([idFile],[idSubBussiness])" +
                                                            " VALUES('" + idFileSelected
-                                                           + "','" + comboBoxSubBussiness.SelectedItem.ToString()
+                                                           + "','" + idSubBussiness
                                                                    + "')";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
@@ -227,8 +237,9 @@ namespace Payments.Views
                     MessageBox.Show("Assignation sucessful for the file: " + lblFileSelected.Text + " for the sub-bussiness: " + comboBoxSubBussiness.SelectedItem.ToString());
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
             }
         }
 

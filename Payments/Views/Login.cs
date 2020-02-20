@@ -20,12 +20,26 @@ namespace Payments
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-
+            //FirstRun();
         }
 
         #endregion Constructor
 
         #region Methods
+
+        private void FirstRun()
+        {
+            string user = "root";
+            string pass = SecurePassword.Hash("root");
+            string query = "INSERT INTO [PAYMENTS].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', 'admin')";
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Connection.Open();
+            command.ExecuteNonQuery();
+            query = "INSERT INTO [PAYMENTS].[dbo].[t_types] ([id], [content]) VALUES ('1', 'Unsigned Bill'), ('2', 'Signed Bill'), ('3', 'Proof of Payment')";
+            command.CommandText = query;
+            command.ExecuteNonQuery();
+            command.Connection.Close();
+        }
 
         private void UserLogIn(string user, string password)
         {
