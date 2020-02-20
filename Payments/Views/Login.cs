@@ -20,6 +20,7 @@ namespace Payments
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
+
         }
 
         #endregion Constructor
@@ -28,7 +29,7 @@ namespace Payments
 
         private void UserLogIn(string user, string password)
         {
-            string queryString = "SELECT * FROM [PRUEBA1].[dbo].[t_users] WHERE [user] = '" + user + "'";
+            string queryString = "SELECT * FROM [PAYMENTS].[dbo].[t_users] WHERE [user] = '" + user + "'";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

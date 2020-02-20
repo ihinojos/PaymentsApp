@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -9,6 +10,7 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
+        private List<string> idBussiness = new List<string>();
 
         #endregion Attributes
 
@@ -27,13 +29,14 @@ namespace Payments.Views
 
         private void LoadCombo()
         {
-            string query = "SELECT * FROM [PRUEBA1].[dbo].[t_bussiness]";
+            string query = "SELECT * FROM [PAYMENTS].[dbo].[t_bussiness]";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 bussinessBox.Items.Add(reader[1].ToString());
+                idBussiness.Add(reader[0].ToString());
             }
             reader.Close();
             command.Connection.Close();
@@ -45,14 +48,14 @@ namespace Payments.Views
             {
                 string name = nameTextBox.Text;
                 string addr = addTextBox.Text;
-                string buss = bussinessBox.SelectedItem.ToString();
+                string buss = idBussiness[bussinessBox.SelectedIndex];
                 if (String.IsNullOrEmpty(name) || String.IsNullOrEmpty(buss))
                 {
                     MessageBox.Show("One or more invalid parameters!");
                 }
                 else
                 {
-                    string query = "INSERT INTO [PRUEBA1].[dbo].[t_subbussiness] ([id], [nameSub], [address], [idBussiness]) " +
+                    string query = "INSERT INTO [PAYMENTS].[dbo].[t_subbussiness] ([id], [nameSub], [address], [idBussiness]) " +
                         "VALUES ( NEWID(), '" + name + "', '" + addr + "', '" + buss + "')";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Connection.Open();

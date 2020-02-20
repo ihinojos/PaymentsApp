@@ -43,7 +43,7 @@ namespace Payments.Views
         private void LoadTree()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select * from [prueba1].[dbo].[t_transactions] where [id] = '" + transId + "';";
+            string queryobtainid = "select * from [PAYMENTS].[dbo].[t_transactions] where [id] = '" + transId + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
@@ -60,7 +60,7 @@ namespace Payments.Views
             int count = 0;
             foreach (Transactions record in allSubs)
             {
-                string queryobtain = "select * from [prueba1].[dbo].[t_files] where transId ='" + record.Id + "';";
+                string queryobtain = "select * from [PAYMENTS].[dbo].[t_files] where transId ='" + record.Id + "';";
                 command.CommandText = queryobtain;
                 using (var reader = command.ExecuteReader())
                 {
@@ -87,7 +87,7 @@ namespace Payments.Views
 
         private void LoadLookUpEdit()
         {
-            string querystringstatus = "SELECT [transactionId],[id] FROM [PRUEBA1].[dbo].[t_transactions] where [id] = '" + transId + "';";
+            string querystringstatus = "SELECT [transactionId],[id] FROM [PAYMENTS].[dbo].[t_transactions] where [id] = '" + transId + "';";
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand command = new SqlCommand(querystringstatus, connection);
             command.Connection.Open();
@@ -145,7 +145,7 @@ namespace Payments.Views
                 newPathForRenameOld = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat;
                 newPathForRenameNew = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat2;
 
-                string queryobtainid = "select * from [prueba1].[dbo].[t_transactions] where transactionId='" + lblSelected.Text + "';";
+                string queryobtainid = "select * from [PAYMENTS].[dbo].[t_transactions] where transactionId='" + lblSelected.Text + "';";
                 SqlCommand command = new SqlCommand(queryobtainid, connection);
                 command.Connection.Open();
                 using (var reader = command.ExecuteReader())
@@ -159,13 +159,13 @@ namespace Payments.Views
 
                 foreach (var item in allSubs2)
                 {
-                    string queryFile = "select * from [prueba1].[dbo].[t_files] where transId='" + item.Id + "';";
+                    string queryFile = "select * from [PAYMENTS].[dbo].[t_files] where transId='" + item.Id + "';";
                     command.CommandText = queryFile;
                     using (var reader2 = command.ExecuteReader())
                     {
                         var list3 = new List<T_Files>();
                         while (reader2.Read())
-                            list3.Add(new T_Files { Id = reader2.GetString(0), Name = reader2.GetString(1), Fullroute = reader2.GetString(2), TransId = reader2.GetString(4) });
+                            list3.Add(new T_Files { Id = reader2.GetString(0), Name = reader2.GetString(1), Fullroute = reader2.GetString(2), TransId = reader2.GetString(3) });
                         files = list3.ToArray();
                         reader2.Close();
                     }
@@ -177,20 +177,22 @@ namespace Payments.Views
                     if (cadena.Contains("Unsigned"))
                     {
                         string oldRouteUsigned = item.Fullroute + item.Name;
-                        System.IO.File.Move(oldRouteUsigned, newPathForRenameOld);
-                        string queryFile = "UPDATE [PRUEBA1].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameOld)
+                        string queryFile = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameOld)
                             + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type='1';";
                         command.CommandText = queryFile;
                         command.ExecuteNonQuery();
+
+                        System.IO.File.Move(oldRouteUsigned, newPathForRenameOld);
                     }
                     if (cadena.Contains("Signed"))
                     {
                         string oldRouteSigned = item.Fullroute + item.Name;
-                        System.IO.File.Move(oldRouteSigned, newPathForRenameNew);
-                        string queryFile = "UPDATE[PRUEBA1].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameNew)
+                        string queryFile = "UPDATE[PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameNew)
                             + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type = '2';";
                         command.CommandText = queryFile;
                         command.ExecuteNonQuery();
+
+                        System.IO.File.Move(oldRouteSigned, newPathForRenameNew);
                     }
                 }
                 command.Connection.Close();

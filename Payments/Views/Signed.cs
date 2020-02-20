@@ -51,14 +51,14 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select * from [prueba1].[dbo].[t_filesSubs] where idFile = '" + id + "';";
+            string queryobtainid = "select * from [PAYMENTS].[dbo].[t_filesSubs] where idFile = '" + id + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<T_SubBussines>();
                 while (reader.Read())
-                    list.Add(new T_SubBussines { Id = reader.GetString(0), IdFile = reader.GetString(1), IdSubBussiness = reader.GetString(2) });
+                    list.Add(new T_SubBussines { IdFile = reader.GetString(0), IdSubBussiness = reader.GetString(1) });
                 allSubs = list.ToArray();
                 reader.Close();
             }
@@ -106,7 +106,7 @@ namespace Payments.Views
             {
                 //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 folder = folder.Replace("waiting-auth", "signed");
-                string queryStringDelete1 = "UPDATE [PRUEBA1].[dbo].[t_files] SET " +
+                string queryStringDelete1 = "UPDATE [PAYMENTS].[dbo].[t_files] SET " +
                     "fileName = '" + newFormat + "', " +
                     "folder= '" + folder + "'," +
                     "transId = '" + lblTransID.Text + "', " +
@@ -118,8 +118,8 @@ namespace Payments.Views
                 //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
 
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
-                string queryStringDelete12 = "INSERT INTO [PRUEBA1].[dbo].[t_files] (id, fileName, folder, idstatus, transId, status_name,type)" +
-                    " VALUES (NEWID(), '" + newFormat2 + "', '" + folder + "', '', '" + lblTransID.Text + "', 'signed','2');";
+                string queryStringDelete12 = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId, status_name,type)" +
+                    " VALUES (NEWID(), '" + newFormat2 + "', '" + folder + "', '" + lblTransID.Text + "', 'signed','2');";
                 command.CommandText = queryStringDelete12;
                 command.ExecuteNonQuery();
                 command.Connection.Close();
@@ -140,7 +140,7 @@ namespace Payments.Views
 
         private void SearchTransaction(string transId)
         {
-            string querytransId = "SELECT * FROM [PRUEBA1].[dbo].[t_transactions] WHERE id = '" + transId + "';";
+            string querytransId = "SELECT * FROM [PAYMENTS].[dbo].[t_transactions] WHERE id = '" + transId + "';";
             SqlCommand command = new SqlCommand(querytransId, connection);
             command.Connection.Open();
             SqlDataReader read = command.ExecuteReader();
@@ -158,7 +158,7 @@ namespace Payments.Views
             }
             if (!String.IsNullOrEmpty(fid))
             {
-                string querystringstatus = "SELECT * FROM [PRUEBA1].[dbo].[t_files] WHERE transId = '" + fid + "';";
+                string querystringstatus = "SELECT * FROM [PAYMENTS].[dbo].[t_files] WHERE transId = '" + fid + "';";
                 lblTransID.Text = fid;
                 lblTransNumber.Text = Tid;
                 command.CommandText = querystringstatus;

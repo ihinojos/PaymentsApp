@@ -22,7 +22,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "Select transactionId,t.id from [PRUEBA1].[dbo].[t_transactions] t inner join [PRUEBA1].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
+            string query2 = "Select t.transactionId,t.id from [PAYMENTS].[dbo].[t_transactions] t inner join [PAYMENTS].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
             LoadTable(query2);
         }
 
@@ -45,7 +45,6 @@ namespace Payments.Views
             gridControl1.DataSource = null;
             gridControl1.DataSource = FullDT;
             gridView1.PopulateColumns();
-            gridView1.Columns["id"].Visible = false;
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
@@ -63,7 +62,7 @@ namespace Payments.Views
             string status = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
             lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transactionId").ToString();
 
-            string query3 = "Select * from [PRUEBA1].[dbo].[t_files] f inner join [PRUEBA1].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
+            string query3 = "Select * from [PAYMENTS].[dbo].[t_files] f inner join [PAYMENTS].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
             SqlCommand command = new SqlCommand(query3, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
