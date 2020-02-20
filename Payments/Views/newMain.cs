@@ -114,7 +114,7 @@ namespace Payments.Views
                                     if (SecondlastElement(file) == "incoming")
                                     {
                                         string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_files]([id],[filename],[folder],[status_name],[transId],[type])" +
-                                                               " VALUES( NEWID(),'" + strlist[i] + "','" + url + "','" + status + "','" + "Not assigned yet',1)";
+                                                               " VALUES( NEWID(),'" + strlist[i] + "','" + url + "','" + status + "',NULL,1)";
                                         command.CommandText = queryString2;
                                         command.ExecuteNonQuery();
                                     }
