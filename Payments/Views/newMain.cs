@@ -240,21 +240,22 @@ namespace Payments.Views
 
         private void InitializeComboboxBussines()
         {
+            DeleteRemovedBussiness();
             comboBox1.Items.Clear();
             string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
                 string queryString = "SELECT * FROM[PAYMENTS].[dbo].[t_bussiness] WHERE nameBussiness = '"
-                    + strlist[strlist.Length - 1] + "';";
+                    + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + newpath + "';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
                 if (!reader.Read())
                 {
                     reader.Close();
-                    string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_bussiness]([id],[nameBussiness])" +
-                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "')";
+                    string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_bussiness]([id],[nameBussiness], [pathBussiness])" +
+                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + newpath + "')";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
                 }
@@ -265,6 +266,40 @@ namespace Payments.Views
                 }
                 command.Connection.Close();
             }
+            
+        }
+
+        private void DeleteRemovedBussiness()
+        {
+            List<string> localBussiness = new List<string>();
+            List<string> dataBussiness = new List<string>();
+            List<string> idBussiness = new List<string>();
+            string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
+            foreach (var dir in dirs) localBussiness.Add(dir);
+            string query = "SELECT * FROM [PAYMENTS].[dbo].[t_bussiness]";
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Connection.Open();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    dataBussiness.Add(reader[2].ToString() + "\\" + reader[1].ToString());
+                    idBussiness.Add(reader[0].ToString());
+                }
+                reader.Close();
+                command.Connection.Close();
+            }
+            int index = 0;
+            foreach(var db in dataBussiness)
+            {
+                if (!localBussiness.Contains(db))
+                {
+                    string del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '"+idBussiness[index]+"';";
+                    DeleteRegisters(del);
+                }
+                index++;
+            }
+
         }
 
         private void UpdateFilesForTransactionId()
@@ -595,7 +630,7 @@ namespace Payments.Views
             {
                 if (ShowInputDialog(ref input) == DialogResult.OK)
                 {
-                    Directory.CreateDirectory(newpath+"\\"+input);
+                    Directory.CreateDirectory(newpath + "\\" + input);
                     ObtainFiles(newpath);
                     InitializeComboboxBussines();
                     CheckIfStatesFoldersExists();
@@ -604,7 +639,7 @@ namespace Payments.Views
                     gridControl1.RefreshDataSource();
                     lblSelectedFile.Text = "Select a file.";
                     lblNameBuss.Text = "Select a business.";
-                    MessageBox.Show("Created: "+ newpath + "\\" + input); 
+                    MessageBox.Show("Created: " + newpath + "\\" + input);
                 }
             }
         }
