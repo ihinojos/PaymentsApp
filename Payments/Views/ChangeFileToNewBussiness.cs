@@ -38,19 +38,13 @@ namespace Payments.Views
             }
             foreach (var item in RutasPusibles)
             {
-                if (LastElement(item) != SecondlastElement(oldDirectory))
+                if (NewMain.LastElement(item) != SecondlastElement(oldDirectory))
                 {
                     treeView1.Nodes.Add(item);
                 }
             }
         }
 
-        public string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
 
         public string SecondlastElement(string splitme)
         {
@@ -69,7 +63,7 @@ namespace Payments.Views
             {
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + LastElement(oldDirectory);
+                path = path + "\\incoming\\" + NewMain.LastElement(oldDirectory);
                 System.IO.File.Move(oldDirectory, path);
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();

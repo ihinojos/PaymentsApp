@@ -41,12 +41,7 @@ namespace Payments.Views
             axAcroPDF2.src = file;
         }
 
-        public string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
+
 
         private void ObtainSubBussinesRelationated()
         {
@@ -196,7 +191,7 @@ namespace Payments.Views
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.ShowDialog();
             axAcroPDF2.src = openFileDialog1.FileName;
-            lblNameNewFile.Text = LastElement(openFileDialog1.FileName);
+            lblNameNewFile.Text = NewMain.LastElement(openFileDialog1.FileName);
             pathToNewFile = openFileDialog1.FileName;
         }
 

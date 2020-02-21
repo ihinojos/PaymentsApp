@@ -177,7 +177,7 @@ namespace Payments.Views
                     if (cadena.Contains("Unsigned"))
                     {
                         string oldRouteUsigned = item.Fullroute + item.Name;
-                        string queryFile = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameOld)
+                        string queryFile = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathForRenameOld)
                             + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type='1';";
                         command.CommandText = queryFile;
                         command.ExecuteNonQuery();
@@ -187,7 +187,7 @@ namespace Payments.Views
                     if (cadena.Contains("Signed"))
                     {
                         string oldRouteSigned = item.Fullroute + item.Name;
-                        string queryFile = "UPDATE[PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathForRenameNew)
+                        string queryFile = "UPDATE[PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
                             + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type = '2';";
                         command.CommandText = queryFile;
                         command.ExecuteNonQuery();
@@ -204,13 +204,6 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please select a file or: " + ex);
             }
-        }
-
-        public string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                        20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
         }
 
         #endregion Methods

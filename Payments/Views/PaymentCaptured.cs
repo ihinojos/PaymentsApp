@@ -44,12 +44,6 @@ namespace Payments.Views
             MainViewModel.GetInstance().NewMain.BringToFront();
         }
 
-        public string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
 
         private void LoadDocument()
         {
@@ -158,7 +152,7 @@ namespace Payments.Views
                     newPathSigned = newPathSigned + "\\" + strlist[i];
                 }
             }
-            newPathSigned = newPathSigned + "\\" + LastElement(bussiness);
+            newPathSigned = newPathSigned + "\\" + NewMain.LastElement(bussiness);
             newPathNoSigned = newPathSigned;
             newPathProof = newPathSigned;
             pathNewState = newPathSigned;
@@ -188,14 +182,14 @@ namespace Payments.Views
                         if (pathito.Contains("Unsigned"))
                         {
                             System.IO.File.Move(pathito, newPathNoSigned);
-                            string queryUpdateNotSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathNoSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='1';";
+                            string queryUpdateNotSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathNoSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='1';";
                             command.CommandText = queryUpdateNotSigned;
                             command.ExecuteNonQuery();
                         }
                         if (pathito.Contains("Signed"))
                         {
                             System.IO.File.Move(pathito, newPathSigned);
-                            string queryUpdateSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='2';";
+                            string queryUpdateSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='2';";
                             command.CommandText = queryUpdateSigned;
                             command.ExecuteNonQuery();
                         }
@@ -207,7 +201,7 @@ namespace Payments.Views
                 }
                 try
                 {
-                    string queryUpdateSigned = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
+                    string queryUpdateSigned = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + NewMain.LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
                     command.CommandText = queryUpdateSigned;
                     command.ExecuteNonQuery();
                     command.Connection.Close();
@@ -239,7 +233,7 @@ namespace Payments.Views
             openFileDialog1.ShowDialog();
             incomingFile = openFileDialog1.FileName;
             axAcroPDF1.src = openFileDialog1.FileName;
-            lblNameNewFile.Text = LastElement(openFileDialog1.FileName);
+            lblNameNewFile.Text = NewMain.LastElement(openFileDialog1.FileName);
             pathToNewFile = openFileDialog1.FileName;
             //Fin Mostrar pdfs
         }

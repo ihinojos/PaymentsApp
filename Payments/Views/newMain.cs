@@ -40,7 +40,7 @@ namespace Payments.Views
 
         #region Methods
 
-        public string LastElement(string splitme)
+        public static string LastElement(string splitme)
         {
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);

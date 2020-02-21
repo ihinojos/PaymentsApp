@@ -49,13 +49,6 @@ namespace Payments.Views
 
         #region Methods
 
-        public string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
-
         private void LoadTable(string queryString)
         {
             gridControl1.DataSource = null;
@@ -168,7 +161,7 @@ namespace Payments.Views
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                     string queryStringDelete1 = "UPDATE [PAYMENTS].[dbo].[t_files] SET " +
-                        "fileName = '" + LastElement(newPathForRename) + "', " +
+                        "fileName = '" + NewMain.LastElement(newPathForRename) + "', " +
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "transId = '" + idTansaction + "', " +
                         "status_name = 'waiting-auth'" +
