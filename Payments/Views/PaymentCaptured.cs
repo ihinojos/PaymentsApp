@@ -120,7 +120,7 @@ namespace Payments.Views
             {
                 var list = new List<T_SubBussines>();
                 while (reader.Read())
-                    list.Add(new T_SubBussines {Id= reader[1].ToString(),  IdFile = reader[0].ToString(), IdSubBussiness = reader[2].ToString() }); ;
+                    list.Add(new T_SubBussines { Id = reader[1].ToString(), IdFile = reader[0].ToString(), IdSubBussiness = reader[2].ToString() }); ;
                 allSubs = list.ToArray();
                 reader.Close();
             }
@@ -248,13 +248,10 @@ namespace Payments.Views
         {
             if (!String.IsNullOrEmpty(pathToNewFile))
             {
-                if (MainViewModel.GetInstance().SplitPdf == null)
-                {
-                    MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "pay");
-                    MainViewModel.GetInstance().SplitPdf.FormClosed += MainViewModel.GetInstance().NewMain.FormClosed;
-                    MainViewModel.GetInstance().SplitPdf.Show();
-                }
-                else MainViewModel.GetInstance().SplitPdf.BringToFront();
+                var instance = MainViewModel.GetInstance().SplitPdf;
+                if (instance != null) instance.Dispose();
+                instance = new SplitPDF(pathToNewFile, "pay");
+                instance.Show();
             }
             else MessageBox.Show("Please select a file first");
         }

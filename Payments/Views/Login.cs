@@ -29,6 +29,7 @@ namespace Payments
 
         private void FirstRun()
         {
+            //4154178783359821.632.0320
             string user = "root";
             string pass = SecurePassword.Hash("root");
             string query = "INSERT INTO [PAYMENTS].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', 'admin')";

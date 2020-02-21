@@ -78,13 +78,10 @@ namespace Payments.Views
         {
             try
             {
-                if (MainViewModel.GetInstance().ViewPdf == null)
-                {
-                    MainViewModel.GetInstance().ViewPdf = new ViewPDF(treeView1.SelectedNode.Text);
-                    MainViewModel.GetInstance().ViewPdf.FormClosed += MainViewModel.GetInstance().NewMain.FormClosed;
-                    MainViewModel.GetInstance().ViewPdf.Show();
-                }
-                else MainViewModel.GetInstance().ViewPdf.BringToFront();
+                var instance = MainViewModel.GetInstance().ViewPdf;
+                if (instance != null) instance.Dispose();
+                instance = new ViewPDF(treeView1.SelectedNode.Text);
+                instance.Show();    
             }
             catch (Exception ex)
             {

@@ -230,13 +230,11 @@ namespace Payments.Views
             }
             else
             {
-                if (MainViewModel.GetInstance().SplitPdf == null)
-                {
-                    MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "sign");
-                    MainViewModel.GetInstance().SplitPdf.FormClosed += MainViewModel.GetInstance().NewMain.FormClosed;
-                    MainViewModel.GetInstance().SplitPdf.Show();
-                }
-                else MainViewModel.GetInstance().SplitPdf.BringToFront();
+                var instance = MainViewModel.GetInstance().SplitPdf;
+                if (instance != null) instance.Dispose();
+                instance = new SplitPDF(pathToNewFile, "sign");
+                instance.Show();
+
             }
         }
 
