@@ -47,7 +47,7 @@ namespace Payments.Views
             return strlist[strlist.Length - 1].ToString();
         }
 
-        public string SecondlastElement(string splitme)
+        public static string SecondLastElement(string splitme)
         {
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
@@ -109,7 +109,7 @@ namespace Payments.Views
                                 if (!reader.Read())
                                 {
                                     reader.Close();
-                                    if (SecondlastElement(file) == "incoming")
+                                    if (SecondLastElement(file) == "incoming")
                                     {
                                         string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_files]([id],[filename],[folder],[status_name],[transId],[type])" +
                                                                " VALUES( NEWID(),'" + strlist[i] + "','" + url + "','" + status + "',NULL,1)";

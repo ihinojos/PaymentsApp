@@ -10,7 +10,7 @@ namespace Payments.Views
     {
         #region Attributes
 
-        private readonly string oldDirectory;
+        private readonly string fileDirectory;
         public string newpath = "C:\\TestFiles";
         private readonly List<string> RutasPusibles = new List<string>();
 
@@ -21,7 +21,7 @@ namespace Payments.Views
         public ChangeFileToNewBussiness(string path)
         {
             InitializeComponent();
-            oldDirectory = path;
+            fileDirectory = path;
             ScanForAvailableBussiness();
         }
 
@@ -38,7 +38,7 @@ namespace Payments.Views
             }
             foreach (var item in RutasPusibles)
             {
-                if (NewMain.LastElement(item) != SecondlastElement(oldDirectory))
+                if (NewMain.LastElement(item) != FileBussiness(fileDirectory))
                 {
                     treeView1.Nodes.Add(item);
                 }
@@ -46,7 +46,7 @@ namespace Payments.Views
         }
 
 
-        public string SecondlastElement(string splitme)
+        public string FileBussiness(string splitme)
         {
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
@@ -63,8 +63,8 @@ namespace Payments.Views
             {
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + NewMain.LastElement(oldDirectory);
-                System.IO.File.Move(oldDirectory, path);
+                path = path + "\\incoming\\" + NewMain.LastElement(fileDirectory);
+                System.IO.File.Move(fileDirectory, path);
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();
             }
