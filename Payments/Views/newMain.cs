@@ -333,6 +333,48 @@ namespace Payments.Views
             return true;
         }
 
+        public static DialogResult ShowInputDialog(ref string input)
+        {
+            System.Drawing.Size size = new System.Drawing.Size(200, 70);
+            Form inputBox = new Form
+            {
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
+                ClientSize = size,
+                Text = "Enter bussiness name"
+            };
+
+            System.Windows.Forms.TextBox textBox = new TextBox();
+            textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
+            textBox.Location = new System.Drawing.Point(5, 5);
+            textBox.Text = input;
+            inputBox.Controls.Add(textBox);
+
+            Button okButton = new Button();
+            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(75, 23);
+            okButton.Text = "&OK";
+            okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
+            inputBox.Controls.Add(okButton);
+
+            Button cancelButton = new Button();
+            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(75, 23);
+            cancelButton.Text = "&Cancel";
+            cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
+            inputBox.Controls.Add(cancelButton);
+
+            inputBox.AcceptButton = okButton;
+            inputBox.CancelButton = cancelButton;
+
+            inputBox.StartPosition = FormStartPosition.CenterParent;
+
+            DialogResult result = inputBox.ShowDialog();
+            input = textBox.Text;
+            return result;
+        }
+
         #endregion Methods
 
         #region Clicks
@@ -509,7 +551,7 @@ namespace Payments.Views
                     if (instance != null) instance.Dispose();
                     string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                     string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                    instance = new ChangeFileToNewBussiness(path);
+                    instance = new ChangeFileToNewBussiness(path, newpath);
                     instance.Show();
                 }
                 else
@@ -520,6 +562,7 @@ namespace Payments.Views
             catch (Exception)
             {
                 MessageBox.Show("Please select a bussines and a file");
+
             }
         }
 
@@ -546,8 +589,24 @@ namespace Payments.Views
 
         private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Please create a folder with the desired Business name in the root path:" +
-                "\n" + newpath);
+            string input = "";
+            if (String.IsNullOrEmpty(newpath)) MessageBox.Show("Please select a root path.");
+            else
+            {
+                if (ShowInputDialog(ref input) == DialogResult.OK)
+                {
+                    Directory.CreateDirectory(newpath+"\\"+input);
+                    ObtainFiles(newpath);
+                    InitializeComboboxBussines();
+                    CheckIfStatesFoldersExists();
+                    DeactivateButtons();
+                    gridControl1.DataSource = null;
+                    gridControl1.RefreshDataSource();
+                    lblSelectedFile.Text = "Select a file.";
+                    lblNameBuss.Text = "Select a business.";
+                    MessageBox.Show("Created: "+ newpath + "\\" + input); 
+                }
+            }
         }
 
         private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)

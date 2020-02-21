@@ -12,11 +12,8 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        public DataTable FullDT;
-        private readonly string idFileSelected;
-        private readonly string pathfileSelected;
-        private readonly string queryString;
-        private string idTansaction;
+        private readonly string idFile;
+        private readonly string selectedFilePath;
         private string queryStringSubBussinesFiles;
         private string pathToThisBussinesWaitingAuth;
 
@@ -28,15 +25,14 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            queryString = "SELECT * FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE idBussiness = '" + idBussiness + "';";
             lblFileSelected.Text = fileSelected;
-            LoadCombo(queryString);
-            idFileSelected = id;
-            pathfileSelected = pathToFile;
+            LoadCombo("SELECT * FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE idBussiness = '" + idBussiness + "';");
+            idFile = id;
+            selectedFilePath = pathToFile;
             axAcroPDF1.src = pathToFile;
             try
             {
-                queryStringSubBussinesFiles = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "';";
+                queryStringSubBussinesFiles = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "';";
                 LoadTable(queryStringSubBussinesFiles);
             }
             catch (Exception ex)
@@ -55,7 +51,7 @@ namespace Payments.Views
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             command.ExecuteNonQuery();
-            FullDT = new DataTable();
+            DataTable FullDT = new DataTable();
             using (SqlDataAdapter DA = new SqlDataAdapter(command))
             {
                 DA.Fill(FullDT);
@@ -96,8 +92,8 @@ namespace Payments.Views
         {
             int subBussiness = 0;
             Cursor.Current = Cursors.WaitCursor;
-            queryStringSubBussinesFiles = "SELECT COUNT (idFile) FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "';";
-            SqlCommand command = new SqlCommand(queryStringSubBussinesFiles, connection);
+            string query = "SELECT COUNT (idFile) FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "';";
+            SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             do
@@ -119,7 +115,7 @@ namespace Payments.Views
                 var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                 var formatDate = dateTimeOffset.ToUnixTimeSeconds();
                 string newFormat = formatDate + "_" + "waitingAuth" + "_" + textBoxTransaction.Text.ToString() + ".pdf";
-                string[] strlist = pathfileSelected.Split(new char[] { '\\' },
+                string[] strlist = selectedFilePath.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
                 for (int i = 0; i < strlist.Length - 2; i++)
                 {
@@ -150,6 +146,7 @@ namespace Payments.Views
                     string queryObtainNewId = "select * from [PAYMENTS].[dbo].[t_transactions] where transactionId ='" + textBoxTransaction.Text + "';";
                     command.CommandText = queryObtainNewId;
                     reader = command.ExecuteReader();
+                    string idTansaction = "";
                     if (reader.Read())
                     {
                         idTansaction = reader[1].ToString();
@@ -165,11 +162,11 @@ namespace Payments.Views
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "transId = '" + idTansaction + "', " +
                         "status_name = 'waiting-auth'" +
-                        " WHERE id = '" + idFileSelected + "';";
+                        " WHERE id = '" + idFile + "';";
                     command.CommandText = queryStringDelete1;
                     command.ExecuteNonQuery();
 
-                    System.IO.File.Move(pathfileSelected, newPathForRename);
+                    System.IO.File.Move(selectedFilePath, newPathForRename);
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                     MessageBox.Show("Invoice captured correctly");
@@ -206,7 +203,7 @@ namespace Payments.Views
                     idSubBussiness = reader[0].ToString();
                 }
                 reader.Close();
-                string queryStringNew = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFileSelected + "' AND idSubBussiness ='" + idSubBussiness + "';";
+                string queryStringNew = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "' AND idSubBussiness ='" + idSubBussiness + "';";
                 command.CommandText = queryStringNew;
                 reader = command.ExecuteReader();
                 if (reader.Read())
@@ -220,7 +217,7 @@ namespace Payments.Views
                     reader.Close();
                     string newSub = lblSubSelected.Text;
                     string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_filesSubs]([idFile],[idSubBussiness])" +
-                                                           " VALUES('" + idFileSelected
+                                                           " VALUES('" + idFile
                                                            + "','" + idSubBussiness
                                                                    + "')";
                     command.CommandText = queryString2;

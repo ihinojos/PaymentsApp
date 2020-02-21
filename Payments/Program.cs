@@ -20,5 +20,6 @@ namespace Payments
             //Starts application in the log in view.
             Application.Run(MainViewModel.GetInstance().Login);
         }
+        
     }
 }

@@ -11,17 +11,18 @@ namespace Payments.Views
         #region Attributes
 
         private readonly string fileDirectory;
-        public string newpath = "C:\\TestFiles";
+        public readonly string newpath;
         private readonly List<string> RutasPusibles = new List<string>();
 
         #endregion Attributes
 
         #region Constructor
 
-        public ChangeFileToNewBussiness(string path)
+        public ChangeFileToNewBussiness(string path, string root)
         {
             InitializeComponent();
             fileDirectory = path;
+            newpath = root;
             ScanForAvailableBussiness();
         }
 
