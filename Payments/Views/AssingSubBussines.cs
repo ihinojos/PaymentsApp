@@ -32,7 +32,7 @@ namespace Payments.Views
             axAcroPDF1.src = pathToFile;
             try
             {
-                queryStringSubBussinesFiles = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "';";
+                queryStringSubBussinesFiles = "SELECT s.nameSub, fs.* FROM [PAYMENTS].[dbo].[t_filesSubs] fs, [PAYMENTS].[dbo].[t_subbussiness] s  WHERE fs.idFile = '" + idFile + "' AND s.id = fs.idSubBussiness;";
                 LoadTable(queryStringSubBussinesFiles);
             }
             catch (Exception ex)
@@ -61,6 +61,8 @@ namespace Payments.Views
             gridControl1.DataSource = FullDT;
             gridView1.PopulateColumns();
             gridView1.Columns["idFile"].Visible = false;
+            gridView1.Columns["idSubBussiness"].Visible = false;
+            gridView1.Columns["nameSub"].Caption = "Sub_Bussiness Name";
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();

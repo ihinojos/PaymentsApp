@@ -204,6 +204,34 @@ namespace Payments.Views
                     string queryUpdateSigned = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + NewMain.LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
                     command.CommandText = queryUpdateSigned;
                     command.ExecuteNonQuery();
+                    string idsub = "SELECT f.id, fs.idSubBussiness FROM t_files f, t_filesSubs fs WHERE f.fileName = '" + NewMain.LastElement(newPathSigned) + "' AND f.id = fs.idFile";
+                    command.CommandText = idsub;
+
+                    using (var read = command.ExecuteReader())
+                    {
+                        if (read.Read())
+                        {
+                            idsub = read[1].ToString();
+                        }
+                        read.Close();
+                    }
+
+
+                    string idfile = "SELECT id FROM t_files WHERE fileName = '" + NewMain.LastElement(newPathProof) + "';";
+                    command.CommandText = idfile;
+
+                    using (var read = command.ExecuteReader())
+                    {
+                        if (read.Read())
+                        {
+                            idfile = read[0].ToString();
+                        }
+                        read.Close();
+                    }
+
+                    string q = "INSERT INTO t_filesSubs ([idFile], [idSubBussiness]) VALUES ('" + idfile + "','" + idsub + "')";
+                    command.CommandText = q;
+                    command.ExecuteNonQuery();
                     command.Connection.Close();
                     System.IO.File.Move(incomingFile, newPathProof);
                     MessageBox.Show("Invoice marked as paid correctly");

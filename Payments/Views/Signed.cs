@@ -38,7 +38,7 @@ namespace Payments.Views
 
         public void PutCroppedPdf(string file)
         {
-            axAcroPDF2.src = file;
+            this.axAcroPDF2.src = file;
         }
 
 
@@ -116,6 +116,34 @@ namespace Payments.Views
                 string queryStringDelete12 = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId, status_name,type)" +
                     " VALUES (NEWID(), '" + newFormat2 + "', '" + folder + "', '" + lblTransID.Text + "', 'signed','2');";
                 command.CommandText = queryStringDelete12;
+                command.ExecuteNonQuery();
+
+                string idsub = "SELECT f.id, fs.idSubBussiness FROM t_files f, t_filesSubs fs WHERE f.fileName = '" + newFormat + "' AND f.id = fs.idFile";
+                command.CommandText = idsub;
+
+                using (var read = command.ExecuteReader())
+                {
+                    if (read.Read())
+                    {
+                        idsub = read[1].ToString();
+                    }
+                    read.Close();
+                }
+
+                string idfile = "SELECT id FROM t_files WHERE fileName = '" + newFormat2 + "';";
+                command.CommandText = idfile;
+
+                using (var read = command.ExecuteReader())
+                {
+                    if (read.Read())
+                    {
+                        idfile = read[0].ToString();
+                    }
+                    read.Close();
+                }
+
+                string q = "INSERT INTO t_filesSubs ([idFile], [idSubBussiness]) VALUES ('"+idfile+"','"+idsub+"')";
+                command.CommandText = q;
                 command.ExecuteNonQuery();
                 command.Connection.Close();
 

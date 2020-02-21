@@ -73,6 +73,9 @@ namespace Payments.Views
             gridView1.Columns["transId"].Visible = false;
             gridView1.Columns["status_name"].Visible = true;
             gridView1.Columns["type"].Visible = false;
+            gridView1.Columns["fileName"].Caption = "File Name";
+            gridView1.Columns["status_name"].Caption = "Status";
+            gridView1.Columns["content"].Caption = "Document Type";
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
@@ -266,7 +269,6 @@ namespace Payments.Views
                 }
                 command.Connection.Close();
             }
-            
         }
 
         private void DeleteRemovedBussiness()
@@ -290,16 +292,15 @@ namespace Payments.Views
                 command.Connection.Close();
             }
             int index = 0;
-            foreach(var db in dataBussiness)
+            foreach (var db in dataBussiness)
             {
                 if (!localBussiness.Contains(db))
                 {
-                    string del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '"+idBussiness[index]+"';";
+                    string del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '" + idBussiness[index] + "';";
                     DeleteRegisters(del);
                 }
                 index++;
             }
-
         }
 
         private void UpdateFilesForTransactionId()
@@ -503,7 +504,7 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().CapturePayment;
                 if (instance != null) instance.Dispose();
-                instance = new PaymentCaptured(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().CapturePayment = new PaymentCaptured(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
                 instance.Show();
             }
         }
@@ -518,7 +519,7 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().SignDoc;
                 if (instance != null) instance.Dispose();
-                instance = new Signed(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().SignDoc = new Signed(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
                 instance.Show();
             }
         }
@@ -597,7 +598,6 @@ namespace Payments.Views
             catch (Exception)
             {
                 MessageBox.Show("Please select a bussines and a file");
-
             }
         }
 

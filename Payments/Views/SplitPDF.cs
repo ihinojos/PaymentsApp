@@ -63,11 +63,13 @@ namespace Payments.Views
             }
 
             outputDocument.Save(pathToPlaceFiles);
+            inputDocument.Save(pathToPlaceFiles+".BAK");
             axAcroPDF1.src = pathToPlaceFiles;
             switch (name)
             {
                 case "sign":
-                    MainViewModel.GetInstance().SignDoc.PutCroppedPdf(pathToPlaceFiles);
+                    var instance = MainViewModel.GetInstance().SignDoc;
+                    instance.PutCroppedPdf(pathToPlaceFiles);
                     break;
 
                 case "pay":
