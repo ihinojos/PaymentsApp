@@ -20,7 +20,9 @@ namespace Payments.Models
         public UserAddView AddUser { get; set; }
         public SubBussinessAdd AddSubBussiness { get; set; }
 
-        #endregion 
+        #endregion Properties
+
+
 
         #region Constructor
 
@@ -43,6 +45,5 @@ namespace Payments.Models
         }
 
         #endregion Singleton
-
     }
 }

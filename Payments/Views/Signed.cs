@@ -234,7 +234,6 @@ namespace Payments.Views
                 if (instance != null) instance.Dispose();
                 instance = new SplitPDF(pathToNewFile, "sign");
                 instance.Show();
-
             }
         }
 

@@ -81,7 +81,7 @@ namespace Payments.Views
                 var instance = MainViewModel.GetInstance().ViewPdf;
                 if (instance != null) instance.Dispose();
                 instance = new ViewPDF(treeView1.SelectedNode.Text);
-                instance.Show();    
+                instance.Show();
             }
             catch (Exception ex)
             {
