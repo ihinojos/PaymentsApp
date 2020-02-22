@@ -247,6 +247,7 @@ namespace Payments.Views
 
         public void PutCroppedPdf(string file)
         {
+            incomingFile = file;
             axAcroPDF1.src = file;
         }
 

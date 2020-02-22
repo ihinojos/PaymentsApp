@@ -14,7 +14,7 @@ namespace Payments.Views
         private readonly SqlConnection connection;
         private readonly string idFile;
         private readonly string selectedFilePath;
-        private string queryStringSubBussinesFiles;
+        private readonly string queryStringSubBussinesFiles;
         private string pathToThisBussinesWaitingAuth;
 
         #endregion Attributes
@@ -109,6 +109,7 @@ namespace Payments.Views
 
             if (textBoxTransaction.Text == "" || subBussiness <= 0)
             {
+                command.Connection.Close();
                 MessageBox.Show("Verify if file has sub_bussiness or there is a transacion Id");
             }
             else

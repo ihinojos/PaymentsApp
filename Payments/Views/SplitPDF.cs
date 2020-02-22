@@ -12,7 +12,7 @@ namespace Payments.Views
         #region Attributes
 
         private readonly string name;
-        private readonly string pathToPlaceFiles;
+        private string pathToPlaceFiles;
         private readonly List<int> pages = new List<int>();
         private readonly List<int> pagesComplement = new List<int>();
 
@@ -61,22 +61,21 @@ namespace Payments.Views
             {
                 MessageBox.Show(ex.Message);
             }
-
+            pathToPlaceFiles += "_crop";
             outputDocument.Save(pathToPlaceFiles);
-            inputDocument.Save(pathToPlaceFiles+".BAK");
             axAcroPDF1.src = pathToPlaceFiles;
             switch (name)
             {
                 case "sign":
-                    var instance = MainViewModel.GetInstance().SignDoc;
-                    instance.PutCroppedPdf(pathToPlaceFiles);
+                    MainViewModel.GetInstance().SignDoc.PutCroppedPdf(pathToPlaceFiles);
                     break;
 
                 case "pay":
                     MainViewModel.GetInstance().CapturePayment.PutCroppedPdf(pathToPlaceFiles);
                     break;
             }
-            this.Dispose();
+            Dispose();
+
         }
 
         private void FillComboBox()

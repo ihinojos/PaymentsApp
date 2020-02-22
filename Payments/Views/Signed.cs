@@ -38,6 +38,7 @@ namespace Payments.Views
 
         public void PutCroppedPdf(string file)
         {
+            pathToNewFile = file;
             this.axAcroPDF2.src = file;
         }
 
@@ -92,6 +93,8 @@ namespace Payments.Views
                     newPathForRenameOld = newPathForRenameOld + "\\" + strlist[i];
                 }
             }
+
+
             newPathForRenameOld = newPathForRenameOld + "\\" + lblBussiness.Text;
             newPathForRenameNew = newPathForRenameOld;
             newPathForRenameOld = newPathForRenameOld + "\\" + "Signed" + "\\" + newFormat;
@@ -148,7 +151,9 @@ namespace Payments.Views
                 command.Connection.Close();
 
                 System.IO.File.Move(pathToOldFile, newPathForRenameOld);
+                Console.WriteLine("path to old file: " + pathToOldFile);
                 System.IO.File.Move(pathToNewFile, newPathForRenameNew);
+                Console.WriteLine("path to new file: " + pathToNewFile);
 
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
@@ -255,7 +260,7 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().SplitPdf;
                 if (instance != null) instance.Dispose();
-                instance = new SplitPDF(pathToNewFile, "sign");
+                instance = MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "sign");
                 instance.Show();
             }
         }
