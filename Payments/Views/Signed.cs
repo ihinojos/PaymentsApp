@@ -151,9 +151,7 @@ namespace Payments.Views
                 command.Connection.Close();
 
                 System.IO.File.Move(pathToOldFile, newPathForRenameOld);
-                Console.WriteLine("path to old file: " + pathToOldFile);
                 System.IO.File.Move(pathToNewFile, newPathForRenameNew);
-                Console.WriteLine("path to new file: " + pathToNewFile);
 
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
@@ -205,7 +203,6 @@ namespace Payments.Views
                         id = reader[0].ToString();
                         lblNameOldFile.Text = fileName;
                         pathToOldFile = folder + "\\" + fileName;
-                        axAcroPDF1.src = "";
                         axAcroPDF1.src = pathToOldFile;
                     }
                 }

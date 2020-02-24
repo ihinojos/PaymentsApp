@@ -273,7 +273,7 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().SplitPdf;
                 if (instance != null) instance.Dispose();
-                instance = new SplitPDF(pathToNewFile, "pay");
+                instance = MainViewModel.GetInstance().SplitPdf = new SplitPDF(pathToNewFile, "pay");
                 instance.Show();
             }
             else MessageBox.Show("Please select a file first");

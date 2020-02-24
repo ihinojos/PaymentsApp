@@ -485,7 +485,7 @@ namespace Payments.Views
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                 string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
                 string id = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString();
-                instance = new AssingSubBussines(name, path, idBussiness, id);
+                instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, idBussiness, id);
                 instance.Show();
             }
             catch (Exception)
@@ -542,7 +542,7 @@ namespace Payments.Views
         {
             var instance = MainViewModel.GetInstance().FinishedTransaction;
             if (instance != null) instance.Dispose();
-            instance = new FinishedTransactions();
+            instance = MainViewModel.GetInstance().FinishedTransaction = new FinishedTransactions();
             instance.Show();
         }
 
@@ -556,7 +556,7 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().MakePayment;
                 if (instance != null) instance.Dispose();
-                instance = new MakingPayment(gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().MakePayment = new MakingPayment(gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
                 instance.Show();
             }
         }
@@ -568,7 +568,7 @@ namespace Payments.Views
                 var instance = MainViewModel.GetInstance().ViewPdf;
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                 string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                instance = new ViewPDF(path);
+                instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(path);
                 instance.Show();
             }
             catch (Exception)
@@ -587,7 +587,7 @@ namespace Payments.Views
                     if (instance != null) instance.Dispose();
                     string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                     string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                    instance = new ChangeFileToNewBussiness(path, newpath);
+                    instance = MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path, newpath);
                     instance.Show();
                 }
                 else
@@ -610,7 +610,7 @@ namespace Payments.Views
         {
             var instance = MainViewModel.GetInstance().AddSubBussiness;
             if (instance != null) instance.Dispose();
-            instance = new SubBussinessAdd();
+            instance = MainViewModel.GetInstance().AddSubBussiness = new SubBussinessAdd();
             instance.Show();
         }
 
@@ -618,7 +618,7 @@ namespace Payments.Views
         {
             var instance = MainViewModel.GetInstance().AddUser;
             if (instance != null) instance.Dispose();
-            instance = new UserAddView();
+            instance = MainViewModel.GetInstance().AddUser = new UserAddView();
             instance.Show();
         }
 
