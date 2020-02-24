@@ -25,13 +25,9 @@ namespace Payments.Views
 
         #region Constructor
 
-        public NewMain(string userType)
+        public NewMain()
         {
             InitializeComponent();
-            if (userType == "capture")
-            {
-                createToolStripMenuItem.Enabled = false;
-            }
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
         }
@@ -181,10 +177,7 @@ namespace Payments.Views
             int counter = 0;
             foreach (var item in files)
             {
-                if (item.Contains("incoming"))
-                {
-                    counter += 1;
-                }
+                if (item.Contains("incoming")) counter += 1;
             }
             return counter;
         }
@@ -296,8 +289,15 @@ namespace Payments.Views
             {
                 if (!localBussiness.Contains(db))
                 {
-                    string del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '" + idBussiness[index] + "';";
-                    DeleteRegisters(del);
+                    if (DialogResult.OK == MessageBox.Show("The bussiness: " + db + " has not been found, would you like to delete files and sub-bussiness related?", "Bussiness not found", MessageBoxButtons.OKCancel))
+                    {
+                        string del = "DELETE FROM [PAYMENTS].[dbo].[t_files] WHERE [folder] = '" + db + "%';";
+                        DeleteRegisters(del);
+                        del = "DELETE FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE [idBussiness] = '" + idBussiness[index] + "';";
+                        DeleteRegisters(del);
+                        del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '" + idBussiness[index] + "';";
+                        DeleteRegisters(del);
+                    }
                 }
                 index++;
             }
@@ -365,8 +365,7 @@ namespace Payments.Views
             List<string> states = new List<string>();
             string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs) states.Add(LastElement(dir));
-            if (states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth")) return false;
-            return true;
+            return !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
         }
 
         public static DialogResult ShowInputDialog(ref string input)
@@ -379,26 +378,32 @@ namespace Payments.Views
                 Text = "Enter bussiness name"
             };
 
-            System.Windows.Forms.TextBox textBox = new TextBox();
-            textBox.Size = new System.Drawing.Size(size.Width - 10, 23);
-            textBox.Location = new System.Drawing.Point(5, 5);
-            textBox.Text = input;
+            System.Windows.Forms.TextBox textBox = new TextBox
+            {
+                Size = new System.Drawing.Size(size.Width - 10, 23),
+                Location = new System.Drawing.Point(5, 5),
+                Text = input
+            };
             inputBox.Controls.Add(textBox);
 
-            Button okButton = new Button();
-            okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            okButton.Name = "okButton";
-            okButton.Size = new System.Drawing.Size(75, 23);
-            okButton.Text = "&OK";
-            okButton.Location = new System.Drawing.Point(size.Width - 80 - 80, 39);
+            Button okButton = new Button
+            {
+                DialogResult = System.Windows.Forms.DialogResult.OK,
+                Name = "okButton",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "&OK",
+                Location = new System.Drawing.Point(size.Width - 80 - 80, 39)
+            };
             inputBox.Controls.Add(okButton);
 
-            Button cancelButton = new Button();
-            cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            cancelButton.Name = "cancelButton";
-            cancelButton.Size = new System.Drawing.Size(75, 23);
-            cancelButton.Text = "&Cancel";
-            cancelButton.Location = new System.Drawing.Point(size.Width - 80, 39);
+            Button cancelButton = new Button
+            {
+                DialogResult = System.Windows.Forms.DialogResult.Cancel,
+                Name = "cancelButton",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "&Cancel",
+                Location = new System.Drawing.Point(size.Width - 80, 39)
+            };
             inputBox.Controls.Add(cancelButton);
 
             inputBox.AcceptButton = okButton;
@@ -675,7 +680,7 @@ namespace Payments.Views
         {
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                MessageBox.Show("Intelogix México © 2020\nCurrent Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
+                MessageBox.Show("Intelogix México © 2020\n\nCurrent Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
             }
             else
             {

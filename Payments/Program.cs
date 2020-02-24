@@ -14,11 +14,10 @@ namespace Payments
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
             //Creates a singleton for the views.
-            MainViewModel.GetInstance().Login = new Login();
+            var instance = MainViewModel.GetInstance().Login = new Login();
             //Starts application in the log in view.
-            Application.Run(MainViewModel.GetInstance().Login);
+            Application.Run(instance);
         }
         
     }

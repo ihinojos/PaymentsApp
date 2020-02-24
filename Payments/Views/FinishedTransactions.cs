@@ -12,7 +12,6 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        public DataTable FullDT;
 
         #endregion Attributes
 
@@ -33,7 +32,7 @@ namespace Payments.Views
         public void LoadTable(string queryString)
         {
             SqlCommand command = new SqlCommand(queryString, connection);
-            FullDT = new DataTable();
+            DataTable FullDT = new DataTable();
             command.Connection.Open();
             using (SqlDataAdapter DA = new SqlDataAdapter(command))
             {
@@ -78,9 +77,7 @@ namespace Payments.Views
         {
             try
             {
-                var instance = MainViewModel.GetInstance().ViewPdf;
-                if (instance != null) instance.Dispose();
-                instance = new ViewPDF(treeView1.SelectedNode.Text);
+                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(treeView1.SelectedNode.Text);
                 instance.Show();
             }
             catch (Exception ex)

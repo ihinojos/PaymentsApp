@@ -49,14 +49,15 @@ namespace Payments
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
-                string type = reader[3].ToString();
                 string hash = reader[2].ToString();
                 reader.Close();
                 if (SecurePassword.Verify(password, hash))
                 {
                     Cursor.Current = Cursors.WaitCursor;
-                    MainViewModel.GetInstance().NewMain = new NewMain(type);
-                    MainViewModel.GetInstance().NewMain.Show();
+                    var instance = MainViewModel.GetInstance().NewMain;
+                    if (instance != null) instance.Dispose();
+                    instance = MainViewModel.GetInstance().NewMain = new NewMain();
+                    instance.Show();
                     Cursor.Current = Cursors.Default;
                     Visible = false;
                     textBoxPass.Clear();
