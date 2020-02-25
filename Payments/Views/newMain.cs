@@ -298,6 +298,7 @@ namespace Payments.Views
                         del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '" + idBussiness[index] + "';";
                         DeleteRegisters(del);
                     }
+                    MessageBox.Show("All records for bussiness \""+db+"\" have been deleted.");
                 }
                 index++;
             }
