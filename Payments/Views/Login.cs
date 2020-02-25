@@ -64,7 +64,7 @@ namespace Payments
                 }
                 else
                 {
-                    MessageBox.Show("The user or the password are incorrect.");
+                    MessageBox.Show("Wrong password.");
                     textBoxUser.Clear();
                     textBoxPass.Clear();
                 }
@@ -85,7 +85,6 @@ namespace Payments
         {
             if (!string.IsNullOrEmpty(textBoxUser.Text) && !string.IsNullOrEmpty(textBoxPass.Text))
             {
-                if (MainViewModel.GetInstance().NewMain != null) MainViewModel.GetInstance().NewMain = null;
                 UserLogIn(textBoxUser.Text, textBoxPass.Text);
             }
             else

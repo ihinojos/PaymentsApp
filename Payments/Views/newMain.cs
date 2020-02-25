@@ -427,29 +427,21 @@ namespace Payments.Views
             string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
             try
             {
-                if (status == "incoming")
+                DeactivateButtons();
+                switch (status)
                 {
-                    DeactivateButtons();
-                    btnCapture.Enabled = true;
-                }
-                if (status == "waiting-auth")
-                {
-                    DeactivateButtons();
-                    btnSigned.Enabled = true;
-                }
-                if (status == "signed")
-                {
-                    DeactivateButtons();
-                    btnMakePayment.Enabled = true;
-                }
-                if (status == "making-payment")
-                {
-                    DeactivateButtons();
-                    btnPaymentCaptured.Enabled = true;
-                }
-                if (status == "payment-captured")
-                {
-                    DeactivateButtons();
+                    case "incoming":
+                        btnCapture.Enabled = true;
+                        break;
+                    case "waiting-auth":
+                        btnSigned.Enabled = true;
+                        break;
+                    case "signed":
+                        btnMakePayment.Enabled = true;
+                        break;
+                    case "making-payment":
+                        btnPaymentCaptured.Enabled = true;
+                        break;
                 }
             }
             catch (Exception)
