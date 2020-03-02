@@ -20,7 +20,7 @@ namespace Payments
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            //FirstRun();
+            FirstRun();
         }
 
         #endregion Constructor
@@ -31,11 +31,11 @@ namespace Payments
         {
             string user = "root";
             string pass = SecurePassword.Hash("root");
-            string query = "INSERT INTO [PAYMENTS].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', 'admin')";
+            string query = "INSERT INTO [TESTPAY].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', 'admin')";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             command.ExecuteNonQuery();
-            query = "INSERT INTO [PAYMENTS].[dbo].[t_types] ([id], [content]) VALUES ('1', 'Unsigned Bill'), ('2', 'Signed Bill'), ('3', 'Proof of Payment')";
+            query = "INSERT INTO [TESTPAY].[dbo].[t_types] ([id], [content]) VALUES ('1', 'Unsigned Bill'), ('2', 'Signed Bill'), ('3', 'Proof of Payment')";
             command.CommandText = query;
             command.ExecuteNonQuery();
             command.Connection.Close();
@@ -43,7 +43,7 @@ namespace Payments
 
         private void UserLogIn(string user, string password)
         {
-            string queryString = "SELECT * FROM [PAYMENTS].[dbo].[t_users] WHERE [user] = '" + user + "'";
+            string queryString = "SELECT * FROM [TESTPAY].[dbo].[t_users] WHERE [user] = '" + user + "'";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

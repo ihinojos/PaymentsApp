@@ -42,6 +42,8 @@
             this.textBoxTransaction = new System.Windows.Forms.TextBox();
             this.btnCapture = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.textBoxAmount = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
@@ -64,7 +66,7 @@
             this.gridControl1.Location = new System.Drawing.Point(15, 124);
             this.gridControl1.MainView = this.gridView1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(203, 142);
+            this.gridControl1.Size = new System.Drawing.Size(203, 93);
             this.gridControl1.TabIndex = 1;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
@@ -131,7 +133,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 278);
+            this.label3.Location = new System.Drawing.Point(12, 271);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(118, 13);
             this.label3.TabIndex = 13;
@@ -139,7 +141,7 @@
             // 
             // textBoxTransaction
             // 
-            this.textBoxTransaction.Location = new System.Drawing.Point(15, 294);
+            this.textBoxTransaction.Location = new System.Drawing.Point(15, 287);
             this.textBoxTransaction.Name = "textBoxTransaction";
             this.textBoxTransaction.Size = new System.Drawing.Size(201, 20);
             this.textBoxTransaction.TabIndex = 14;
@@ -163,11 +165,29 @@
             this.label4.TabIndex = 16;
             this.label4.Text = "Currents sub-bussiness of the file selected";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(12, 232);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Invoice Amount";
+            // 
+            // textBoxAmount
+            // 
+            this.textBoxAmount.Location = new System.Drawing.Point(15, 248);
+            this.textBoxAmount.Name = "textBoxAmount";
+            this.textBoxAmount.Size = new System.Drawing.Size(201, 20);
+            this.textBoxAmount.TabIndex = 18;
+            // 
             // AssingSubBussines
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(488, 355);
+            this.Controls.Add(this.textBoxAmount);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.btnCapture);
             this.Controls.Add(this.textBoxTransaction);
@@ -205,5 +225,7 @@
         private System.Windows.Forms.TextBox textBoxTransaction;
         public  System.Windows.Forms.Button btnCapture;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox textBoxAmount;
     }
 }

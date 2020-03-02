@@ -101,7 +101,7 @@ namespace Payments.Views
                             if (Path.GetExtension(strlist[i]) == ".pdf")
                             {
                                 //Condicion para revisar si ya existe el archivo
-                                string queryString = "SELECT [fileName],[folder] FROM[PAYMENTS].[dbo].[t_files] WHERE fileName = '" + strlist[i] + "' AND folder ='" + url + "';";
+                                string queryString = "SELECT [fileName],[folder] FROM[TESTPAY].[dbo].[t_files] WHERE fileName = '" + strlist[i] + "' AND folder ='" + url + "';";
                                 SqlCommand command = new SqlCommand(queryString, connection);
                                 command.Connection.Open();
                                 SqlDataReader reader = command.ExecuteReader();
@@ -110,7 +110,7 @@ namespace Payments.Views
                                     reader.Close();
                                     if (SecondLastElement(file) == "incoming")
                                     {
-                                        string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_files]([id],[filename],[folder],[status_name],[transId],[type])" +
+                                        string queryString2 = "INSERT INTO [TESTPAY].[dbo].[t_files]([id],[filename],[folder],[status_name],[transId],[type])" +
                                                                " VALUES( NEWID(),'" + strlist[i] + "','" + url + "','" + status + "',NULL,1)";
                                         command.CommandText = queryString2;
                                         command.ExecuteNonQuery();
@@ -199,7 +199,7 @@ namespace Payments.Views
             }
             List<string> record = new List<string>();
             List<string> recordId = new List<string>();
-            string queryfiles = "SELECT * FROM [PAYMENTS].[dbo].[t_files] WHERE [folder] LIKE '" + nameBussiness + "%';";
+            string queryfiles = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE [folder] LIKE '" + nameBussiness + "%';";
             SqlCommand command = new SqlCommand(queryfiles, connection);
             command.Connection.Open();
             SqlDataReader read = command.ExecuteReader();
@@ -215,8 +215,8 @@ namespace Payments.Views
             {
                 if (!allFiles.Contains(record[i]))
                 {
-                    string querydelete = "DELETE FROM [PAYMENTS].[dbo].[t_files] WHERE [id] = '" + recordId[i] + "';";
-                    string querydelete2 = "DELETE FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE [idFile] = '" + recordId[i] + "';";
+                    string querydelete = "DELETE FROM [TESTPAY].[dbo].[t_files] WHERE [id] = '" + recordId[i] + "';";
+                    string querydelete2 = "DELETE FROM [TESTPAY].[dbo].[t_filesSubs] WHERE [idFile] = '" + recordId[i] + "';";
                     DeleteRegisters(querydelete2);
                     DeleteRegisters(querydelete);
                 }
@@ -236,13 +236,12 @@ namespace Payments.Views
 
         private void InitializeComboboxBussines()
         {
-            DeleteRemovedBussiness();
             comboBox1.Items.Clear();
             string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
-                string queryString = "SELECT * FROM[PAYMENTS].[dbo].[t_bussiness] WHERE nameBussiness = '"
+                string queryString = "SELECT * FROM[TESTPAY].[dbo].[t_bussiness] WHERE nameBussiness = '"
                     + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + newpath + "';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
@@ -250,7 +249,7 @@ namespace Payments.Views
                 if (!reader.Read())
                 {
                     reader.Close();
-                    string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_bussiness]([id],[nameBussiness], [pathBussiness])" +
+                    string queryString2 = "INSERT INTO [TESTPAY].[dbo].[t_bussiness]([id],[nameBussiness], [pathBussiness])" +
                                                        " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + newpath + "')";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
@@ -264,49 +263,9 @@ namespace Payments.Views
             }
         }
 
-        private void DeleteRemovedBussiness()
-        {
-            List<string> localBussiness = new List<string>();
-            List<string> dataBussiness = new List<string>();
-            List<string> idBussiness = new List<string>();
-            string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
-            foreach (var dir in dirs) localBussiness.Add(dir);
-            string query = "SELECT * FROM [PAYMENTS].[dbo].[t_bussiness]";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Connection.Open();
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    dataBussiness.Add(reader[2].ToString() + "\\" + reader[1].ToString());
-                    idBussiness.Add(reader[0].ToString());
-                }
-                reader.Close();
-                command.Connection.Close();
-            }
-            int index = 0;
-            foreach (var db in dataBussiness)
-            {
-                if (!localBussiness.Contains(db))
-                {
-                    if (DialogResult.OK == MessageBox.Show("The bussiness: " + db + " has not been found, would you like to delete files and sub-bussiness related?", "Bussiness not found", MessageBoxButtons.OKCancel))
-                    {
-                        string del = "DELETE FROM [PAYMENTS].[dbo].[t_files] WHERE [folder] = '" + db + "%';";
-                        DeleteRegisters(del);
-                        del = "DELETE FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE [idBussiness] = '" + idBussiness[index] + "';";
-                        DeleteRegisters(del);
-                        del = "DELETE FROM [PAYMENTS].[dbo].[t_bussiness] WHERE [id] = '" + idBussiness[index] + "';";
-                        DeleteRegisters(del);
-                    }
-                    MessageBox.Show("All records for bussiness \""+db+"\" have been deleted.");
-                }
-                index++;
-            }
-        }
-
         private void UpdateFilesForTransactionId()
         {
-            string queryObtainId = "SELECT * FROM [PAYMENTS].[dbo].[t_files] where status_name = 'waiting-auth';";
+            string queryObtainId = "SELECT * FROM [TESTPAY].[dbo].[t_files] where status_name = 'waiting-auth';";
             SqlCommand command = new SqlCommand(queryObtainId, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
@@ -326,14 +285,14 @@ namespace Payments.Views
             }
             foreach (T_Files record in allRecords)
             {
-                string queryStringStatus = "SELECT * FROM [PAYMENTS].[dbo].[t_transactions] WHERE transactionID LIKE '" + record.TransId + "%';";
+                string queryStringStatus = "SELECT * FROM [TESTPAY].[dbo].[t_transactions] WHERE transactionID LIKE '" + record.TransId + "%';";
                 command.CommandText = queryStringStatus;
                 SqlDataReader reader = command.ExecuteReader();
                 if (reader.Read())
                 {
                     string fieldsTableFilesId = reader[1].ToString();
                     reader.Close();
-                    string queryUpdate = "UPDATE [PAYMENTS].[dbo].[t_files] SET transId = '" + fieldsTableFilesId + "' WHERE folder ='" + record.Fullroute + "' AND fileName = '" + record.Name + "';";
+                    string queryUpdate = "UPDATE [TESTPAY].[dbo].[t_files] SET transId = '" + fieldsTableFilesId + "' WHERE folder ='" + record.Fullroute + "' AND fileName = '" + record.Name + "';";
                     command.CommandText = queryUpdate;
                     command.ExecuteNonQuery();
                 }
@@ -348,7 +307,7 @@ namespace Payments.Views
             CheckIfStatesFoldersExists();
             UpdateFilesForTransactionId();
             DeactivateButtons();
-            queryString = "SELECT f.*, t.content FROM [PAYMENTS].[dbo].[t_files] f,[PAYMENTS].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.fileName DESC;";
+            queryString = "SELECT f.*, t.content FROM [TESTPAY].[dbo].[t_files] f,[TESTPAY].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.fileName DESC;";
             lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
         }
@@ -455,7 +414,7 @@ namespace Payments.Views
         {
             DeactivateButtons();
             nameBussiness = comboBox1.SelectedItem.ToString();
-            string queryString = "SELECT * FROM[PAYMENTS].[dbo].[t_bussiness] WHERE nameBussiness = '" + nameBussiness + "';";
+            string queryString = "SELECT * FROM[TESTPAY].[dbo].[t_bussiness] WHERE nameBussiness = '" + nameBussiness + "';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();
@@ -469,7 +428,7 @@ namespace Payments.Views
             nameBussiness = $"{newpath}\\{nameBussiness}\\";
             nameBussiness = nameBussiness.Replace(@"\\", @"\");
             DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
-            queryString = "SELECT f.*, t.content FROM [PAYMENTS].[dbo].[t_files] f,[PAYMENTS].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.fileName DESC;";
+            queryString = "SELECT f.*, t.content FROM [TESTPAY].[dbo].[t_files] f,[TESTPAY].[dbo].[t_types] t  WHERE f.folder Like '" + nameBussiness + "%' AND f.type = t.id ORDER BY f.fileName DESC;";
             lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
         }

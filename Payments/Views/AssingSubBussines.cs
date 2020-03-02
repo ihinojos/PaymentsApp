@@ -26,13 +26,13 @@ namespace Payments.Views
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             lblFileSelected.Text = fileSelected;
-            LoadCombo("SELECT * FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE idBussiness = '" + idBussiness + "';");
+            LoadCombo("SELECT * FROM [TESTPAY].[dbo].[t_subbussiness] WHERE idBussiness = '" + idBussiness + "';");
             idFile = id;
             selectedFilePath = pathToFile;
             axAcroPDF1.src = pathToFile;
             try
             {
-                queryStringSubBussinesFiles = "SELECT s.nameSub, fs.* FROM [PAYMENTS].[dbo].[t_filesSubs] fs, [PAYMENTS].[dbo].[t_subbussiness] s  WHERE fs.idFile = '" + idFile + "' AND s.id = fs.idSubBussiness;";
+                queryStringSubBussinesFiles = "SELECT s.nameSub, fs.* FROM [TESTPAY].[dbo].[t_filesSubs] fs, [TESTPAY].[dbo].[t_subbussiness] s  WHERE fs.idFile = '" + idFile + "' AND s.id = fs.idSubBussiness;";
                 LoadTable(queryStringSubBussinesFiles);
             }
             catch (Exception ex)
@@ -94,7 +94,7 @@ namespace Payments.Views
         {
             int subBussiness = 0;
             Cursor.Current = Cursors.WaitCursor;
-            string query = "SELECT COUNT (idFile) FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "';";
+            string query = "SELECT COUNT (idFile) FROM [TESTPAY].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "';";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
@@ -107,13 +107,14 @@ namespace Payments.Views
             } while (reader.NextResult());
             reader.Close();
 
-            if (textBoxTransaction.Text == "" || subBussiness <= 0)
+            if (String.IsNullOrEmpty(textBoxTransaction.Text) || subBussiness <= 0 || String.IsNullOrEmpty(textBoxAmount.Text))
             {
                 command.Connection.Close();
-                MessageBox.Show("Verify if file has sub_bussiness or there is a transacion Id");
+                MessageBox.Show("Verify the inserted information and try again.");
             }
             else
             {
+                double amount = Double.Parse(textBoxAmount.Text);
                 string newPathForRename = "";
                 var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                 var formatDate = dateTimeOffset.ToUnixTimeSeconds();
@@ -138,15 +139,15 @@ namespace Payments.Views
                 try
                 {
                     //Insertar nueva transaccion
-                    string queryStringformat1 = "INSERT INTO [PAYMENTS].[dbo].[t_transactions]([id],[transactionId])" +
+                    string queryStringformat1 = "INSERT INTO [TESTPAY].[dbo].[t_transactions]([id],[transactionId], [amount])" +
                                                                " VALUES( NEWID(),'" + textBoxTransaction.Text
-                                                               + "')";
+                                                               + "', '"+amount+"')";
                     command.CommandText = queryStringformat1;
                     command.ExecuteNonQuery();
                     //Fin Insertar nueva transaccion
 
                     //Obtener el id creado en el paso anterior para posteriormente indexarlo a la tabla t_files
-                    string queryObtainNewId = "select * from [PAYMENTS].[dbo].[t_transactions] where transactionId ='" + textBoxTransaction.Text + "';";
+                    string queryObtainNewId = "select * from [TESTPAY].[dbo].[t_transactions] where transactionId ='" + textBoxTransaction.Text + "';";
                     command.CommandText = queryObtainNewId;
                     reader = command.ExecuteReader();
                     string idTansaction = "";
@@ -160,7 +161,7 @@ namespace Payments.Views
                     //Fin obtener el id creado en el paso anterior para posteriormente indexarlo a la tabla t_files
 
                     //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
-                    string queryStringDelete1 = "UPDATE [PAYMENTS].[dbo].[t_files] SET " +
+                    string queryStringDelete1 = "UPDATE [TESTPAY].[dbo].[t_files] SET " +
                         "fileName = '" + NewMain.LastElement(newPathForRename) + "', " +
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "transId = '" + idTansaction + "', " +
@@ -197,7 +198,7 @@ namespace Payments.Views
             {
                 string subBussiness = comboBoxSubBussiness.SelectedItem.ToString();
                 string idSubBussiness = "";
-                string query = "SELECT * FROM [PAYMENTS].[dbo].[t_subbussiness] WHERE [nameSub] = '" + subBussiness + "';";
+                string query = "SELECT * FROM [TESTPAY].[dbo].[t_subbussiness] WHERE [nameSub] = '" + subBussiness + "';";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -206,7 +207,7 @@ namespace Payments.Views
                     idSubBussiness = reader[0].ToString();
                 }
                 reader.Close();
-                string queryStringNew = "SELECT * FROM [PAYMENTS].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "' AND idSubBussiness ='" + idSubBussiness + "';";
+                string queryStringNew = "SELECT * FROM [TESTPAY].[dbo].[t_filesSubs] WHERE idFile = '" + idFile + "' AND idSubBussiness ='" + idSubBussiness + "';";
                 command.CommandText = queryStringNew;
                 reader = command.ExecuteReader();
                 if (reader.Read())
@@ -219,7 +220,7 @@ namespace Payments.Views
                 {
                     reader.Close();
                     string newSub = lblSubSelected.Text;
-                    string queryString2 = "INSERT INTO [PAYMENTS].[dbo].[t_filesSubs]([idFile],[idSubBussiness])" +
+                    string queryString2 = "INSERT INTO [TESTPAY].[dbo].[t_filesSubs]([idFile],[idSubBussiness])" +
                                                            " VALUES('" + idFile
                                                            + "','" + idSubBussiness
                                                                    + "')";

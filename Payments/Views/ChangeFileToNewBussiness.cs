@@ -49,7 +49,7 @@ namespace Payments.Views
 
         public string FileBussiness(string splitme)
         {
-            string[] strlist = splitme.Split(new char[] { '\\' },
+            string[] strlist = splitme.Split(new char[] { '\\'  },
                        20, StringSplitOptions.None);
             return strlist[strlist.Length - 3].ToString();
         }

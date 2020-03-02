@@ -47,7 +47,7 @@ namespace Payments.Views
 
         private void LoadDocument()
         {
-            string query = "SELECT * FROM [PAYMENTS].[dbo].[t_transactions] where [id] = '" + transId + "';";
+            string query = "SELECT * FROM [TESTPAY].[dbo].[t_transactions] where [id] = '" + transId + "';";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader read = command.ExecuteReader();
@@ -56,7 +56,7 @@ namespace Payments.Views
             read.Close();
             lblBussiness.Text = bussiness;
             lblTransNumber.Text = transId;
-            string queryStringStatus = "SELECT * FROM [PAYMENTS].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='2';";
+            string queryStringStatus = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='2';";
             command.CommandText = queryStringStatus;
             read = command.ExecuteReader();
             if (read.Read())
@@ -81,7 +81,7 @@ namespace Payments.Views
                 MessageBox.Show("There is nothing to show");
             }
             read.Close();
-            string queryStringStatus3 = "SELECT * FROM [PAYMENTS].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='1';";
+            string queryStringStatus3 = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='1';";
             command.CommandText = queryStringStatus3;
             read = command.ExecuteReader();
             if (read.Read())
@@ -107,7 +107,7 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select f.*, s.nameSub  from [PAYMENTS].[dbo].[t_filesSubs] f, [PAYMENTS].[dbo].[t_subbussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
+            string queryobtainid = "select f.*, s.nameSub  from [TESTPAY].[dbo].[t_filesSubs] f, [TESTPAY].[dbo].[t_subbussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
@@ -159,13 +159,13 @@ namespace Payments.Views
             newPathSigned = newPathSigned + "\\" + "payment-captured" + "\\" + newFormat2;
             newPathNoSigned = newPathNoSigned + "\\" + "payment-captured" + "\\" + newFormat;
             newPathProof = newPathProof + "\\" + "payment-captured" + "\\" + newFormat3;
-            string queryobtainid = "select * from [PAYMENTS].[dbo].[t_transactions] where [transactionId] = '" + lblTransID.Text + "';";
+            string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where [transactionId] = '" + lblTransID.Text + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
-                string queryObtainPaths = "select * from [PAYMENTS].[dbo].[t_files] where transId = '" + reader[1].ToString() + "';";
+                string queryObtainPaths = "select * from [TESTPAY].[dbo].[t_files] where transId = '" + reader[1].ToString() + "';";
                 command.CommandText = queryObtainPaths;
                 reader.Close();
                 SqlDataReader reader2 = command.ExecuteReader();
@@ -182,14 +182,14 @@ namespace Payments.Views
                         if (pathito.Contains("Unsigned"))
                         {
                             System.IO.File.Move(pathito, newPathNoSigned);
-                            string queryUpdateNotSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathNoSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='1';";
+                            string queryUpdateNotSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathNoSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='1';";
                             command.CommandText = queryUpdateNotSigned;
                             command.ExecuteNonQuery();
                         }
                         if (pathito.Contains("Signed"))
                         {
                             System.IO.File.Move(pathito, newPathSigned);
-                            string queryUpdateSigned = "UPDATE [PAYMENTS].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='2';";
+                            string queryUpdateSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='2';";
                             command.CommandText = queryUpdateSigned;
                             command.ExecuteNonQuery();
                         }
@@ -201,7 +201,7 @@ namespace Payments.Views
                 }
                 try
                 {
-                    string queryUpdateSigned = "INSERT INTO [PAYMENTS].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + NewMain.LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
+                    string queryUpdateSigned = "INSERT INTO [TESTPAY].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + NewMain.LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
                     command.CommandText = queryUpdateSigned;
                     command.ExecuteNonQuery();
                     string idsub = "SELECT f.id, fs.idSubBussiness FROM t_files f, t_filesSubs fs WHERE f.fileName = '" + NewMain.LastElement(newPathSigned) + "' AND f.id = fs.idFile";

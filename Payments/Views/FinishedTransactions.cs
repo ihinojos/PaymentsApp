@@ -21,7 +21,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "Select t.transactionId,t.id from [PAYMENTS].[dbo].[t_transactions] t inner join [PAYMENTS].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
+            string query2 = "Select t.transactionId,t.id from [TESTPAY].[dbo].[t_transactions] t inner join [TESTPAY].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
             LoadTable(query2);
         }
 
@@ -61,7 +61,7 @@ namespace Payments.Views
             string status = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
             lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transactionId").ToString();
 
-            string query3 = "Select * from [PAYMENTS].[dbo].[t_files] f inner join [PAYMENTS].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
+            string query3 = "Select * from [TESTPAY].[dbo].[t_files] f inner join [TESTPAY].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
             SqlCommand command = new SqlCommand(query3, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

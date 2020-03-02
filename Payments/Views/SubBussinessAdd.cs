@@ -29,7 +29,7 @@ namespace Payments.Views
 
         private void LoadCombo()
         {
-            string query = "SELECT * FROM [PAYMENTS].[dbo].[t_bussiness]";
+            string query = "SELECT * FROM [TESTPAY].[dbo].[t_bussiness]";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
@@ -55,7 +55,7 @@ namespace Payments.Views
                 }
                 else
                 {
-                    string query = "INSERT INTO [PAYMENTS].[dbo].[t_subbussiness] ([id], [nameSub], [address], [idBussiness]) " +
+                    string query = "INSERT INTO [TESTPAY].[dbo].[t_subbussiness] ([id], [nameSub], [address], [idBussiness]) " +
                         "VALUES ( NEWID(), '" + name + "', '" + addr + "', '" + buss + "')";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Connection.Open();

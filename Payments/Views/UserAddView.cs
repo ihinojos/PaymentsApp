@@ -60,7 +60,7 @@ namespace Payments.Views
             if (SecurePassword.IsSecure(pass))
             {
                 pass = SecurePassword.Hash(pass);
-                string query = "INSERT INTO [PAYMENTS].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', '" + type + "')";
+                string query = "INSERT INTO [TESTPAY].[dbo].[t_users] ([id], [user], [password], [type]) VALUES (NEWID(), '" + user + "', '" + pass + "', '" + type + "')";
 
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
