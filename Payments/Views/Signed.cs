@@ -1,4 +1,6 @@
 ﻿using Payments.Models;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -39,7 +41,7 @@ namespace Payments.Views
         public void PutCroppedPdf(string file)
         {
             pathToNewFile = file;
-            this.axAcroPDF2.src = file;
+            axAcroPDF2.src = pathToNewFile;
         }
 
 
@@ -69,36 +71,12 @@ namespace Payments.Views
 
         private void CreateNewNomenclature()
         {
-            string newPathForRenameOld = "";
-            string newPathForRenameNew = "";
-            //Nomenclatura = 12.12.2019_estado_#Transaction.pdf
-            //Variable path vieja: pathfileSelected
-            //Variable path nueva: newPathForRename
-            // Display date (uses calendar of current culture    by default).
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
-            string newFormat = formatDate + "_" + "Bill-Unsigned" + "_" + Tid + ".pdf";
-            string newFormat2 = formatDate + "_" + "Bill-Signed" + "_" + Tid + ".pdf";
+            string newFormat = formatDate + "_" + "Bill-Signed" + "_" + Tid + ".pdf";
             string path = MainViewModel.GetInstance().NewMain.newpath;
-            string[] strlist = path.Split(new char[] { '\\' },
-                   20, StringSplitOptions.None);
-            for (int i = 0; i < strlist.Length; i++)
-            {
-                if (i == 0)
-                {
-                    newPathForRenameOld = strlist[i];
-                }
-                else
-                {
-                    newPathForRenameOld = newPathForRenameOld + "\\" + strlist[i];
-                }
-            }
-
-
-            newPathForRenameOld = newPathForRenameOld + "\\" + lblBussiness.Text;
-            newPathForRenameNew = newPathForRenameOld;
-            newPathForRenameOld = newPathForRenameOld + "\\" + "Signed" + "\\" + newFormat;
-            newPathForRenameNew = newPathForRenameNew + "\\" + "Signed" + "\\" + newFormat2;
+            path += "\\" + lblBussiness.Text;
+            path += "\\" + "Signed" + "\\" + newFormat;
 
             try
             {
@@ -115,44 +93,9 @@ namespace Payments.Views
                 command.ExecuteNonQuery();
                 //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
 
-                //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
-                string queryStringDelete12 = "INSERT INTO [TESTPAY].[dbo].[t_files] (id, fileName, folder, transId, status_name,type)" +
-                    " VALUES (NEWID(), '" + newFormat2 + "', '" + folder + "', '" + lblTransID.Text + "', 'signed','2');";
-                command.CommandText = queryStringDelete12;
-                command.ExecuteNonQuery();
+                PdfDocument combined = NewMain.Combine(PdfReader.Open(pathToOldFile, PdfDocumentOpenMode.Import), PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Import));
 
-                string idsub = "SELECT f.id, fs.idSubBussiness FROM t_files f, t_filesSubs fs WHERE f.fileName = '" + newFormat + "' AND f.id = fs.idFile";
-                command.CommandText = idsub;
-
-                using (var read = command.ExecuteReader())
-                {
-                    if (read.Read())
-                    {
-                        idsub = read[1].ToString();
-                    }
-                    read.Close();
-                }
-
-                string idfile = "SELECT id FROM t_files WHERE fileName = '" + newFormat2 + "';";
-                command.CommandText = idfile;
-
-                using (var read = command.ExecuteReader())
-                {
-                    if (read.Read())
-                    {
-                        idfile = read[0].ToString();
-                    }
-                    read.Close();
-                }
-
-                string q = "INSERT INTO t_filesSubs ([idFile], [idSubBussiness]) VALUES ('"+idfile+"','"+idsub+"')";
-                command.CommandText = q;
-                command.ExecuteNonQuery();
-                command.Connection.Close();
-
-                System.IO.File.Move(pathToOldFile, newPathForRenameOld);
-                System.IO.File.Move(pathToNewFile, newPathForRenameNew);
-
+                combined.Save(path);
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
             }
@@ -163,6 +106,8 @@ namespace Payments.Views
             MainViewModel.GetInstance().NewMain.FullRefresh();
             this.Close();
         }
+
+        
 
         private void SearchTransaction(string transId)
         {

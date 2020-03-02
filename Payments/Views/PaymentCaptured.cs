@@ -1,4 +1,6 @@
 ﻿using Payments.Models;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -56,7 +58,7 @@ namespace Payments.Views
             read.Close();
             lblBussiness.Text = bussiness;
             lblTransNumber.Text = transId;
-            string queryStringStatus = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='2';";
+            string queryStringStatus = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "';";
             command.CommandText = queryStringStatus;
             read = command.ExecuteReader();
             if (read.Read())
@@ -81,7 +83,7 @@ namespace Payments.Views
                 MessageBox.Show("There is nothing to show");
             }
             read.Close();
-            string queryStringStatus3 = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "' and type ='1';";
+            string queryStringStatus3 = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "';";
             command.CommandText = queryStringStatus3;
             read = command.ExecuteReader();
             if (read.Read())
@@ -129,36 +131,13 @@ namespace Payments.Views
 
         private void CreateNewNomenclature()
         {
-            string newPathSigned = "";
-            string newPathNoSigned = "";
-            string newPathProof = "";
+            string newPathSigned = MainViewModel.GetInstance().NewMain.newpath; 
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
-            string newFormat = formatDate + "_" + "Payment-Captured-Unsigned" + "_" + lblTransID.Text + ".pdf";
-            string newFormat2 = formatDate + "_" + "Payment-Captured-Signed" + "_" + lblTransID.Text + ".pdf";
-            string newFormat3 = formatDate + "_" + "Payment-Captured-Proof" + "_" + lblTransID.Text + ".pdf";
-
-            string path = MainViewModel.GetInstance().NewMain.newpath;
-            String[] strlist = path.Split(new char[] { '\\' },
-                   20, StringSplitOptions.None);
-            for (int i = 0; i < strlist.Length; i++)
-            {
-                if (i == 0)
-                {
-                    newPathSigned = strlist[i];
-                }
-                else
-                {
-                    newPathSigned = newPathSigned + "\\" + strlist[i];
-                }
-            }
-            newPathSigned = newPathSigned + "\\" + NewMain.LastElement(bussiness);
-            newPathNoSigned = newPathSigned;
-            newPathProof = newPathSigned;
+            string newFormat = formatDate + "_" + "Bill-Paid-Proof" + "_" + lblTransID.Text + ".pdf";
+            newPathSigned += "\\" + NewMain.LastElement(bussiness);
             pathNewState = newPathSigned;
-            newPathSigned = newPathSigned + "\\" + "payment-captured" + "\\" + newFormat2;
-            newPathNoSigned = newPathNoSigned + "\\" + "payment-captured" + "\\" + newFormat;
-            newPathProof = newPathProof + "\\" + "payment-captured" + "\\" + newFormat3;
+            newPathSigned += "\\" + "payment-captured" + "\\" + newFormat;
             string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where [transactionId] = '" + lblTransID.Text + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
@@ -179,19 +158,14 @@ namespace Payments.Views
                     try
                     {
                         string pathito = item.Fullroute + item.Name;
-                        if (pathito.Contains("Unsigned"))
+                        if (pathito.Contains("Paying"))
                         {
-                            System.IO.File.Move(pathito, newPathNoSigned);
-                            string queryUpdateNotSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathNoSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='1';";
-                            command.CommandText = queryUpdateNotSigned;
-                            command.ExecuteNonQuery();
-                        }
-                        if (pathito.Contains("Signed"))
-                        {
-                            System.IO.File.Move(pathito, newPathSigned);
-                            string queryUpdateSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id LIKE '%" + item.Id + "%' and type='2';";
+                            MessageBox.Show("has paying");
+                            PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(incomingFile, PdfDocumentOpenMode.Import));
+                            string queryUpdateSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id = '" + item.Id + "';";
                             command.CommandText = queryUpdateSigned;
                             command.ExecuteNonQuery();
+                            outPdf.Save(newPathSigned);
                         }
                     }
                     catch (Exception ex)
@@ -199,48 +173,8 @@ namespace Payments.Views
                         MessageBox.Show("We had a problem moving the file, please review if the file already exists or:" + ex);
                     }
                 }
-                try
-                {
-                    string queryUpdateSigned = "INSERT INTO [TESTPAY].[dbo].[t_files] (id, fileName, folder, transId,status_name,type) VALUES (NEWID(), '" + NewMain.LastElement(newPathProof) + "', '" + pathNewState + "\\payment-captured\\" + "', '" + lblTransNumber.Text + "', 'payment-captured','3');";
-                    command.CommandText = queryUpdateSigned;
-                    command.ExecuteNonQuery();
-                    string idsub = "SELECT f.id, fs.idSubBussiness FROM t_files f, t_filesSubs fs WHERE f.fileName = '" + NewMain.LastElement(newPathSigned) + "' AND f.id = fs.idFile";
-                    command.CommandText = idsub;
-
-                    using (var read = command.ExecuteReader())
-                    {
-                        if (read.Read())
-                        {
-                            idsub = read[1].ToString();
-                        }
-                        read.Close();
-                    }
-
-
-                    string idfile = "SELECT id FROM t_files WHERE fileName = '" + NewMain.LastElement(newPathProof) + "';";
-                    command.CommandText = idfile;
-
-                    using (var read = command.ExecuteReader())
-                    {
-                        if (read.Read())
-                        {
-                            idfile = read[0].ToString();
-                        }
-                        read.Close();
-                    }
-
-                    string q = "INSERT INTO t_filesSubs ([idFile], [idSubBussiness]) VALUES ('" + idfile + "','" + idsub + "')";
-                    command.CommandText = q;
-                    command.ExecuteNonQuery();
-                    command.Connection.Close();
-                    System.IO.File.Move(incomingFile, newPathProof);
-                    MessageBox.Show("Invoice marked as paid correctly");
-                    MainViewModel.GetInstance().NewMain.FullRefresh();
-                }
-                catch (Exception ex2)
-                {
-                    MessageBox.Show("We had a problem moving the file, please review if the file already exists :" + ex2);
-                }
+                MessageBox.Show("Invoice marked as paid correctly");
+                MainViewModel.GetInstance().NewMain.FullRefresh();
             }
             command.Connection.Close();
         }

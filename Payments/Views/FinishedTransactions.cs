@@ -21,7 +21,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "Select t.transactionId,t.id from [TESTPAY].[dbo].[t_transactions] t inner join [TESTPAY].[dbo].[t_files] f on f.transId = t.id where f.type = '3';";
+            string query2 = "Select t.transactionId,t.id from [TESTPAY].[dbo].[t_transactions] t inner join [TESTPAY].[dbo].[t_files] f on f.transId = t.id where f.status_name = 'payment-captured';";
             LoadTable(query2);
         }
 

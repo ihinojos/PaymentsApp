@@ -98,16 +98,13 @@ namespace Payments.Views
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();
-            do
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    subBussiness = Convert.ToInt32(reader.GetValue(0));
-                }
-            } while (reader.NextResult());
+                subBussiness = Convert.ToInt32(reader.GetValue(0));
+            }
             reader.Close();
 
-            if (String.IsNullOrEmpty(textBoxTransaction.Text) || subBussiness <= 0 || String.IsNullOrEmpty(textBoxAmount.Text))
+            if (String.IsNullOrEmpty(textBoxTransaction.Text) || subBussiness == 0 || String.IsNullOrEmpty(textBoxAmount.Text))
             {
                 command.Connection.Close();
                 MessageBox.Show("Verify the inserted information and try again.");
@@ -141,7 +138,7 @@ namespace Payments.Views
                     //Insertar nueva transaccion
                     string queryStringformat1 = "INSERT INTO [TESTPAY].[dbo].[t_transactions]([id],[transactionId], [amount])" +
                                                                " VALUES( NEWID(),'" + textBoxTransaction.Text
-                                                               + "', '"+amount+"')";
+                                                               + "', '" + amount + "')";
                     command.CommandText = queryStringformat1;
                     command.ExecuteNonQuery();
                     //Fin Insertar nueva transaccion

@@ -1,6 +1,7 @@
 ﻿using DevExpress.XtraGrid.Views.Grid;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Payments.Models;
+using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -48,6 +49,22 @@ namespace Payments.Views
             string[] strlist = splitme.Split(new char[] { '\\' },
                        20, StringSplitOptions.None);
             return strlist[strlist.Length - 2].ToString();
+        }
+
+        public static PdfDocument Combine(PdfDocument doc1, PdfDocument doc2)
+        {
+            PdfDocument outPdf = new PdfDocument();
+            for (int i = 0; i < doc1.PageCount; i++)
+            {
+                outPdf.AddPage(doc1.Pages[i]);
+            }
+            for (int i = 0; i < doc2.PageCount; i++)
+            {
+                outPdf.AddPage(doc2.Pages[i]);
+            }
+            doc1.Close();
+            doc2.Close();
+            return outPdf;
         }
 
         public void LoadTable(string queryString)

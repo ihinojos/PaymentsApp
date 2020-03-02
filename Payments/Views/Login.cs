@@ -20,7 +20,7 @@ namespace Payments
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            FirstRun();
+            //FirstRun();
         }
 
         #endregion Constructor

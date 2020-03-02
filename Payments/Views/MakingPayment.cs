@@ -112,39 +112,21 @@ namespace Payments.Views
             {
                 string newPathForRenameOld = "";
                 string newPathForRenameNew = "";
-                //Nomenclatura = 12.12.2019_estado_#Transaction.pdf
-                //Variable path vieja: pathfileSelected
-                //Variable path nueva: newPathForRename
                 var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                 var formatDate = dateTimeOffset.ToUnixTimeSeconds();
                 if (radioButton1.Checked)
                 {
                     newFormat = formatDate + "_" + "Making-Payment-Unsigned" + "_" + lblSelected.Text + ".pdf";
-                    newFormat2 = formatDate + "_" + "Making-Payment-Signed" + "_" + lblSelected.Text + ".pdf";
+                    newFormat2 = formatDate + "_" + "Bill-Paying" + "_" + lblSelected.Text + ".pdf";
                 }
                 if (radioButton2.Checked)
                 {
                     newFormat = formatDate + "_" + "Making-Payment-Unsigned" + "_" + idTransForQuery2 + ".pdf";
-                    newFormat2 = formatDate + "_" + "Making-Payment-Signed" + "_" + idTransForQuery2 + ".pdf";
-                }
-                string path = MainViewModel.GetInstance().NewMain.newpath;
-                // Using the Method
-                String[] strlist = path.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-                for (int i = 0; i < strlist.Length; i++)
-                {
-                    if (i == 0)
-                    {
-                        newPathForRenameOld = strlist[i];
-                    }
-                    else
-                    {
-                        newPathForRenameOld = newPathForRenameOld + "\\" + strlist[i];
-                    }
+                    newFormat2 = formatDate + "_" + "Bill-Paying" + "_" + idTransForQuery2 + ".pdf";
                 }
                 newPathForRenameOld = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat;
                 newPathForRenameNew = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat2;
-
+                Console.WriteLine("new path for rename new: "+newPathForRenameNew);
                 string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where transactionId='" + lblSelected.Text + "';";
                 SqlCommand command = new SqlCommand(queryobtainid, connection);
                 command.Connection.Open();
@@ -173,22 +155,12 @@ namespace Payments.Views
                 foreach (var item in files)
                 {
                     string cadena = item.Name;
-
-                    if (cadena.Contains("Unsigned"))
-                    {
-                        string oldRouteUsigned = item.Fullroute + item.Name;
-                        string queryFile = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathForRenameOld)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type='1';";
-                        command.CommandText = queryFile;
-                        command.ExecuteNonQuery();
-
-                        System.IO.File.Move(oldRouteUsigned, newPathForRenameOld);
-                    }
                     if (cadena.Contains("Signed"))
                     {
+                        MessageBox.Show("it contains signed");
                         string oldRouteSigned = item.Fullroute + item.Name;
                         string queryFile = "UPDATE[TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%' and type = '2';";
+                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%';";
                         command.CommandText = queryFile;
                         command.ExecuteNonQuery();
 
