@@ -16,7 +16,6 @@ namespace Payments.Views
         private readonly string invoiceID;
         private readonly string bussiness;
         private string pathToNewFile;
-        private T_SubBussines[] allSubs;
         private T_Invoices[] files;
         private string id;
         private string incomingFile;
@@ -55,7 +54,7 @@ namespace Payments.Views
             if (read.Read())
             {
                 lblTransID.Text = read[5].ToString();
-                lblAmount.Text = "$"+read[6].ToString();
+                lblAmount.Text = "$" + read[6].ToString();
                 string fileName = read[1].ToString();
                 string folder = read[2].ToString();
                 id = read[0].ToString();
@@ -73,22 +72,26 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select f.*, s.nameSub  from [t_fileSubs] f, [t_subBussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
+            string queryobtainid = "SELECT [idSubBussiness] FROM [t_invoices] WHERE [id] = '" + id + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
+            string idsub = "";
             using (var reader = command.ExecuteReader())
             {
-                var list = new List<T_SubBussines>();
-                while (reader.Read())
-                    list.Add(new T_SubBussines { Id = reader[1].ToString(), IdFile = reader[0].ToString(), IdSubBussiness = reader[2].ToString() }); ;
-                allSubs = list.ToArray();
+                if (reader.Read())
+                    idsub = reader[0].ToString();
                 reader.Close();
             }
-            foreach (T_SubBussines record in allSubs)
+            command.CommandText = "SELECT [nameSub] FROM [t_subBussiness] WHERE [id] = '" + idsub + "';";
+            using (var reader = command.ExecuteReader())
             {
-                treeView1.BeginUpdate();
-                treeView1.Nodes.Add(record.IdSubBussiness);
-                treeView1.EndUpdate();
+                if (reader.Read())
+                {
+                    treeView1.BeginUpdate();
+                    treeView1.Nodes.Add(reader[0].ToString());
+                    treeView1.EndUpdate();
+                }
+                reader.Close();
             }
             command.Connection.Close();
         }

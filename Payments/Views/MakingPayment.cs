@@ -14,8 +14,6 @@ namespace Payments.Views
 
         private readonly SqlConnection connection;
         private readonly string invoiceID;
-        private Transactions[] allSubs;
-        private Transactions[] allSubs2;
         private T_Invoices[] invoices;
         private string newFormat;
         private string idTransForQuery2;

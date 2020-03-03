@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -16,7 +17,7 @@ namespace Payments.Views
         #region Attributes
 
         public string nameBussiness;
-        public String newpath = "";
+        public string newpath = "";
         public string queryString;
         private string idBussiness;
         private readonly SqlConnection connection;
@@ -80,14 +81,8 @@ namespace Payments.Views
             GridView gv = gridView1;
             gridControl1.DataSource = null;
             gridControl1.DataSource = FullDT;
-            gridView1.PopulateColumns();
-            gridView1.Columns["folder"].Visible = false;
-            gridView1.Columns["id"].Visible = false;
-            gridView1.Columns["transId"].Visible = false;
-            gridView1.Columns["status_name"].Visible = true;
-            gridView1.Columns["fileName"].Caption = "File Name";
-            gridView1.Columns["status_name"].Caption = "Status";
-            gridView1.RowCellClick += gridView1_RowCellClick;
+            gv.PopulateColumns();
+            gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
         }
@@ -125,12 +120,13 @@ namespace Payments.Views
                                     reader.Close();
                                     if (SecondLastElement(file) == "incoming")
                                     {
-                                        command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount])" +
+                                        command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
                                                                " VALUES( NEWID()," +
                                                                "'" + strlist[i] + "'," +
                                                                "'" + url + "'," +
                                                                "'" + status + "'," +
                                                                "GETDATE()," +
+                                                               "NULL," +
                                                                "NULL," +
                                                                "NULL)";
 
@@ -205,36 +201,40 @@ namespace Payments.Views
 
         private void DeleteRegistersFromFilesThatWasRemoved(string path)
         {
-            List<string> allFiles = new List<string>();
-            string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
-            foreach (var dir in dirs)
+            if (!IsThisRoot(path))
             {
-                string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
-                foreach (var file in files)
+                List<string> allFiles = new List<string>();
+                string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
+                foreach (var dir in dirs)
                 {
-                    allFiles.Add(file);
+                    string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
+                    foreach (var file in files)
+                    {
+                        allFiles.Add(file);
+                    }
                 }
-            }
-            List<string> record = new List<string>();
-            List<string> recordId = new List<string>();
-            string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + path + "%' and status_name = 'incoming';";
-            SqlCommand command = new SqlCommand(queryfiles, connection);
-            command.Connection.Open();
-            SqlDataReader read = command.ExecuteReader();
-            while (read.Read())
-            {
-                string r = read[2].ToString() + read[1].ToString();
-                record.Add(r);
-                recordId.Add(read[0].ToString());
-            }
-            read.Close();
-            command.Connection.Close();
-            for (int i = 0; i < record.Count; i++)
-            {
-                if (!allFiles.Contains(record[i]))
+                List<string> record = new List<string>();
+                List<string> recordId = new List<string>();
+                string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + path + "%' and status_name = 'incoming';";
+                SqlCommand command = new SqlCommand(queryfiles, connection);
+                command.Connection.Open();
+                SqlDataReader read = command.ExecuteReader();
+                while (read.Read())
                 {
-                    string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
-                    DeleteRegisters(querydelete);
+                    string r = read[2].ToString() + read[1].ToString();
+                    record.Add(r);
+                    recordId.Add(read[0].ToString());
+                }
+                read.Close();
+                command.Connection.Close();
+                for (int i = 0; i < record.Count; i++)
+                {
+                    if (!allFiles.Contains(record[i]))
+                    {
+                        Console.WriteLine("Deleted: "+record[i]);
+                        string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
+                        DeleteRegisters(querydelete);
+                    }
                 }
             }
         }
@@ -285,7 +285,6 @@ namespace Payments.Views
             CheckIfStatesFoldersExists();
             DeactivateButtons();
             queryString = "SELECT f.* FROM [t_invoices] f  WHERE f.folder Like '" + nameBussiness + "%' ORDER BY f.fileName DESC;";
-            Console.WriteLine("full ref bus name: "+nameBussiness);
             DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
             lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
@@ -651,5 +650,10 @@ namespace Payments.Views
         }
 
         #endregion Events
+
+        private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
+        {
+            
+        }
     }
 }

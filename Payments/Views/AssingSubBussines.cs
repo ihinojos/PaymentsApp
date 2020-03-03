@@ -13,6 +13,7 @@ namespace Payments.Views
 
         private readonly SqlConnection connection;
         private readonly string idFile;
+        private readonly string idBussiness;
         private readonly string selectedFilePath;
         private readonly string queryStringSubBussinesFiles;
         private string pathToThisBussinesWaitingAuth;
@@ -26,13 +27,14 @@ namespace Payments.Views
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             lblFileSelected.Text = fileSelected;
+            this.idBussiness = idBussiness;
             LoadCombo("SELECT * FROM [t_subBussiness] WHERE idBussiness = '" + idBussiness + "';");
             idFile = id;
             selectedFilePath = pathToFile;
             axAcroPDF1.src = pathToFile;
             try
             {
-                queryStringSubBussinesFiles = "SELECT s.nameSub, fs.* FROM [t_fileSubs] fs, [t_subBussiness] s  WHERE fs.idFile = '" + idFile + "' AND s.id = fs.idSubBussiness;";
+                queryStringSubBussinesFiles = "SELECT s.nameSub FROM [t_invoices] i, [t_subBussiness] s  WHERE i.[id] = '" + idFile + "' AND s.id = i.idSubBussiness;";
                 LoadTable(queryStringSubBussinesFiles);
             }
             catch (Exception ex)
@@ -60,8 +62,6 @@ namespace Payments.Views
             GridView gv = gridView1;
             gridControl1.DataSource = FullDT;
             gridView1.PopulateColumns();
-            gridView1.Columns["idFile"].Visible = false;
-            gridView1.Columns["idSubBussiness"].Visible = false;
             gridView1.Columns["nameSub"].Caption = "Sub_Bussiness Name";
             gridView1.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
@@ -90,21 +90,9 @@ namespace Payments.Views
 
         private void btnCapture_Click(object sender, EventArgs e)
         {
-            int subBussiness = 0;
-            Cursor.Current = Cursors.WaitCursor;
-            string query = "SELECT COUNT (idFile) FROM [t_fileSubs] WHERE idFile = '" + idFile + "';";
-            SqlCommand command = new SqlCommand(query, connection);
-            command.Connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+           
+            if (String.IsNullOrEmpty(textBoxTransaction.Text) || String.IsNullOrEmpty(textBoxAmount.Text))
             {
-                subBussiness = Convert.ToInt32(reader.GetValue(0));
-            }
-            reader.Close();
-
-            if (String.IsNullOrEmpty(textBoxTransaction.Text) || subBussiness == 0 || String.IsNullOrEmpty(textBoxAmount.Text))
-            {
-                command.Connection.Close();
                 MessageBox.Show("Verify the inserted information and try again.");
             }
             else
@@ -133,7 +121,7 @@ namespace Payments.Views
 
                 try
                 {
-                    string queryStringDelete1 = "UPDATE [t_invoices] SET " +
+                    string query = "UPDATE [t_invoices] SET " +
                         "fileName = '" + NewMain.LastElement(newPathForRename) + "', " +
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "status_name = 'waiting-auth'," +
@@ -141,9 +129,10 @@ namespace Payments.Views
                         "transId = '" + textBoxTransaction.Text + "'," +
                         "amount = " + amount + 
                         " WHERE id = '" + idFile + "';";
-                    command.CommandText = queryStringDelete1;
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Connection.Open();
                     command.ExecuteNonQuery();
-
+                    command.Connection.Close();
                     System.IO.File.Move(selectedFilePath, newPathForRename);
 
                     MessageBox.Show("Invoice captured correctly");
@@ -153,8 +142,6 @@ namespace Payments.Views
                 {
                     MessageBox.Show(ex.Message);
                 }
-                command.Connection.Close();
-                Cursor.Current = Cursors.Default;
                 this.Close();
             }
         }
@@ -171,7 +158,7 @@ namespace Payments.Views
             {
                 string subBussiness = comboBoxSubBussiness.SelectedItem.ToString();
                 string idSubBussiness = "";
-                string query = "SELECT * FROM [t_subbussiness] WHERE [nameSub] = '" + subBussiness + "';";
+                string query = "SELECT * FROM [t_subBussiness] WHERE [nameSub] = '" + subBussiness + "' AND [idBussiness] = '"+idBussiness+"';";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -180,7 +167,7 @@ namespace Payments.Views
                     idSubBussiness = reader[0].ToString();
                 }
                 reader.Close();
-                string queryStringNew = "SELECT * FROM [t_fileSubs] WHERE idFile = '" + idFile + "' AND idSubBussiness ='" + idSubBussiness + "';";
+                string queryStringNew = "SELECT * FROM [t_invoices] WHERE [id] = '" + idFile + "' AND [idSubBussiness] ='" + idSubBussiness + "';";
                 command.CommandText = queryStringNew;
                 reader = command.ExecuteReader();
                 if (reader.Read())
@@ -193,8 +180,7 @@ namespace Payments.Views
                 {
                     reader.Close();
                     string newSub = lblSubSelected.Text;
-                    string queryString2 = "INSERT INTO [t_fileSubs]([idFile],[idSubBussiness])" +
-                                                           " VALUES('" + idFile + "','" + idSubBussiness + "')";
+                    string queryString2 = "UPDATE [t_invoices] SET [idSubBussiness] = '"+idSubBussiness+"';";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
                     command.Connection.Close();

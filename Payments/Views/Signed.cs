@@ -13,9 +13,7 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        private T_SubBussines[] allSubs;
-        private string id;
-        private string invoiceID;
+        private readonly string invoiceID;
         private string folder;
         private string pathToOldFile;
         private string pathToNewFile;
@@ -49,22 +47,26 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select f.*, s.nameSub  from [t_fileSubs] f, [t_subBussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
+            string queryobtainid = "SELECT [idSubBussiness] FROM [t_invoices] WHERE [id] = '" + invoiceID + "';";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
+            string idsub = "";
             using (var reader = command.ExecuteReader())
             {
-                var list = new List<T_SubBussines>();
-                while (reader.Read())
-                    list.Add(new T_SubBussines { Id = reader.GetString(1), IdFile = reader.GetString(0), IdSubBussiness = reader.GetString(2) });
-                allSubs = list.ToArray();
+                if (reader.Read())
+                    idsub = reader[0].ToString();
                 reader.Close();
             }
-            foreach (T_SubBussines record in allSubs)
+            command.CommandText = "SELECT [nameSub] FROM [t_subBussiness] WHERE [id] = '" + idsub + "';";
+            using (var reader = command.ExecuteReader())
             {
-                treeView1.BeginUpdate();
-                treeView1.Nodes.Add(record.IdSubBussiness);
-                treeView1.EndUpdate();
+                if (reader.Read())
+                {
+                    treeView1.BeginUpdate();
+                    treeView1.Nodes.Add(reader[0].ToString());
+                    treeView1.EndUpdate();
+                }
+                reader.Close();
             }
             command.Connection.Close();
         }
@@ -85,8 +87,8 @@ namespace Payments.Views
                 string queryStringDelete1 = "UPDATE [t_invoices] SET " +
                     "fileName = '" + newFormat + "', " +
                     "folder= '" + folder + "'," +
-                    "status_name = 'signed'" +
-                    "date_modified = GETDATE() WHERE id = '" + id + "';";
+                    "status_name = 'signed'," +
+                    "date_modified = GETDATE() WHERE id = '" + invoiceID + "';";
                 SqlCommand command = new SqlCommand(queryStringDelete1, connection);
                 command.Connection.Open();
                 command.ExecuteNonQuery();
@@ -126,10 +128,9 @@ namespace Payments.Views
                 else
                 {
                     lblTransID.Text = reader[5].ToString();
-                    lblTransAmount.Text = "$"+reader[6].ToString();
+                    lblTransAmount.Text = "$" + reader[6].ToString();
                     string fileName = reader[1].ToString();
                     folder = reader[2].ToString();
-                    id = reader[0].ToString();
                     lblNameOldFile.Text = fileName;
                     pathToOldFile = folder + "\\" + fileName;
                     axAcroPDF1.src = pathToOldFile;
