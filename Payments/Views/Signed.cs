@@ -96,6 +96,8 @@ namespace Payments.Views
                 PdfDocument combined = NewMain.Combine(PdfReader.Open(pathToOldFile, PdfDocumentOpenMode.Import), PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Import));
 
                 combined.Save(path);
+
+                System.IO.File.Delete(pathToOldFile);
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
             }

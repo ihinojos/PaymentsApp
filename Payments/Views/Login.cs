@@ -35,9 +35,6 @@ namespace Payments
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             command.ExecuteNonQuery();
-            query = "INSERT INTO [TESTPAY].[dbo].[t_types] ([id], [content]) VALUES ('1', 'Unsigned Bill'), ('2', 'Signed Bill'), ('3', 'Proof of Payment')";
-            command.CommandText = query;
-            command.ExecuteNonQuery();
             command.Connection.Close();
         }
 

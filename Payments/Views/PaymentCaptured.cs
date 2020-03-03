@@ -166,6 +166,7 @@ namespace Payments.Views
                             command.CommandText = queryUpdateSigned;
                             command.ExecuteNonQuery();
                             outPdf.Save(newPathSigned);
+                            System.IO.File.Delete(pathito);
                         }
                     }
                     catch (Exception ex)
