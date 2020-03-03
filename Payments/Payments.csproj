@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DB.cs" />
+    <Compile Include="Models\T_Invoices.cs" />
     <Compile Include="SecurePassword.cs" />
     <Compile Include="Views\Login.cs">
       <SubType>Form</SubType>

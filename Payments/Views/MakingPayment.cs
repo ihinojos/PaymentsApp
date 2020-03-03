@@ -13,10 +13,10 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        private readonly string transId;
+        private readonly string invoiceID;
         private Transactions[] allSubs;
         private Transactions[] allSubs2;
-        private T_Files[] files;
+        private T_Invoices[] invoices;
         private string newFormat;
         private string idTransForQuery2;
         private string newFormat2;
@@ -25,10 +25,10 @@ namespace Payments.Views
 
         #region Constructor
 
-        public MakingPayment(string transId)
+        public MakingPayment(string invoiceID)
         {
             InitializeComponent();
-            this.transId = transId;
+            this.invoiceID = invoiceID;
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             radioButton1.Checked = true;
             LoadTree();
@@ -43,51 +43,36 @@ namespace Payments.Views
         private void LoadTree()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where [id] = '" + transId + "';";
-            SqlCommand command = new SqlCommand(queryobtainid, connection);
+            string query = "select * from [t_invoices] where id ='" + invoiceID + "';";
+            SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
             {
-                var list = new List<Transactions>();
-                do
-                {
-                    while (reader.Read())
-                        list.Add(new Transactions { Id = reader[1].ToString(), TransactionQB = reader[0].ToString() });
-                } while (reader.NextResult());
-                allSubs = list.ToArray();
+                var list = new List<T_Invoices>();
+                while (reader.Read())
+                    list.Add(new T_Invoices
+                    {
+                        Id = reader[0].ToString(),
+                        FileName = reader[1].ToString(),
+                        Folder = reader[2].ToString(),
+                        Status = reader[3].ToString(),
+                        Date = reader[4].ToString(),
+                        TransId = reader[5].ToString(),
+                        Amount = Double.Parse(reader[6].ToString()),
+                    });
+                invoices = list.ToArray();
                 reader.Close();
             }
-            int count = 0;
-            foreach (Transactions record in allSubs)
-            {
-                string queryobtain = "select * from [TESTPAY].[dbo].[t_files] where transId ='" + record.Id + "';";
-                command.CommandText = queryobtain;
-                using (var reader = command.ExecuteReader())
-                {
-                    var list = new List<T_Files>();
-                    do
-                    {
-                        while (reader.Read())
-                            list.Add(new T_Files { Id = reader[0].ToString(), Name = reader[1].ToString(), Fullroute = reader[2].ToString() }); ;
-                    } while (reader.NextResult());
-                    files = list.ToArray();
-                    reader.Close();
-                }
-                treeView1.BeginUpdate();
-                treeView1.Nodes.Add(record.TransactionQB);
-                foreach (T_Files file in files)
-                {
-                    treeView1.Nodes[count].Nodes.Add(file.Name);
-                }
-                count += 1;
-                treeView1.EndUpdate();
-            }
+            treeView1.BeginUpdate();
+            treeView1.Nodes.Add(invoices[0].TransId);
+            treeView1.Nodes[0].Nodes.Add(invoices[0].FileName);
+            treeView1.EndUpdate();
             command.Connection.Close();
         }
 
         private void LoadLookUpEdit()
         {
-            string querystringstatus = "SELECT [transactionId],[id] FROM [TESTPAY].[dbo].[t_transactions] where [id] = '" + transId + "';";
+            string querystringstatus = "SELECT * FROM [t_invoices] where [id] = '" + invoiceID + "';";
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand command = new SqlCommand(querystringstatus, connection);
             command.Connection.Open();
@@ -98,10 +83,10 @@ namespace Payments.Views
             DataSet dataSet = new DataSet();
             adapter.Fill(dataSet);
             lookUpEdit1.Properties.PopulateColumns();
-            lookUpEdit1.Properties.Columns.Add(new LookUpColumnInfo("id", "id"));
-            lookUpEdit1.Properties.Columns.Add(new LookUpColumnInfo("transactionId", "transactionId"));
+            lookUpEdit1.Properties.Columns.Add(new LookUpColumnInfo("fileName", "File Name"));
+            lookUpEdit1.Properties.Columns.Add(new LookUpColumnInfo("transId", "Transaction Id"));
             lookUpEdit1.Properties.DataSource = dataSet.Tables[0];
-            lookUpEdit1.Properties.DisplayMember = "transactionId";
+            lookUpEdit1.Properties.DisplayMember = "transId";
             lookUpEdit1.Properties.ValueMember = "id";
             command.Connection.Close();
         }
@@ -126,48 +111,24 @@ namespace Payments.Views
                 }
                 newPathForRenameOld = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat;
                 newPathForRenameNew = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat2;
-                Console.WriteLine("new path for rename new: "+newPathForRenameNew);
-                string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where transactionId='" + lblSelected.Text + "';";
-                SqlCommand command = new SqlCommand(queryobtainid, connection);
-                command.Connection.Open();
-                using (var reader = command.ExecuteReader())
+                Console.WriteLine("new path for rename new: " + newPathForRenameNew);
+                
+                foreach (var item in invoices)
                 {
-                    var list2 = new List<Transactions>();
-                    while (reader.Read())
-                        list2.Add(new Transactions { Id = reader.GetString(1), TransactionQB = reader.GetString(0) });
-                    allSubs2 = list2.ToArray();
-                    reader.Close();
-                }
-
-                foreach (var item in allSubs2)
-                {
-                    string queryFile = "select * from [TESTPAY].[dbo].[t_files] where transId='" + item.Id + "';";
-                    command.CommandText = queryFile;
-                    using (var reader2 = command.ExecuteReader())
-                    {
-                        var list3 = new List<T_Files>();
-                        while (reader2.Read())
-                            list3.Add(new T_Files { Id = reader2.GetString(0), Name = reader2.GetString(1), Fullroute = reader2.GetString(2), TransId = reader2.GetString(3) });
-                        files = list3.ToArray();
-                        reader2.Close();
-                    }
-                }
-                foreach (var item in files)
-                {
-                    string cadena = item.Name;
+                    string cadena = item.FileName;
                     if (cadena.Contains("Signed"))
                     {
-                        MessageBox.Show("it contains signed");
-                        string oldRouteSigned = item.Fullroute + item.Name;
-                        string queryFile = "UPDATE[TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "' WHERE transId LIKE '" + item.TransId + "%';";
-                        command.CommandText = queryFile;
+                        string oldRouteSigned = item.Folder + item.FileName;
+                        string queryFile = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
+                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "'," +
+                            "date_modified = GETDATE() WHERE [id] = '" + invoiceID + "';";
+                        SqlCommand command = new SqlCommand(queryFile, connection);
+                        command.Connection.Open();
                         command.ExecuteNonQuery();
-
                         System.IO.File.Move(oldRouteSigned, newPathForRenameNew);
+                        command.Connection.Close();
                     }
                 }
-                command.Connection.Close();
                 MainViewModel.GetInstance().NewMain.FullRefresh();
                 MessageBox.Show("Invoice marked as payment in process");
                 this.Close();
@@ -198,7 +159,7 @@ namespace Payments.Views
 
         private void lookUpEdit1_EditValueChanged_1(object sender, EventArgs e)
         {
-            idTransForQuery2 = lookUpEdit1.GetColumnValue("transactionId").ToString();
+            idTransForQuery2 = lookUpEdit1.GetColumnValue("transId").ToString();
             lblSelected.Text = idTransForQuery2;
         }
 

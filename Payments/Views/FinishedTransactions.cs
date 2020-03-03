@@ -21,7 +21,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "Select t.transactionId,t.id from [TESTPAY].[dbo].[t_transactions] t inner join [TESTPAY].[dbo].[t_files] f on f.transId = t.id where f.status_name = 'payment-captured';";
+            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured';";
             LoadTable(query2);
         }
 
@@ -58,10 +58,10 @@ namespace Payments.Views
             treeView1.Nodes.Clear();
             GridView gv = gridView1;
 
-            string status = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
-            lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transactionId").ToString();
+            string id = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
+            lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
 
-            string query3 = "Select * from [TESTPAY].[dbo].[t_files] f inner join [TESTPAY].[dbo].[t_transactions] t on f.transId = t.id where t.id = '" + status + "';";
+            string query3 = "Select * from [t_invoices] where id = '" + id + "';";
             SqlCommand command = new SqlCommand(query3, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

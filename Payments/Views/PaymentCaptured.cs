@@ -13,12 +13,11 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        private readonly string transId;
+        private readonly string invoiceID;
         private readonly string bussiness;
         private string pathToNewFile;
-        public string newpath = "C:\\TestFiles";
         private T_SubBussines[] allSubs;
-        private T_Files[] files;
+        private T_Invoices[] files;
         private string id;
         private string incomingFile;
         private string pathNewState;
@@ -27,10 +26,10 @@ namespace Payments.Views
 
         #region Constructor
 
-        public PaymentCaptured(string bussiness, string transId)
+        public PaymentCaptured(string bussiness, string invoiceID)
         {
             InitializeComponent();
-            this.transId = transId;
+            this.invoiceID = invoiceID;
             this.bussiness = bussiness;
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             this.FormClosed += new FormClosedEventHandler(WhenClosed);
@@ -49,59 +48,24 @@ namespace Payments.Views
 
         private void LoadDocument()
         {
-            string query = "SELECT * FROM [TESTPAY].[dbo].[t_transactions] where [id] = '" + transId + "';";
+            string query = "SELECT * FROM [t_invoices] where [id] = '" + invoiceID + "';";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader read = command.ExecuteReader();
             if (read.Read())
-                lblTransID.Text = read[0].ToString();
+            {
+                lblTransID.Text = read[5].ToString();
+                lblAmount.Text = "$"+read[6].ToString();
+                string fileName = read[1].ToString();
+                string folder = read[2].ToString();
+                id = read[0].ToString();
+                lblNameOldFile.Text = fileName;
+                string pathToOldFile = folder + fileName;
+                axAcroPDF2.src = "";
+                axAcroPDF2.src = pathToOldFile;
+            }
             read.Close();
             lblBussiness.Text = bussiness;
-            lblTransNumber.Text = transId;
-            string queryStringStatus = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "';";
-            command.CommandText = queryStringStatus;
-            read = command.ExecuteReader();
-            if (read.Read())
-            {
-                if (read[4].ToString() != "making-payment")
-                {
-                    MessageBox.Show("This transaction number is in another state, choose a diferent one");
-                }
-                else
-                {
-                    string fileName = read[1].ToString();
-                    string folder = read[2].ToString();
-                    id = read[0].ToString();
-                    lblNameOldFile.Text = fileName;
-                    string pathToOldFile = folder + fileName;
-                    axAcroPDF2.src = "";
-                    axAcroPDF2.src = pathToOldFile;
-                }
-            }
-            else
-            {
-                MessageBox.Show("There is nothing to show");
-            }
-            read.Close();
-            string queryStringStatus3 = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + transId + "';";
-            command.CommandText = queryStringStatus3;
-            read = command.ExecuteReader();
-            if (read.Read())
-            {
-                if (read[4].ToString() != "making-payment")
-                {
-                    MessageBox.Show("This transaction number is in another state, choose a diferent one");
-                }
-                else
-                {
-                    id = read[0].ToString();
-                }
-            }
-            else
-            {
-                MessageBox.Show("There is nothing to show");
-            }
-            read.Close();
             command.Connection.Close();
             ObtainSubBussinesRelationated();
         }
@@ -109,7 +73,7 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select f.*, s.nameSub  from [TESTPAY].[dbo].[t_filesSubs] f, [TESTPAY].[dbo].[t_subbussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
+            string queryobtainid = "select f.*, s.nameSub  from [t_fileSubs] f, [t_subBussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
@@ -131,52 +95,58 @@ namespace Payments.Views
 
         private void CreateNewNomenclature()
         {
-            string newPathSigned = MainViewModel.GetInstance().NewMain.newpath; 
+            string newPathSigned = MainViewModel.GetInstance().NewMain.newpath;
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
             string newFormat = formatDate + "_" + "Bill-Paid-Proof" + "_" + lblTransID.Text + ".pdf";
             newPathSigned += "\\" + NewMain.LastElement(bussiness);
             pathNewState = newPathSigned;
             newPathSigned += "\\" + "payment-captured" + "\\" + newFormat;
-            string queryobtainid = "select * from [TESTPAY].[dbo].[t_transactions] where [transactionId] = '" + lblTransID.Text + "';";
-            SqlCommand command = new SqlCommand(queryobtainid, connection);
+            string query = "select * from [t_invoices] where [id] = '" + invoiceID + "';";
+            SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            if (reader.Read())
+            using (var reader = command.ExecuteReader())
             {
-                string queryObtainPaths = "select * from [TESTPAY].[dbo].[t_files] where transId = '" + reader[1].ToString() + "';";
-                command.CommandText = queryObtainPaths;
-                reader.Close();
-                SqlDataReader reader2 = command.ExecuteReader();
-                var list = new List<T_Files>();
-                while (reader2.Read())
-                    list.Add(new T_Files { Id = reader2.GetString(0), Name = reader2.GetString(1), Fullroute = reader2.GetString(2) });
+                var list = new List<T_Invoices>();
+                while (reader.Read())
+                    list.Add(new T_Invoices
+                    {
+                        Id = reader[0].ToString(),
+                        FileName = reader[1].ToString(),
+                        Folder = reader[2].ToString(),
+                        Status = reader[3].ToString(),
+                        Date = reader[4].ToString(),
+                        TransId = reader[5].ToString(),
+                        Amount = Double.Parse(reader[6].ToString()),
+                    });
                 files = list.ToArray();
-                reader2.Close();
-                foreach (var item in files)
+                reader.Close();
+            }
+            foreach (var item in files)
+            {
+                try
                 {
-                    try
+                    string pathito = item.Folder + item.FileName;
+                    if (pathito.Contains("Paying"))
                     {
-                        string pathito = item.Fullroute + item.Name;
-                        if (pathito.Contains("Paying"))
-                        {
-                            MessageBox.Show("has paying");
-                            PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(incomingFile, PdfDocumentOpenMode.Import));
-                            string queryUpdateSigned = "UPDATE [TESTPAY].[dbo].[t_files] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured' WHERE id = '" + item.Id + "';";
-                            command.CommandText = queryUpdateSigned;
-                            command.ExecuteNonQuery();
-                            outPdf.Save(newPathSigned);
-                            System.IO.File.Delete(pathito);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("We had a problem moving the file, please review if the file already exists or:" + ex);
+                        MessageBox.Show("has paying");
+                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(incomingFile, PdfDocumentOpenMode.Import));
+                        string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
+                            " date_modified = GETDATE() WHERE id = '" + item.Id + "';";
+                        command.CommandText = queryUpdateSigned;
+                        command.ExecuteNonQuery();
+                        outPdf.Save(newPathSigned);
+                        System.IO.File.Delete(pathito);
                     }
                 }
-                MessageBox.Show("Invoice marked as paid correctly");
-                MainViewModel.GetInstance().NewMain.FullRefresh();
+                catch (Exception ex)
+                {
+                    MessageBox.Show("We had a problem moving the file, please review if the file already exists or:" + ex);
+                }
             }
+            MessageBox.Show("Invoice marked as paid correctly");
+            MainViewModel.GetInstance().NewMain.FullRefresh();
+
             command.Connection.Close();
         }
 

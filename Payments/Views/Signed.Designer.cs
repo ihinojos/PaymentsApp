@@ -36,7 +36,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.lblTransNumber = new System.Windows.Forms.Label();
+            this.lblTransAmount = new System.Windows.Forms.Label();
             this.lblTransID = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -106,9 +106,9 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(12, 47);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(104, 13);
+            this.label7.Size = new System.Drawing.Size(83, 13);
             this.label7.TabIndex = 16;
-            this.label7.Text = "Transaction number:";
+            this.label7.Text = "Invoice amount:";
             // 
             // button1
             // 
@@ -120,13 +120,13 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // lblTransNumber
+            // lblTransAmount
             // 
-            this.lblTransNumber.AutoSize = true;
-            this.lblTransNumber.Location = new System.Drawing.Point(12, 60);
-            this.lblTransNumber.Name = "lblTransNumber";
-            this.lblTransNumber.Size = new System.Drawing.Size(0, 13);
-            this.lblTransNumber.TabIndex = 18;
+            this.lblTransAmount.AutoSize = true;
+            this.lblTransAmount.Location = new System.Drawing.Point(12, 60);
+            this.lblTransAmount.Name = "lblTransAmount";
+            this.lblTransAmount.Size = new System.Drawing.Size(0, 13);
+            this.lblTransAmount.TabIndex = 18;
             // 
             // lblTransID
             // 
@@ -241,7 +241,7 @@
             // 
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.lblTransNumber);
+            this.groupBox3.Controls.Add(this.lblTransAmount);
             this.groupBox3.Controls.Add(this.lblTransID);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.lblBussiness);
@@ -302,7 +302,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label lblTransNumber;
+        private System.Windows.Forms.Label lblTransAmount;
         private System.Windows.Forms.Label lblTransID;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox1;

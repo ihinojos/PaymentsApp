@@ -15,7 +15,7 @@ namespace Payments.Views
         private readonly SqlConnection connection;
         private T_SubBussines[] allSubs;
         private string id;
-        private string Tid;
+        private string invoiceID;
         private string folder;
         private string pathToOldFile;
         private string pathToNewFile;
@@ -24,14 +24,14 @@ namespace Payments.Views
 
         #region Constructor
 
-        public Signed(string Bussiness, string Tid)
+        public Signed(string Bussiness, string invoiceID)
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             lblBussiness.Text = Bussiness;
-            this.Tid = Tid;
-            lblTransID.Text = Tid;
-            SearchTransaction(Tid);
+            this.invoiceID = invoiceID;
+            lblTransID.Text = invoiceID;
+            SearchInvoice(invoiceID);
         }
 
         #endregion Constructor
@@ -49,7 +49,7 @@ namespace Payments.Views
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
-            string queryobtainid = "select f.*, s.nameSub  from [TESTPAY].[dbo].[t_filesSubs] f, [TESTPAY].[dbo].[t_subbussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
+            string queryobtainid = "select f.*, s.nameSub  from [t_fileSubs] f, [t_subBussiness] s where f.idFile = '" + id + "' AND f.idSubBussiness = s.id;";
             SqlCommand command = new SqlCommand(queryobtainid, connection);
             command.Connection.Open();
             using (var reader = command.ExecuteReader())
@@ -73,7 +73,7 @@ namespace Payments.Views
         {
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
-            string newFormat = formatDate + "_" + "Bill-Signed" + "_" + Tid + ".pdf";
+            string newFormat = formatDate + "_" + "Bill-Signed" + "_" + lblTransID.Text + ".pdf";
             string path = MainViewModel.GetInstance().NewMain.newpath;
             path += "\\" + lblBussiness.Text;
             path += "\\" + "Signed" + "\\" + newFormat;
@@ -82,12 +82,11 @@ namespace Payments.Views
             {
                 //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 folder = folder.Replace("waiting-auth", "signed");
-                string queryStringDelete1 = "UPDATE [TESTPAY].[dbo].[t_files] SET " +
+                string queryStringDelete1 = "UPDATE [t_invoices] SET " +
                     "fileName = '" + newFormat + "', " +
                     "folder= '" + folder + "'," +
-                    "transId = '" + lblTransID.Text + "', " +
                     "status_name = 'signed'" +
-                    " WHERE id = '" + id + "';";
+                    "date_modified = GETDATE() WHERE id = '" + id + "';";
                 SqlCommand command = new SqlCommand(queryStringDelete1, connection);
                 command.Connection.Open();
                 command.ExecuteNonQuery();
@@ -109,54 +108,37 @@ namespace Payments.Views
             this.Close();
         }
 
-        
 
-        private void SearchTransaction(string transId)
+
+        private void SearchInvoice(string invoiceID)
         {
-            string querytransId = "SELECT * FROM [TESTPAY].[dbo].[t_transactions] WHERE id = '" + transId + "';";
-            SqlCommand command = new SqlCommand(querytransId, connection);
+            string querystringstatus = "SELECT * FROM [TESTPAY].[dbo].[t_invoices] WHERE [id] = '" + invoiceID + "';";
+            SqlCommand command = new SqlCommand(querystringstatus, connection);
             command.Connection.Open();
-            SqlDataReader read = command.ExecuteReader();
-            string fid = null;
-            if (read.Read())
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.Read())
             {
-                Tid = read[0].ToString();
-                fid = read[1].ToString();
-                read.Close();
-            }
-            else
-            {
-                MessageBox.Show("Transaction not found.");
-                axAcroPDF2.src = "";
-            }
-            if (!String.IsNullOrEmpty(fid))
-            {
-                string querystringstatus = "SELECT * FROM [TESTPAY].[dbo].[t_files] WHERE transId = '" + fid + "';";
-                lblTransID.Text = fid;
-                lblTransNumber.Text = Tid;
-                command.CommandText = querystringstatus;
-                SqlDataReader reader = command.ExecuteReader();
-                if (reader.Read())
+                if (reader[5].ToString() == "signed")
                 {
-                    if (reader[5].ToString() == "signed")
-                    {
-                        MessageBox.Show("This transaction number is not valid for this action. \n" +
-                            "Current status: " + reader[5].ToString());
-                    }
-                    else
-                    {
-                        string fileName = reader[1].ToString();
-                        folder = reader[2].ToString();
-                        id = reader[0].ToString();
-                        lblNameOldFile.Text = fileName;
-                        pathToOldFile = folder + "\\" + fileName;
-                        axAcroPDF1.src = pathToOldFile;
-                    }
+                    MessageBox.Show("This transaction number is not valid for this action. \n" +
+                        "Current status: " + reader[5].ToString());
                 }
-                reader.Close();
-                command.Connection.Close();
-                ObtainSubBussinesRelationated();
+                else
+                {
+                    lblTransID.Text = reader[5].ToString();
+                    lblTransAmount.Text = "$"+reader[6].ToString();
+                    string fileName = reader[1].ToString();
+                    folder = reader[2].ToString();
+                    id = reader[0].ToString();
+                    lblNameOldFile.Text = fileName;
+                    pathToOldFile = folder + "\\" + fileName;
+                    axAcroPDF1.src = pathToOldFile;
+                }
             }
+            reader.Close();
+            command.Connection.Close();
+            ObtainSubBussinesRelationated();
+
         }
 
         #endregion Methods

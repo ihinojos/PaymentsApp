@@ -18,7 +18,6 @@ namespace Payments.Views
         public string nameBussiness;
         public String newpath = "";
         public string queryString;
-        private T_Files[] allRecords;
         private string idBussiness;
         private readonly SqlConnection connection;
 
@@ -213,15 +212,12 @@ namespace Payments.Views
                 string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
                 foreach (var file in files)
                 {
-                    if (file != path)
-                    {
-                        allFiles.Add(file);
-                    }
+                    allFiles.Add(file);
                 }
             }
             List<string> record = new List<string>();
             List<string> recordId = new List<string>();
-            string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + nameBussiness + "%';";
+            string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + path + "%' and status_name = 'incoming';";
             SqlCommand command = new SqlCommand(queryfiles, connection);
             command.Connection.Open();
             SqlDataReader read = command.ExecuteReader();
@@ -238,8 +234,6 @@ namespace Payments.Views
                 if (!allFiles.Contains(record[i]))
                 {
                     string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
-                    string querydelete2 = "DELETE FROM [t_filesSubs] WHERE [idFile] = '" + recordId[i] + "';";
-                    DeleteRegisters(querydelete2);
                     DeleteRegisters(querydelete);
                 }
             }
@@ -291,6 +285,8 @@ namespace Payments.Views
             CheckIfStatesFoldersExists();
             DeactivateButtons();
             queryString = "SELECT f.* FROM [t_invoices] f  WHERE f.folder Like '" + nameBussiness + "%' ORDER BY f.fileName DESC;";
+            Console.WriteLine("full ref bus name: "+nameBussiness);
+            DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
             lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
             LoadTable(queryString);
         }
@@ -418,25 +414,32 @@ namespace Payments.Views
 
         private void btnCapture_Click(object sender, EventArgs e)
         {
-            try
+            if (String.IsNullOrEmpty(idBussiness))
             {
-                var instance = MainViewModel.GetInstance().AssingSubBussiness;
-                if (instance != null) instance.Dispose();
-                string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
-                string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                string id = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString();
-                instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, idBussiness, id);
-                instance.Show();
+                MessageBox.Show("Please select a Bussiness");
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("You must select a bussines and then a file to continue");
+                try
+                {
+                    var instance = MainViewModel.GetInstance().AssingSubBussiness;
+                    if (instance != null) instance.Dispose();
+                    string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
+                    string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
+                    string id = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString();
+                    instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, idBussiness, id);
+                    instance.Show();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("You must select a bussines and then a file to continue");
+                }
             }
         }
 
         private void btnPaymentCaptured_Click(object sender, EventArgs e)
         {
-            if (lblNameBuss.Text == "")
+            if (String.IsNullOrEmpty(idBussiness))
             {
                 MessageBox.Show("Please select a Bussiness");
             }
@@ -444,14 +447,14 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().CapturePayment;
                 if (instance != null) instance.Dispose();
-                instance = MainViewModel.GetInstance().CapturePayment = new PaymentCaptured(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().CapturePayment = new PaymentCaptured(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString());
                 instance.Show();
             }
         }
 
         private void btnSigned_Click_1(object sender, EventArgs e)
         {
-            if (lblNameBuss.Text == "")
+            if (String.IsNullOrEmpty(idBussiness))
             {
                 MessageBox.Show("Please select a Bussiness");
             }
@@ -459,13 +462,14 @@ namespace Payments.Views
             {
                 var instance = MainViewModel.GetInstance().SignDoc;
                 if (instance != null) instance.Dispose();
-                instance = MainViewModel.GetInstance().SignDoc = new Signed(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().SignDoc = new Signed(lblNameBuss.Text, gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString());
                 instance.Show();
             }
         }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -476,6 +480,7 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please select a bussiness");
             }
+
         }
 
         private void button1_Click_2(object sender, EventArgs e)
@@ -488,15 +493,15 @@ namespace Payments.Views
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (lblNameBuss.Text == "Select a Bussiness.")
+            if (String.IsNullOrEmpty(idBussiness))
             {
-                MessageBox.Show("Select a bussines pls");
+                MessageBox.Show("Please select a Bussiness");
             }
             else
             {
                 var instance = MainViewModel.GetInstance().MakePayment;
                 if (instance != null) instance.Dispose();
-                instance = MainViewModel.GetInstance().MakePayment = new MakingPayment(gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString());
+                instance = MainViewModel.GetInstance().MakePayment = new MakingPayment(gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString());
                 instance.Show();
             }
         }
