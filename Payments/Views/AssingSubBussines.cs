@@ -28,6 +28,10 @@ namespace Payments.Views
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             lblFileSelected.Text = fileSelected;
             this.idBussiness = idBussiness;
+            Console.WriteLine(fileSelected);
+            Console.WriteLine(pathToFile);
+            Console.WriteLine(idBussiness);
+            Console.WriteLine(id);
             LoadCombo("SELECT * FROM [t_subBussiness] WHERE idBussiness = '" + idBussiness + "';");
             idFile = id;
             selectedFilePath = pathToFile;
@@ -129,6 +133,7 @@ namespace Payments.Views
                         "transId = '" + textBoxTransaction.Text + "'," +
                         "amount = " + amount + 
                         " WHERE id = '" + idFile + "';";
+                    Console.WriteLine(idFile);
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Connection.Open();
                     command.ExecuteNonQuery();
@@ -180,7 +185,7 @@ namespace Payments.Views
                 {
                     reader.Close();
                     string newSub = lblSubSelected.Text;
-                    string queryString2 = "UPDATE [t_invoices] SET [idSubBussiness] = '"+idSubBussiness+"';";
+                    string queryString2 = "UPDATE [t_invoices] SET [idSubBussiness] = '"+idSubBussiness+"' WHERE [id] = '"+idFile+"';";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
                     command.Connection.Close();

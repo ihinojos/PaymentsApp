@@ -107,8 +107,8 @@ namespace Payments.Views
                     newFormat = formatDate + "_" + "Making-Payment-Unsigned" + "_" + idTransForQuery2 + ".pdf";
                     newFormat2 = formatDate + "_" + "Bill-Paying" + "_" + idTransForQuery2 + ".pdf";
                 }
-                newPathForRenameOld = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat;
-                newPathForRenameNew = MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment" + "\\" + newFormat2;
+                newPathForRenameOld = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat;
+                newPathForRenameNew = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat2;
                 Console.WriteLine("new path for rename new: " + newPathForRenameNew);
                 
                 foreach (var item in invoices)
@@ -118,7 +118,7 @@ namespace Payments.Views
                     {
                         string oldRouteSigned = item.Folder + item.FileName;
                         string queryFile = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
-                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.nameBussiness + "making-payment\\" + "'," +
+                            + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment\\" + "'," +
                             "date_modified = GETDATE() WHERE [id] = '" + invoiceID + "';";
                         SqlCommand command = new SqlCommand(queryFile, connection);
                         command.Connection.Open();

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -16,12 +15,11 @@ namespace Payments.Views
     {
         #region Attributes
 
-        public string nameBussiness;
+        public string bussinessPath;
         public string newpath = "";
         public string queryString;
-        private string idBussiness;
         private readonly SqlConnection connection;
-
+        private string idBussiness;
         #endregion Attributes
 
         #region Constructor
@@ -31,26 +29,11 @@ namespace Payments.Views
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
-
         }
 
         #endregion Constructor
 
         #region Methods
-
-        public static string LastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
-
-        public static string SecondLastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 2].ToString();
-        }
 
         public static PdfDocument Combine(PdfDocument doc1, PdfDocument doc2)
         {
@@ -68,6 +51,84 @@ namespace Payments.Views
             return outPdf;
         }
 
+        public static string LastElement(string splitme)
+        {
+            string[] strlist = splitme.Split(new char[] { '\\' },
+                       20, StringSplitOptions.None);
+            return strlist[strlist.Length - 1].ToString();
+        }
+
+        public static string SecondLastElement(string splitme)
+        {
+            string[] strlist = splitme.Split(new char[] { '\\' },
+                       20, StringSplitOptions.None);
+            return strlist[strlist.Length - 2].ToString();
+        }
+
+        public static string ElementAt(string str, int i) {
+            string[] strlist = str.Split(new char[] { '\\' });
+            return strlist[strlist.Length - i].ToString();
+        }
+
+        public static DialogResult ShowInputDialog(ref string input)
+        {
+            System.Drawing.Size size = new System.Drawing.Size(200, 70);
+            Form inputBox = new Form
+            {
+                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
+                ClientSize = size,
+                Text = "Enter bussiness name"
+            };
+
+            System.Windows.Forms.TextBox textBox = new TextBox
+            {
+                Size = new System.Drawing.Size(size.Width - 10, 23),
+                Location = new System.Drawing.Point(5, 5),
+                Text = input
+            };
+            inputBox.Controls.Add(textBox);
+
+            Button okButton = new Button
+            {
+                DialogResult = System.Windows.Forms.DialogResult.OK,
+                Name = "okButton",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "&OK",
+                Location = new System.Drawing.Point(size.Width - 80 - 80, 39)
+            };
+            inputBox.Controls.Add(okButton);
+
+            Button cancelButton = new Button
+            {
+                DialogResult = System.Windows.Forms.DialogResult.Cancel,
+                Name = "cancelButton",
+                Size = new System.Drawing.Size(75, 23),
+                Text = "&Cancel",
+                Location = new System.Drawing.Point(size.Width - 80, 39)
+            };
+            inputBox.Controls.Add(cancelButton);
+
+            inputBox.AcceptButton = okButton;
+            inputBox.CancelButton = cancelButton;
+
+            inputBox.StartPosition = FormStartPosition.CenterParent;
+
+            DialogResult result = inputBox.ShowDialog();
+            input = textBox.Text;
+            return result;
+        }
+
+        public void FullRefresh()
+        {
+            ObtainFiles(newpath);
+            CheckIfStatesFoldersExists();
+            DeactivateButtons();
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+            DeleteRegisters(bussinessPath);
+            LoadTable(queryString);
+        }
+
         public void LoadTable(string queryString)
         {
             SqlCommand command = new SqlCommand(queryString, connection);
@@ -82,6 +143,10 @@ namespace Payments.Views
             gridControl1.DataSource = null;
             gridControl1.DataSource = FullDT;
             gv.PopulateColumns();
+            gv.Columns["id"].Visible = false;
+            gv.Columns["folder"].Visible = false;
+            gv.Columns["idSubBussiness"].Visible = false;
+            gv.Columns["idBussiness"].Visible = false;
             gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
@@ -199,57 +264,59 @@ namespace Payments.Views
             return counter;
         }
 
-        private void DeleteRegistersFromFilesThatWasRemoved(string path)
+        private void DeactivateButtons()
         {
-            if (!IsThisRoot(path))
+            btnMakePayment.Enabled = false;
+            btnPaymentCaptured.Enabled = false;
+            btnSigned.Enabled = false;
+            btnCapture.Enabled = false;
+        }
+
+        
+
+        private void DeleteRegisters(string path)
+        {
+            List<string> allFiles = new List<string>();
+            string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
+            foreach (var dir in dirs)
             {
-                List<string> allFiles = new List<string>();
-                string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
-                foreach (var dir in dirs)
+                string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
+                foreach (var file in files)
                 {
-                    string[] files = Directory.GetFiles(dir, "*", SearchOption.TopDirectoryOnly);
-                    foreach (var file in files)
-                    {
-                        allFiles.Add(file);
-                    }
+                    allFiles.Add(file);
                 }
-                List<string> record = new List<string>();
-                List<string> recordId = new List<string>();
-                string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + path + "%' and status_name = 'incoming';";
-                SqlCommand command = new SqlCommand(queryfiles, connection);
-                command.Connection.Open();
-                SqlDataReader read = command.ExecuteReader();
-                while (read.Read())
+            }
+            List<string> record = new List<string>();
+            List<string> recordId = new List<string>();
+            string queryfiles = "SELECT * FROM [t_invoices] WHERE [folder] LIKE '" + path + "%' and status_name = 'incoming';";
+            SqlCommand command = new SqlCommand(queryfiles, connection);
+            command.Connection.Open();
+            SqlDataReader read = command.ExecuteReader();
+            while (read.Read())
+            {
+                string r = read[2].ToString() + read[1].ToString();
+                record.Add(r);
+                recordId.Add(read[0].ToString());
+            }
+            read.Close();
+            command.Connection.Close();
+            for (int i = 0; i < record.Count; i++)
+            {
+                if (!allFiles.Contains(record[i]))
                 {
-                    string r = read[2].ToString() + read[1].ToString();
-                    record.Add(r);
-                    recordId.Add(read[0].ToString());
-                }
-                read.Close();
-                command.Connection.Close();
-                for (int i = 0; i < record.Count; i++)
-                {
-                    if (!allFiles.Contains(record[i]))
+                    Console.WriteLine("Deleted: " + record[i]);
+                    string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
+                    SqlCommand commandDelete = new SqlCommand(querydelete, connection);
+                    lock (commandDelete)
                     {
-                        Console.WriteLine("Deleted: "+record[i]);
-                        string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
-                        DeleteRegisters(querydelete);
+                        commandDelete.Connection.Open();
+                        commandDelete.ExecuteNonQuery();
+                        commandDelete.Connection.Close();
                     }
                 }
             }
-        }
 
-        private void DeleteRegisters(string query)
-        {
-            SqlCommand commandDelete = new SqlCommand(query, connection);
-            lock (commandDelete)
-            {
-                commandDelete.Connection.Open();
-                commandDelete.ExecuteNonQuery();
-                commandDelete.Connection.Close();
-            }
         }
-
         private void InitializeComboboxBussines()
         {
             comboBox1.Items.Clear();
@@ -278,26 +345,6 @@ namespace Payments.Views
                 command.Connection.Close();
             }
         }
-
-        public void FullRefresh()
-        {
-            ObtainFiles(newpath);
-            CheckIfStatesFoldersExists();
-            DeactivateButtons();
-            queryString = "SELECT f.* FROM [t_invoices] f  WHERE f.folder Like '" + nameBussiness + "%' ORDER BY f.fileName DESC;";
-            DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
-            lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
-            LoadTable(queryString);
-        }
-
-        private void DeactivateButtons()
-        {
-            btnMakePayment.Enabled = false;
-            btnPaymentCaptured.Enabled = false;
-            btnSigned.Enabled = false;
-            btnCapture.Enabled = false;
-        }
-
         private bool IsThisRoot(string path)
         {
             List<string> states = new List<string>();
@@ -305,110 +352,20 @@ namespace Payments.Views
             foreach (var dir in dirs) states.Add(LastElement(dir));
             return !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
         }
-
-        public static DialogResult ShowInputDialog(ref string input)
-        {
-            System.Drawing.Size size = new System.Drawing.Size(200, 70);
-            Form inputBox = new Form
-            {
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
-                ClientSize = size,
-                Text = "Enter bussiness name"
-            };
-
-            System.Windows.Forms.TextBox textBox = new TextBox
-            {
-                Size = new System.Drawing.Size(size.Width - 10, 23),
-                Location = new System.Drawing.Point(5, 5),
-                Text = input
-            };
-            inputBox.Controls.Add(textBox);
-
-            Button okButton = new Button
-            {
-                DialogResult = System.Windows.Forms.DialogResult.OK,
-                Name = "okButton",
-                Size = new System.Drawing.Size(75, 23),
-                Text = "&OK",
-                Location = new System.Drawing.Point(size.Width - 80 - 80, 39)
-            };
-            inputBox.Controls.Add(okButton);
-
-            Button cancelButton = new Button
-            {
-                DialogResult = System.Windows.Forms.DialogResult.Cancel,
-                Name = "cancelButton",
-                Size = new System.Drawing.Size(75, 23),
-                Text = "&Cancel",
-                Location = new System.Drawing.Point(size.Width - 80, 39)
-            };
-            inputBox.Controls.Add(cancelButton);
-
-            inputBox.AcceptButton = okButton;
-            inputBox.CancelButton = cancelButton;
-
-            inputBox.StartPosition = FormStartPosition.CenterParent;
-
-            DialogResult result = inputBox.ShowDialog();
-            input = textBox.Text;
-            return result;
-        }
-
         #endregion Methods
 
         #region Clicks
 
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GridView gv = gridView1;
-            lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-            string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
-            try
+            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
-                DeactivateButtons();
-                switch (status)
-                {
-                    case "incoming":
-                        btnCapture.Enabled = true;
-                        break;
-                    case "waiting-auth":
-                        btnSigned.Enabled = true;
-                        break;
-                    case "signed":
-                        btnMakePayment.Enabled = true;
-                        break;
-                    case "making-payment":
-                        btnPaymentCaptured.Enabled = true;
-                        break;
-                }
+                MessageBox.Show("Intelogix México © 2020\n\nCurrent Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("Please select a bussines and a file");
+                MessageBox.Show("Not currently deployed.");
             }
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DeactivateButtons();
-            nameBussiness = comboBox1.SelectedItem.ToString();
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + nameBussiness + "';";
-            SqlCommand command = new SqlCommand(queryString, connection);
-            command.Connection.Open();
-            var reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                idBussiness = reader[0].ToString();
-                reader.Close();
-            }
-            command.Connection.Close();
-            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
-            nameBussiness = $"{newpath}\\{nameBussiness}\\";
-            nameBussiness = nameBussiness.Replace(@"\\", @"\");
-            DeleteRegistersFromFilesThatWasRemoved(nameBussiness);
-            queryString = "SELECT f.* FROM [t_invoices] f WHERE f.folder Like '" + nameBussiness + "%' ORDER BY f.fileName DESC;";
-            lblTitleResult.Text = (CountFiles(nameBussiness).ToString());
-            LoadTable(queryString);
         }
 
         private void btnCapture_Click(object sender, EventArgs e)
@@ -424,8 +381,8 @@ namespace Payments.Views
                     var instance = MainViewModel.GetInstance().AssingSubBussiness;
                     if (instance != null) instance.Dispose();
                     string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
-                    string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
                     string id = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString();
+                    string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
                     instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, idBussiness, id);
                     instance.Show();
                 }
@@ -466,9 +423,30 @@ namespace Payments.Views
             }
         }
 
+        private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string input = "";
+            if (String.IsNullOrEmpty(newpath)) MessageBox.Show("Please select a root path.");
+            else
+            {
+                if (ShowInputDialog(ref input) == DialogResult.OK)
+                {
+                    Directory.CreateDirectory(newpath + "\\" + input);
+                    ObtainFiles(newpath);
+                    InitializeComboboxBussines();
+                    CheckIfStatesFoldersExists();
+                    DeactivateButtons();
+                    gridControl1.DataSource = null;
+                    gridControl1.RefreshDataSource();
+                    lblSelectedFile.Text = "Select a file.";
+                    lblNameBuss.Text = "Select a business.";
+                    MessageBox.Show("Created: " + newpath + "\\" + input);
+                }
+            }
+        }
+
         private void button1_Click_1(object sender, EventArgs e)
         {
-
             try
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -479,7 +457,6 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please select a bussiness");
             }
-
         }
 
         private void button1_Click_2(object sender, EventArgs e)
@@ -525,18 +502,22 @@ namespace Payments.Views
         {
             try
             {
-                if (gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "status_name").ToString() == "incoming")
-                {
-                    var instance = MainViewModel.GetInstance().ChangeBussines;
-                    if (instance != null) instance.Dispose();
-                    string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
-                    string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                    instance = MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path, newpath);
-                    instance.Show();
-                }
+                if (String.IsNullOrEmpty(bussinessPath)) MessageBox.Show("Please select a Bussiness.");
                 else
                 {
-                    MessageBox.Show("Only new files can be moved");
+                    if (gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "status_name").ToString() == "incoming")
+                    {
+                        var instance = MainViewModel.GetInstance().ChangeBussines;
+                        if (instance != null) instance.Dispose();
+                        string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
+                        string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
+                        instance = MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path, newpath);
+                        instance.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Only new files can be moved");
+                    }
                 }
             }
             catch (Exception)
@@ -545,47 +526,79 @@ namespace Payments.Views
             }
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DeactivateButtons();
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '"+newpath+"%';";
+            SqlCommand command = new SqlCommand(queryString, connection);
+            command.Connection.Open();
+            var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                idBussiness = reader[0].ToString();
+                reader.Close();
+            }
+            command.Connection.Close();
+            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
+            lblSelectedFile.Text = "";
+            bussinessPath = $"{newpath}\\{comboBox1.SelectedItem.ToString()}\\";
+            bussinessPath = bussinessPath.Replace(@"\\", @"\");
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+            LoadTable(queryString);
+            gridView1.Columns["nameBussiness"].Visible = false;
+            DeleteRegisters(bussinessPath);
+        }
+
+        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        {
+            GridView gv = gridView1;
+            lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
+            bussinessPath = lblNameBuss.Text = ElementAt( gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString(), 3);
+            bussinessPath = $"{newpath}\\{lblNameBuss.Text}\\";
+            bussinessPath = bussinessPath.Replace(@"\\", @"\");
+
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + newpath + "%';";
+            SqlCommand command = new SqlCommand(queryString, connection);
+            command.Connection.Open();
+            var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                idBussiness = reader[0].ToString();
+                reader.Close();
+            }
+            command.Connection.Close();
+            string status = gv.GetRowCellValue(gv.FocusedRowHandle, "status_name").ToString();
+            try
+            {
+                DeactivateButtons();
+                switch (status)
+                {
+                    case "incoming":
+                        btnCapture.Enabled = true;
+                        break;
+
+                    case "waiting-auth":
+                        btnSigned.Enabled = true;
+                        break;
+
+                    case "signed":
+                        btnMakePayment.Enabled = true;
+                        break;
+
+                    case "making-payment":
+                        btnPaymentCaptured.Enabled = true;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Please select a bussines and a file");
+            }
+        }
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Hope you have a nice day!");
-        }
-
-        private void subBussinessToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var instance = MainViewModel.GetInstance().AddSubBussiness;
-            if (instance != null) instance.Dispose();
-            instance = MainViewModel.GetInstance().AddSubBussiness = new SubBussinessAdd();
-            instance.Show();
-        }
-
-        private void usersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var instance = MainViewModel.GetInstance().AddUser;
-            if (instance != null) instance.Dispose();
-            instance = MainViewModel.GetInstance().AddUser = new UserAddView();
-            instance.Show();
-        }
-
-        private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            string input = "";
-            if (String.IsNullOrEmpty(newpath)) MessageBox.Show("Please select a root path.");
-            else
-            {
-                if (ShowInputDialog(ref input) == DialogResult.OK)
-                {
-                    Directory.CreateDirectory(newpath + "\\" + input);
-                    ObtainFiles(newpath);
-                    InitializeComboboxBussines();
-                    CheckIfStatesFoldersExists();
-                    DeactivateButtons();
-                    gridControl1.DataSource = null;
-                    gridControl1.RefreshDataSource();
-                    lblSelectedFile.Text = "Select a file.";
-                    lblNameBuss.Text = "Select a business.";
-                    MessageBox.Show("Created: " + newpath + "\\" + input);
-                }
-            }
         }
 
         private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)
@@ -607,27 +620,31 @@ namespace Payments.Views
                     DeactivateButtons();
                     gridControl1.DataSource = null;
                     gridControl1.RefreshDataSource();
-                    lblSelectedFile.Text = "Select a file.";
-                    lblNameBuss.Text = "Select a business.";
-                    queryString = "SELECT f.* FROM [t_invoices] f WHERE f.folder Like '" + newpath + "%' ORDER BY f.fileName DESC;";
+                    lblSelectedFile.Text = "Select an invoice.";
+                    lblNameBuss.Text = "Select a bussiness.";
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
                     LoadTable(queryString);
+                    idBussiness = "";
                 }
                 else MessageBox.Show("This is a bussiness folder.");
             }
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void subBussinessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
-            {
-                MessageBox.Show("Intelogix México © 2020\n\nCurrent Version: " + System.Deployment.Application.ApplicationDeployment.CurrentDeployment.CurrentVersion);
-            }
-            else
-            {
-                MessageBox.Show("Not currently deployed.");
-            }
+            var instance = MainViewModel.GetInstance().AddSubBussiness;
+            if (instance != null) instance.Dispose();
+            instance = MainViewModel.GetInstance().AddSubBussiness = new SubBussinessAdd();
+            instance.Show();
         }
 
+        private void usersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var instance = MainViewModel.GetInstance().AddUser;
+            if (instance != null) instance.Dispose();
+            instance = MainViewModel.GetInstance().AddUser = new UserAddView();
+            instance.Show();
+        }
         #endregion Clicks
 
         #region Events
@@ -653,7 +670,6 @@ namespace Payments.Views
 
         private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
-            
         }
     }
 }
