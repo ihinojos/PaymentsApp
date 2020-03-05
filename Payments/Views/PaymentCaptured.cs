@@ -4,6 +4,7 @@ using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Payments.Views
@@ -132,14 +133,17 @@ namespace Payments.Views
                     string pathito = item.Folder + item.FileName;
                     if (pathito.Contains("Paying"))
                     {
-                        MessageBox.Show("has paying");
-                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(incomingFile, PdfDocumentOpenMode.Import));
+                        PdfDocument signed = NewMain.AddWaterMark(PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Modify), "Proof of payment");
+                        string tempFile = Path.Combine(Path.GetTempPath(), "pop.pdf");
+                        signed.Save(tempFile);
+                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
                         string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
                             " date_modified = GETDATE() WHERE id = '" + item.Id + "';";
                         command.CommandText = queryUpdateSigned;
                         command.ExecuteNonQuery();
                         outPdf.Save(newPathSigned);
-                        System.IO.File.Delete(pathito);
+                        File.Delete(pathito);
+                        File.Delete(tempFile);
                     }
                 }
                 catch (Exception ex)

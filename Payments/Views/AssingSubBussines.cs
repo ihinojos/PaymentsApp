@@ -1,8 +1,12 @@
 ﻿using DevExpress.XtraGrid.Views.Grid;
 using Payments.Models;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Payments.Views
@@ -88,6 +92,8 @@ namespace Payments.Views
             command.Connection.Close();
         }
 
+        
+
         #endregion Methods
 
         #region Clicks
@@ -138,7 +144,10 @@ namespace Payments.Views
                     command.Connection.Open();
                     command.ExecuteNonQuery();
                     command.Connection.Close();
-                    System.IO.File.Move(selectedFilePath, newPathForRename);
+
+                    PdfDocument file = NewMain.AddWaterMark(PdfReader.Open(selectedFilePath, PdfDocumentOpenMode.Modify), "Unsigned invoice");
+                    file.Save(newPathForRename);
+                    File.Delete(selectedFilePath);
 
                     MessageBox.Show("Invoice captured correctly");
                     MainViewModel.GetInstance().NewMain.FullRefresh();

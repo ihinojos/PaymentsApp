@@ -4,6 +4,7 @@ using PdfSharp.Pdf.IO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Payments.Views
@@ -94,11 +95,13 @@ namespace Payments.Views
                 command.ExecuteNonQuery();
                 //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
 
-                PdfDocument combined = NewMain.Combine(PdfReader.Open(pathToOldFile, PdfDocumentOpenMode.Import), PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Import));
-
+                PdfDocument signed = NewMain.AddWaterMark(PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Modify), "Signed invoice");
+                string tempFile = Path.Combine(Path.GetTempPath(), "signed.pdf");
+                signed.Save(tempFile);
+                PdfDocument combined = NewMain.Combine(PdfReader.Open(pathToOldFile, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
                 combined.Save(path);
-
-                System.IO.File.Delete(pathToOldFile);
+                File.Delete(pathToOldFile);
+                File.Delete(tempFile);
                 //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
             }

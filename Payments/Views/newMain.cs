@@ -1,11 +1,13 @@
 ﻿using DevExpress.XtraGrid.Views.Grid;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Payments.Models;
+using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -150,6 +152,15 @@ namespace Payments.Views
             gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
+        }
+
+        public static PdfDocument AddWaterMark(PdfDocument doc, string text)
+        {
+            PdfPage page = doc.Pages[0];
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont font = new XFont("Arial", 14, XFontStyle.Italic);
+            gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
+            return doc;
         }
 
         public void ObtainFiles(string path)
@@ -670,6 +681,33 @@ namespace Payments.Views
 
         private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
+            GridView View = sender as GridView;
+            if(e.RowHandle >= 0)
+            {
+                string status = View.GetRowCellDisplayText(e.RowHandle, View.Columns["status_name"]);
+                switch (status)
+                {
+                    case "incoming":
+                        e.Appearance.BackColor = Color.Blue;
+                        e.Appearance.BackColor2 = Color.AliceBlue;
+                        break;
+                    case "waiting-auth":
+                        e.Appearance.BackColor = Color.Yellow;
+                        e.Appearance.BackColor2 = Color.YellowGreen;
+                        break;
+                    case "signed":
+                        e.Appearance.BackColor = Color.Orange;
+                        e.Appearance.BackColor2 = Color.DarkOrange;
+                        break;
+                    case "making-payment":
+                        e.Appearance.BackColor = Color.Orange;
+                        break;
+                    case "payment-captured":
+                        e.Appearance.BackColor = Color.Green;
+                        e.Appearance.BackColor2 = Color.LightGreen;
+                        break;
+                }
+            }
         }
     }
 }
