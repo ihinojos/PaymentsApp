@@ -39,6 +39,15 @@ namespace Payments.Views
 
         #region Methods
 
+        public static PdfDocument AddWaterMark(PdfDocument doc, string text)
+        {
+            PdfPage page = doc.Pages[0];
+            XGraphics gfx = XGraphics.FromPdfPage(page);
+            XFont font = new XFont("Arial", 14, XFontStyle.Italic);
+            gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
+            return doc;
+        }
+
         public static PdfDocument Combine(PdfDocument doc1, PdfDocument doc2)
         {
             PdfDocument outPdf = new PdfDocument();
@@ -63,7 +72,7 @@ namespace Payments.Views
 
         public static DialogResult ShowInputDialog(ref string input)
         {
-            System.Drawing.Size size = new System.Drawing.Size(200, 70);
+            System.Drawing.Size size = new System.Drawing.Size(300, 75);
             Form inputBox = new Form
             {
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
@@ -138,25 +147,17 @@ namespace Payments.Views
             gv.Columns["folder"].Visible = false;
             gv.Columns["idSubBussiness"].Visible = false;
             gv.Columns["idBussiness"].Visible = false;
+            gv.Columns["nameBussiness"].Visible = false;
+            gv.Columns["nameSub"].Visible = false;
             gv.Columns["date_modified"].DisplayFormat.FormatType = FormatType.DateTime;
             gv.Columns["date_modified"].DisplayFormat.FormatString = "g";
             gv.Columns["amount"].DisplayFormat.FormatType = FormatType.Numeric;
             gv.Columns["amount"].DisplayFormat.FormatString = "c2";
-
+            gv.Columns["transId"].VisibleIndex = 0;
             gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
         }
-
-        public static PdfDocument AddWaterMark(PdfDocument doc, string text)
-        {
-            PdfPage page = doc.Pages[0];
-            XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Arial", 14, XFontStyle.Italic);
-            gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
-            return doc;
-        }
-
         public void ObtainFiles(string path)
         {
             string[] Bussiness = Directory.GetDirectories(path, "*.*", SearchOption.TopDirectoryOnly);
@@ -210,7 +211,6 @@ namespace Payments.Views
                 }
             }
         }
-
         private void CheckIfStatesFoldersExists()
         {
             List<string> states = new List<string>();
@@ -256,7 +256,6 @@ namespace Payments.Views
                 }
             }
         }
-
         private int CountFiles(string path)
 
         {
@@ -268,17 +267,14 @@ namespace Payments.Views
             }
             return counter;
         }
-
         private void DeactivateButtons()
         {
             btnMakePayment.Enabled = false;
             btnPaymentCaptured.Enabled = false;
             btnSigned.Enabled = false;
             btnCapture.Enabled = false;
+            btnChangeFileOfBussiness.Enabled = false;
         }
-
-
-
         private void DeleteRegisters(string path)
         {
             List<string> allFiles = new List<string>();
@@ -546,12 +542,13 @@ namespace Payments.Views
             command.Connection.Close();
             lblNameBuss.Text = comboBox1.SelectedItem.ToString();
             lblSelectedFile.Text = "";
+            subBussinessLabel.Text = "";
+            filePathLabel.Text = "";
             bussinessPath = $"{newpath}\\{comboBox1.SelectedItem.ToString()}\\";
             bussinessPath = bussinessPath.Replace(@"\\", @"\");
             queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
             lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
             LoadTable(queryString);
-            gridView1.Columns["nameBussiness"].Visible = false;
             DeleteRegisters(bussinessPath);
         }
 
@@ -560,6 +557,9 @@ namespace Payments.Views
             GridView gv = gridView1;
             lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
             bussinessPath = lblNameBuss.Text = ElementAt(gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString(), 3);
+            filePathLabel.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
+
+            subBussinessLabel.Text = String.IsNullOrEmpty(gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString()) ? "Not yet assigned" : gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
             bussinessPath = $"{newpath}\\{lblNameBuss.Text}\\";
             bussinessPath = bussinessPath.Replace(@"\\", @"\");
 
@@ -581,6 +581,7 @@ namespace Payments.Views
                 {
                     case "incoming":
                         btnCapture.Enabled = true;
+                        btnChangeFileOfBussiness.Enabled = true;
                         break;
 
                     case "waiting-auth":
@@ -644,6 +645,16 @@ namespace Payments.Views
             instance.Show();
         }
 
+        private void rootButton_Click(object sender, EventArgs e)
+        {
+            ObtainFiles(newpath);
+            CheckIfStatesFoldersExists();
+            DeactivateButtons();
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
+            lblTitleResult.Text = (CountFiles(newpath).ToString());
+            LoadTable(queryString);
+        }
+
         private void usersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var instance = MainViewModel.GetInstance().AddUser;
@@ -671,9 +682,6 @@ namespace Payments.Views
                 }
             }
         }
-
-        #endregion Events
-
         private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
             GridView View = sender as GridView;
@@ -706,16 +714,7 @@ namespace Payments.Views
             }
         }
 
-        private void rootButton_Click(object sender, EventArgs e)
-        {
-            ObtainFiles(newpath);
-            CheckIfStatesFoldersExists();
-            DeactivateButtons();
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
-            lblTitleResult.Text = (CountFiles(newpath).ToString());
-            LoadTable(queryString);
-        }
 
-       
+        #endregion Events
     }
 }
