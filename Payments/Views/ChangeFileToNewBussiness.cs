@@ -39,19 +39,11 @@ namespace Payments.Views
             }
             foreach (var item in RutasPusibles)
             {
-                if (NewMain.LastElement(item) != FileBussiness(fileDirectory))
+                if (NewMain.ElementAt(item, 1) != NewMain.ElementAt(fileDirectory, 3))
                 {
                     treeView1.Nodes.Add(item);
                 }
             }
-        }
-
-
-        public string FileBussiness(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\'  },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 3].ToString();
         }
 
         #endregion Methods
@@ -64,7 +56,7 @@ namespace Payments.Views
             {
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + NewMain.LastElement(fileDirectory);
+                path = path + "\\incoming\\" + NewMain.ElementAt(fileDirectory,1);
                 System.IO.File.Move(fileDirectory, path);
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();

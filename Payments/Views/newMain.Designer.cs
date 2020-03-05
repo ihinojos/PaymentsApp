@@ -58,6 +58,7 @@
             this.subBussinessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.businesssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
+            this.rootButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -69,9 +70,9 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(16, 158);
+            this.comboBox1.Location = new System.Drawing.Point(21, 188);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(165, 21);
+            this.comboBox1.Size = new System.Drawing.Size(158, 21);
             this.comboBox1.TabIndex = 0;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -98,10 +99,10 @@
             this.gridControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridControl1.Location = new System.Drawing.Point(191, 154);
+            this.gridControl1.Location = new System.Drawing.Point(191, 146);
             this.gridControl1.MainView = this.gridView1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(458, 364);
+            this.gridControl1.Size = new System.Drawing.Size(458, 372);
             this.gridControl1.TabIndex = 3;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
@@ -188,9 +189,9 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.lblTitleResult);
             this.groupBox1.Controls.Add(this.lblSelectedFile);
-            this.groupBox1.Location = new System.Drawing.Point(12, 41);
+            this.groupBox1.Location = new System.Drawing.Point(12, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(537, 96);
+            this.groupBox1.Size = new System.Drawing.Size(537, 113);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "General Info";
@@ -199,9 +200,9 @@
             // 
             this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Image = global::Payments.Properties.Resources.icons8_payment_history_100;
-            this.pictureBox1.Location = new System.Drawing.Point(555, 41);
+            this.pictureBox1.Location = new System.Drawing.Point(555, 27);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(94, 100);
+            this.pictureBox1.Size = new System.Drawing.Size(94, 113);
             this.pictureBox1.TabIndex = 16;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
@@ -212,7 +213,7 @@
             this.groupBox2.Controls.Add(this.btnMakePayment);
             this.groupBox2.Controls.Add(this.btnSigned);
             this.groupBox2.Controls.Add(this.btnCapture);
-            this.groupBox2.Location = new System.Drawing.Point(15, 199);
+            this.groupBox2.Location = new System.Drawing.Point(15, 215);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(170, 190);
             this.groupBox2.TabIndex = 17;
@@ -347,17 +348,28 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 140);
+            this.label3.Location = new System.Drawing.Point(18, 172);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(57, 13);
             this.label3.TabIndex = 21;
             this.label3.Text = "Bussiness:";
+            // 
+            // rootButton
+            // 
+            this.rootButton.Location = new System.Drawing.Point(21, 146);
+            this.rootButton.Name = "rootButton";
+            this.rootButton.Size = new System.Drawing.Size(158, 23);
+            this.rootButton.TabIndex = 22;
+            this.rootButton.Text = "Go back to root";
+            this.rootButton.UseVisualStyleBackColor = true;
+            this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
             // NewMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(666, 533);
+            this.Controls.Add(this.rootButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnChangeFileOfBussiness);
@@ -418,5 +430,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setRootPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button rootButton;
     }
 }

@@ -103,7 +103,7 @@ namespace Payments.Views
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
             string newFormat = formatDate + "_" + "Bill-Paid-Proof" + "_" + lblTransID.Text + ".pdf";
-            newPathSigned += "\\" + NewMain.LastElement(bussiness);
+            newPathSigned += "\\" + NewMain.ElementAt(bussiness, 1);
             pathNewState = newPathSigned;
             newPathSigned += "\\" + "payment-captured" + "\\" + newFormat;
             string query = "select * from [t_invoices] where [id] = '" + invoiceID + "';";
@@ -137,7 +137,7 @@ namespace Payments.Views
                         string tempFile = Path.Combine(Path.GetTempPath(), "pop.pdf");
                         signed.Save(tempFile);
                         PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
-                        string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathSigned) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
+                        string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.ElementAt(newPathSigned, 1) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
                             " date_modified = GETDATE() WHERE id = '" + item.Id + "';";
                         command.CommandText = queryUpdateSigned;
                         command.ExecuteNonQuery();
@@ -174,7 +174,7 @@ namespace Payments.Views
             openFileDialog1.ShowDialog();
             incomingFile = openFileDialog1.FileName;
             axAcroPDF1.src = openFileDialog1.FileName;
-            lblNameNewFile.Text = NewMain.LastElement(openFileDialog1.FileName);
+            lblNameNewFile.Text = NewMain.ElementAt(openFileDialog1.FileName, 1);
             pathToNewFile = openFileDialog1.FileName;
             //Fin Mostrar pdfs
         }

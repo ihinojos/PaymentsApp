@@ -132,7 +132,7 @@ namespace Payments.Views
                 try
                 {
                     string query = "UPDATE [t_invoices] SET " +
-                        "fileName = '" + NewMain.LastElement(newPathForRename) + "', " +
+                        "fileName = '" + NewMain.ElementAt(newPathForRename, 1) + "', " +
                         "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
                         "status_name = 'waiting-auth'," +
                         "date_modified = GETDATE()," +

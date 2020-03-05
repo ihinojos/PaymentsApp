@@ -117,7 +117,7 @@ namespace Payments.Views
                     if (cadena.Contains("Signed"))
                     {
                         string oldRouteSigned = item.Folder + item.FileName;
-                        string queryFile = "UPDATE [t_invoices] SET fileName = '" + NewMain.LastElement(newPathForRenameNew)
+                        string queryFile = "UPDATE [t_invoices] SET fileName = '" + NewMain.ElementAt(newPathForRenameNew, 1)
                             + "', status_name = 'making-payment', folder='" + MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment\\" + "'," +
                             "date_modified = GETDATE() WHERE [id] = '" + invoiceID + "';";
                         SqlCommand command = new SqlCommand(queryFile, connection);

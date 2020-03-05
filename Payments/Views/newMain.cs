@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraGrid.Views.Grid;
+﻿using DevExpress.Utils;
+using DevExpress.XtraGrid.Views.Grid;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Payments.Models;
 using PdfSharp.Drawing;
@@ -31,6 +32,7 @@ namespace Payments.Views
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
+            rootButton.Enabled = false;
         }
 
         #endregion Constructor
@@ -53,23 +55,10 @@ namespace Payments.Views
             return outPdf;
         }
 
-        public static string LastElement(string splitme)
+        public static string ElementAt(string str, int i)
         {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 1].ToString();
-        }
-
-        public static string SecondLastElement(string splitme)
-        {
-            string[] strlist = splitme.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-            return strlist[strlist.Length - 2].ToString();
-        }
-
-        public static string ElementAt(string str, int i) {
             string[] strlist = str.Split(new char[] { '\\' });
-            return strlist[strlist.Length - i].ToString();
+            return strlist[strlist.Length - i];
         }
 
         public static DialogResult ShowInputDialog(ref string input)
@@ -149,6 +138,11 @@ namespace Payments.Views
             gv.Columns["folder"].Visible = false;
             gv.Columns["idSubBussiness"].Visible = false;
             gv.Columns["idBussiness"].Visible = false;
+            gv.Columns["date_modified"].DisplayFormat.FormatType = FormatType.DateTime;
+            gv.Columns["date_modified"].DisplayFormat.FormatString = "g";
+            gv.Columns["amount"].DisplayFormat.FormatType = FormatType.Numeric;
+            gv.Columns["amount"].DisplayFormat.FormatString = "c2";
+
             gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
@@ -178,7 +172,7 @@ namespace Payments.Views
                         string url = fileName.TrimEnd('\\');
                         url = url.Remove(url.LastIndexOf('\\') + 1);
                         string status = url.TrimEnd('\\');
-                        status = LastElement(status);
+                        status = ElementAt(status, 1);
                         string[] strlist = fileName.Split(new char[] { '\\' },
                                20, StringSplitOptions.None);
                         for (int i = 0; i < strlist.Length; i++)
@@ -194,7 +188,7 @@ namespace Payments.Views
                                 if (!reader.Read())
                                 {
                                     reader.Close();
-                                    if (SecondLastElement(file) == "incoming")
+                                    if (ElementAt(file, 2) == "incoming")
                                     {
                                         command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
                                                                " VALUES( NEWID()," +
@@ -228,7 +222,7 @@ namespace Payments.Views
                 {
                     foreach (var item2 in toScanFolders)
                     {
-                        string folderToCheck = LastElement(item2);
+                        string folderToCheck = ElementAt(item2, 1);
                         states.Add(folderToCheck);
                     }
                     if (!states.Contains("incomig"))
@@ -283,7 +277,7 @@ namespace Payments.Views
             btnCapture.Enabled = false;
         }
 
-        
+
 
         private void DeleteRegisters(string path)
         {
@@ -360,7 +354,7 @@ namespace Payments.Views
         {
             List<string> states = new List<string>();
             string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
-            foreach (var dir in dirs) states.Add(LastElement(dir));
+            foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
             return !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
         }
         #endregion Methods
@@ -540,7 +534,7 @@ namespace Payments.Views
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             DeactivateButtons();
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '"+newpath+"%';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + newpath + "%';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();
@@ -565,7 +559,7 @@ namespace Payments.Views
         {
             GridView gv = gridView1;
             lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-            bussinessPath = lblNameBuss.Text = ElementAt( gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString(), 3);
+            bussinessPath = lblNameBuss.Text = ElementAt(gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString(), 3);
             bussinessPath = $"{newpath}\\{lblNameBuss.Text}\\";
             bussinessPath = bussinessPath.Replace(@"\\", @"\");
 
@@ -636,6 +630,7 @@ namespace Payments.Views
                     queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
                     LoadTable(queryString);
                     idBussiness = "";
+                    rootButton.Enabled = true;
                 }
                 else MessageBox.Show("This is a bussiness folder.");
             }
@@ -682,32 +677,45 @@ namespace Payments.Views
         private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
             GridView View = sender as GridView;
-            if(e.RowHandle >= 0)
+            if (e.RowHandle >= 0)
             {
                 string status = View.GetRowCellDisplayText(e.RowHandle, View.Columns["status_name"]);
                 switch (status)
                 {
                     case "incoming":
-                        e.Appearance.BackColor = Color.Blue;
-                        e.Appearance.BackColor2 = Color.AliceBlue;
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#b2dcef"); // Soap Bubble
+                        e.Appearance.BackColor2 = ColorTranslator.FromHtml("#87cefa "); // Transparent Blue
                         break;
                     case "waiting-auth":
-                        e.Appearance.BackColor = Color.Yellow;
-                        e.Appearance.BackColor2 = Color.YellowGreen;
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#fffe7a"); // Light Yellow
+                        e.Appearance.BackColor2 = ColorTranslator.FromHtml("#fada5f"); // Napples Yellow
                         break;
                     case "signed":
-                        e.Appearance.BackColor = Color.Orange;
-                        e.Appearance.BackColor2 = Color.DarkOrange;
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#ffcc99"); // Peach Orange
+                        e.Appearance.BackColor2 = ColorTranslator.FromHtml("#ffb07c"); // Peach
                         break;
                     case "making-payment":
-                        e.Appearance.BackColor = Color.Orange;
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#ffc0cb"); //Pink                           
+                        e.Appearance.BackColor2 = ColorTranslator.FromHtml("#f2a0a1"); //Plum Blossom
                         break;
                     case "payment-captured":
-                        e.Appearance.BackColor = Color.Green;
-                        e.Appearance.BackColor2 = Color.LightGreen;
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#c4fe82"); //Light Pea Green               
+                        e.Appearance.BackColor2 = ColorTranslator.FromHtml("#98d98e"); //Leek
                         break;
                 }
             }
         }
+
+        private void rootButton_Click(object sender, EventArgs e)
+        {
+            ObtainFiles(newpath);
+            CheckIfStatesFoldersExists();
+            DeactivateButtons();
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
+            lblTitleResult.Text = (CountFiles(newpath).ToString());
+            LoadTable(queryString);
+        }
+
+       
     }
 }

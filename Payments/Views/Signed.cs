@@ -154,7 +154,7 @@ namespace Payments.Views
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.ShowDialog();
             axAcroPDF2.src = openFileDialog1.FileName;
-            lblNameNewFile.Text = NewMain.LastElement(openFileDialog1.FileName);
+            lblNameNewFile.Text = NewMain.ElementAt(openFileDialog1.FileName, 1);
             pathToNewFile = openFileDialog1.FileName;
         }
 
