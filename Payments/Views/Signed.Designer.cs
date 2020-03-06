@@ -61,10 +61,10 @@
             // axAcroPDF1
             // 
             this.axAcroPDF1.Enabled = true;
-            this.axAcroPDF1.Location = new System.Drawing.Point(204, 36);
+            this.axAcroPDF1.Location = new System.Drawing.Point(204, 20);
             this.axAcroPDF1.Name = "axAcroPDF1";
             this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
-            this.axAcroPDF1.Size = new System.Drawing.Size(328, 409);
+            this.axAcroPDF1.Size = new System.Drawing.Size(328, 425);
             this.axAcroPDF1.TabIndex = 5;
             // 
             // treeView1
@@ -77,7 +77,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(323, 20);
+            this.label3.Location = new System.Drawing.Point(327, 4);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 7;
@@ -86,7 +86,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(672, 20);
+            this.label4.Location = new System.Drawing.Point(686, 4);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 8;
@@ -231,10 +231,10 @@
             // axAcroPDF2
             // 
             this.axAcroPDF2.Enabled = true;
-            this.axAcroPDF2.Location = new System.Drawing.Point(538, 36);
+            this.axAcroPDF2.Location = new System.Drawing.Point(538, 20);
             this.axAcroPDF2.Name = "axAcroPDF2";
             this.axAcroPDF2.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF2.OcxState")));
-            this.axAcroPDF2.Size = new System.Drawing.Size(328, 409);
+            this.axAcroPDF2.Size = new System.Drawing.Size(328, 425);
             this.axAcroPDF2.TabIndex = 25;
             // 
             // groupBox3

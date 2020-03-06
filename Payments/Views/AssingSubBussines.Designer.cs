@@ -161,18 +161,18 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(12, 108);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(204, 13);
+            this.label4.Size = new System.Drawing.Size(202, 13);
             this.label4.TabIndex = 16;
-            this.label4.Text = "Currents sub-bussiness of the file selected";
+            this.label4.Text = "Current sub-bussiness of the file selected:";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(12, 232);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.Size = new System.Drawing.Size(84, 13);
             this.label5.TabIndex = 17;
-            this.label5.Text = "Invoice Amount";
+            this.label5.Text = "Invoice Amount:";
             // 
             // textBoxAmount
             // 

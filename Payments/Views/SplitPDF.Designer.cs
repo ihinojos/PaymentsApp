@@ -41,18 +41,21 @@
             // 
             // axAcroPDF1
             // 
+            this.axAcroPDF1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.axAcroPDF1.Enabled = true;
-            this.axAcroPDF1.Location = new System.Drawing.Point(306, 13);
+            this.axAcroPDF1.Location = new System.Drawing.Point(221, 45);
             this.axAcroPDF1.Name = "axAcroPDF1";
             this.axAcroPDF1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axAcroPDF1.OcxState")));
-            this.axAcroPDF1.Size = new System.Drawing.Size(412, 495);
+            this.axAcroPDF1.Size = new System.Drawing.Size(296, 405);
             this.axAcroPDF1.TabIndex = 0;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(16, 442);
+            this.button1.Location = new System.Drawing.Point(16, 247);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(271, 64);
+            this.button1.Size = new System.Drawing.Size(191, 44);
             this.button1.TabIndex = 2;
             this.button1.Text = "Create File";
             this.button1.UseVisualStyleBackColor = true;
@@ -70,23 +73,24 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(16, 49);
+            this.comboBox1.Location = new System.Drawing.Point(16, 45);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(271, 21);
+            this.comboBox1.Size = new System.Drawing.Size(191, 21);
             this.comboBox1.TabIndex = 4;
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(16, 292);
+            this.treeView1.Location = new System.Drawing.Point(16, 151);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(271, 144);
+            this.treeView1.Size = new System.Drawing.Size(191, 81);
             this.treeView1.TabIndex = 5;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(16, 81);
+            this.button2.Location = new System.Drawing.Point(16, 72);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(271, 42);
+            this.button2.Size = new System.Drawing.Size(191, 42);
             this.button2.TabIndex = 6;
             this.button2.Text = "Add this page to new file";
             this.button2.UseVisualStyleBackColor = true;
@@ -95,17 +99,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(16, 273);
+            this.label2.Location = new System.Drawing.Point(16, 135);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(160, 13);
             this.label2.TabIndex = 7;
             this.label2.Text = "List of the pages for the new file:";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // SplitPDF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(730, 520);
+            this.ClientSize = new System.Drawing.Size(529, 462);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.treeView1);

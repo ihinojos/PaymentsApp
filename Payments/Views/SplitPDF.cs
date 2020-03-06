@@ -125,5 +125,15 @@ namespace Payments.Views
         }
 
         #endregion Events
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
