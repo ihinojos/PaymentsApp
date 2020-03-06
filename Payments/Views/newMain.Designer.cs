@@ -41,7 +41,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.lblNameBuss = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnPaymentCaptured = new System.Windows.Forms.Button();
             this.btnMakePayment = new System.Windows.Forms.Button();
@@ -63,10 +62,12 @@
             this.subBussinessLabel = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.filePathLabel = new System.Windows.Forms.Label();
+            this.lblAmuont = new System.Windows.Forms.Label();
+            this.lblDateModified = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -83,7 +84,7 @@
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(12, 64);
+            this.labelTitle.Location = new System.Drawing.Point(12, 69);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(96, 13);
             this.labelTitle.TabIndex = 1;
@@ -106,7 +107,7 @@
             this.gridControl1.Location = new System.Drawing.Point(191, 137);
             this.gridControl1.MainView = this.gridView1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(458, 370);
+            this.gridControl1.Size = new System.Drawing.Size(509, 370);
             this.gridControl1.TabIndex = 3;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
@@ -122,16 +123,15 @@
             // lblTitleResult
             // 
             this.lblTitleResult.AutoSize = true;
-            this.lblTitleResult.Location = new System.Drawing.Point(104, 64);
+            this.lblTitleResult.Location = new System.Drawing.Point(104, 69);
             this.lblTitleResult.Name = "lblTitleResult";
-            this.lblTitleResult.Size = new System.Drawing.Size(91, 13);
+            this.lblTitleResult.Size = new System.Drawing.Size(0, 13);
             this.lblTitleResult.TabIndex = 5;
-            this.lblTitleResult.Text = "Not selected path";
             // 
             // lblSelectedFileStatic
             // 
             this.lblSelectedFileStatic.AutoSize = true;
-            this.lblSelectedFileStatic.Location = new System.Drawing.Point(187, 22);
+            this.lblSelectedFileStatic.Location = new System.Drawing.Point(178, 22);
             this.lblSelectedFileStatic.Name = "lblSelectedFileStatic";
             this.lblSelectedFileStatic.Size = new System.Drawing.Size(57, 13);
             this.lblSelectedFileStatic.TabIndex = 6;
@@ -140,7 +140,7 @@
             // lblSelectedFile
             // 
             this.lblSelectedFile.AutoSize = true;
-            this.lblSelectedFile.Location = new System.Drawing.Point(243, 22);
+            this.lblSelectedFile.Location = new System.Drawing.Point(234, 22);
             this.lblSelectedFile.Name = "lblSelectedFile";
             this.lblSelectedFile.Size = new System.Drawing.Size(65, 13);
             this.lblSelectedFile.TabIndex = 7;
@@ -162,7 +162,7 @@
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(84, 32);
             this.btnReload.TabIndex = 12;
-            this.btnReload.Text = "Reload Table";
+            this.btnReload.Text = "Show on Disk";
             this.btnReload.UseVisualStyleBackColor = true;
             this.btnReload.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -188,6 +188,9 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.lblDateModified);
+            this.groupBox1.Controls.Add(this.lblAmuont);
             this.groupBox1.Controls.Add(this.filePathLabel);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.subBussinessLabel);
@@ -200,21 +203,10 @@
             this.groupBox1.Controls.Add(this.lblSelectedFile);
             this.groupBox1.Location = new System.Drawing.Point(12, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(537, 97);
+            this.groupBox1.Size = new System.Drawing.Size(688, 97);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Invoice Information";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Image = global::Payments.Properties.Resources.icons8_payment_history_100;
-            this.pictureBox1.Location = new System.Drawing.Point(555, 27);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(94, 97);
-            this.pictureBox1.TabIndex = 16;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // groupBox2
             // 
@@ -297,7 +289,7 @@
             this.createToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(666, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(717, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -313,14 +305,14 @@
             // setRootPathToolStripMenuItem
             // 
             this.setRootPathToolStripMenuItem.Name = "setRootPathToolStripMenuItem";
-            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setRootPathToolStripMenuItem.Text = "Set root path";
             this.setRootPathToolStripMenuItem.Click += new System.EventHandler(this.setRootPathToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -337,21 +329,21 @@
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.usersToolStripMenuItem.Text = "Users";
             this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
             // 
             // subBussinessToolStripMenuItem
             // 
             this.subBussinessToolStripMenuItem.Name = "subBussinessToolStripMenuItem";
-            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subBussinessToolStripMenuItem.Text = "Sub-Bussiness";
             this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.subBussinessToolStripMenuItem_Click);
             // 
             // businesssToolStripMenuItem
             // 
             this.businesssToolStripMenuItem.Name = "businesssToolStripMenuItem";
-            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.businesssToolStripMenuItem.Text = "Business";
             this.businesssToolStripMenuItem.Click += new System.EventHandler(this.businesssToolStripMenuItem_Click);
             // 
@@ -377,7 +369,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 43);
+            this.label4.Location = new System.Drawing.Point(12, 45);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 13);
             this.label4.TabIndex = 15;
@@ -386,16 +378,16 @@
             // subBussinessLabel
             // 
             this.subBussinessLabel.AutoSize = true;
-            this.subBussinessLabel.Location = new System.Drawing.Point(86, 43);
+            this.subBussinessLabel.Location = new System.Drawing.Point(86, 45);
             this.subBussinessLabel.Name = "subBussinessLabel";
-            this.subBussinessLabel.Size = new System.Drawing.Size(69, 13);
+            this.subBussinessLabel.Size = new System.Drawing.Size(72, 13);
             this.subBussinessLabel.TabIndex = 16;
-            this.subBussinessLabel.Text = "Not assigned";
+            this.subBussinessLabel.Text = "Not assigned.";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(187, 43);
+            this.label5.Location = new System.Drawing.Point(178, 45);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 13);
             this.label5.TabIndex = 17;
@@ -404,22 +396,49 @@
             // filePathLabel
             // 
             this.filePathLabel.AutoSize = true;
-            this.filePathLabel.Location = new System.Drawing.Point(236, 43);
+            this.filePathLabel.Location = new System.Drawing.Point(227, 45);
             this.filePathLabel.Name = "filePathLabel";
             this.filePathLabel.Size = new System.Drawing.Size(65, 13);
             this.filePathLabel.TabIndex = 18;
             this.filePathLabel.Text = "Select a file.";
             // 
+            // lblAmuont
+            // 
+            this.lblAmuont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblAmuont.AutoSize = true;
+            this.lblAmuont.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F);
+            this.lblAmuont.Location = new System.Drawing.Point(477, 53);
+            this.lblAmuont.Name = "lblAmuont";
+            this.lblAmuont.Size = new System.Drawing.Size(32, 36);
+            this.lblAmuont.TabIndex = 19;
+            this.lblAmuont.Text = "$";
+            // 
+            // lblDateModified
+            // 
+            this.lblDateModified.AutoSize = true;
+            this.lblDateModified.Location = new System.Drawing.Point(253, 69);
+            this.lblDateModified.Name = "lblDateModified";
+            this.lblDateModified.Size = new System.Drawing.Size(0, 13);
+            this.lblDateModified.TabIndex = 20;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(178, 69);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(75, 13);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "Date modified:";
+            // 
             // NewMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(666, 519);
+            this.ClientSize = new System.Drawing.Size(717, 519);
             this.Controls.Add(this.rootButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnReload);
             this.Controls.Add(this.btnViewPDF);
@@ -434,7 +453,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -458,7 +476,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblNameBuss;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnPaymentCaptured;
         private System.Windows.Forms.Button btnMakePayment;
@@ -480,5 +497,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label subBussinessLabel;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblDateModified;
+        private System.Windows.Forms.Label lblAmuont;
+        private System.Windows.Forms.Label label6;
     }
 }

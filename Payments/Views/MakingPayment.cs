@@ -32,6 +32,7 @@ namespace Payments.Views
             LoadTree();
             lookUpEdit1.Visible = false;
             treeView1.Visible = true;
+            lblFile.Text = invoices[0].FileName;
         }
 
         #endregion Constructor
@@ -47,7 +48,7 @@ namespace Payments.Views
             using (var reader = command.ExecuteReader())
             {
                 var list = new List<T_Invoices>();
-                while (reader.Read())
+                if (reader.Read())
                     list.Add(new T_Invoices
                     {
                         Id = reader[0].ToString(),
@@ -167,7 +168,6 @@ namespace Payments.Views
             {
                 var id = treeView1.SelectedNode.Text;
                 lblSelected.Text = id.ToString();
-                lblFile.Text = "No file selected";
             }
             else
             {

@@ -1,4 +1,6 @@
-﻿using DevExpress.XtraGrid.Views.Grid;
+﻿using DevExpress.Utils;
+using DevExpress.Utils.Filtering.Internal;
+using DevExpress.XtraGrid.Views.Grid;
 using Payments.Models;
 using System;
 using System.Data;
@@ -12,6 +14,7 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
+        private string filePath;
 
         #endregion Attributes
 
@@ -21,7 +24,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured';";
+            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured' AND folder LIKE '" + MainViewModel.GetInstance().NewMain.newpath + "%';";
             LoadTable(query2);
         }
 
@@ -43,10 +46,23 @@ namespace Payments.Views
             GridView gv = gridView1;
             gridControl1.DataSource = null;
             gridControl1.DataSource = FullDT;
-            gridView1.PopulateColumns();
-            gridView1.RowCellClick += gridView1_RowCellClick;
+            gv.PopulateColumns();
+            gv.Columns["id"].Visible = false;
+            gv.Columns["transId"].VisibleIndex = 0;
+            gv.Columns["folder"].Visible = false;
+            gv.Columns["fileName"].Visible = false;
+            gv.Columns["status_name"].Visible = false;
+            gv.Columns["idSubBussiness"].Visible = false;
+            gv.Columns["date_modified"].DisplayFormat.FormatType = FormatType.DateTime;
+            gv.Columns["date_modified"].DisplayFormat.FormatString = "g";
+            gv.Columns["amount"].DisplayFormat.FormatType = FormatType.Numeric;
+            gv.Columns["amount"].DisplayFormat.FormatString = "c2";
+            gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
+
+
+
         }
 
         #endregion Methods
@@ -57,35 +73,30 @@ namespace Payments.Views
         {
             treeView1.Nodes.Clear();
             GridView gv = gridView1;
-
-            string id = gv.GetRowCellValue(gv.FocusedRowHandle, "id").ToString();
             lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
-
-            string query3 = "Select * from [t_invoices] where id = '" + id + "';";
-            SqlCommand command = new SqlCommand(query3, connection);
-            command.Connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                treeView1.Nodes.Add(reader[2].ToString() + reader[1].ToString());
-            }
-            reader.Close();
-            command.Connection.Close();
+            filePath = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString() + gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
+            treeView1.Nodes.Add(filePath);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(treeView1.SelectedNode.Text);
+                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(filePath);
                 instance.Show();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message + "\nPlease select a transaction.");
             }
         }
 
         #endregion Clicks
+
+        private void showOnDiskButton_Click(object sender, EventArgs e)
+        {
+            string argument = "/select, \"" + filePath + "\"";
+            System.Diagnostics.Process.Start("explorer.exe", argument);
+        }
     }
 }

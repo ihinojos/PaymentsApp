@@ -450,18 +450,24 @@ namespace Payments.Views
         {
             try
             {
-                Cursor.Current = Cursors.WaitCursor;
-                FullRefresh();
-                Cursor.Current = Cursors.Default;
+                string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
+                string filePath = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
+                string argument = "/select, \"" + filePath + "\"";
+                System.Diagnostics.Process.Start("explorer.exe", argument);
             }
-            catch (Exception)
+            catch
             {
-                MessageBox.Show("Please select a bussiness");
+                MessageBox.Show("Please select an invoice.");
             }
         }
 
         private void button1_Click_2(object sender, EventArgs e)
         {
+            if (String.IsNullOrEmpty(newpath))
+            {
+                MessageBox.Show("Please select a root path.");
+                return;
+            }
             var instance = MainViewModel.GetInstance().FinishedTransaction;
             if (instance != null) instance.Dispose();
             instance = MainViewModel.GetInstance().FinishedTransaction = new FinishedTransactions();
@@ -562,6 +568,12 @@ namespace Payments.Views
             subBussinessLabel.Text = String.IsNullOrEmpty(gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString()) ? "Not yet assigned" : gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
             bussinessPath = $"{newpath}\\{lblNameBuss.Text}\\";
             bussinessPath = bussinessPath.Replace(@"\\", @"\");
+
+            decimal amount = Decimal.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "amount").ToString());
+            string txtAmnt = String.Format("{0:C}", amount);
+            lblAmuont.Text = txtAmnt;
+            var date1 = DateTime.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "date_modified").ToString());
+            lblDateModified.Text = date1.ToString("F");
 
             string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + newpath + "%';";
             SqlCommand command = new SqlCommand(queryString, connection);

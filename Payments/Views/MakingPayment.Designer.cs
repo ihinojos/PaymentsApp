@@ -45,15 +45,18 @@
             // 
             // treeView1
             // 
-            this.treeView1.Location = new System.Drawing.Point(18, 93);
+            this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.treeView1.Location = new System.Drawing.Point(18, 102);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(336, 76);
+            this.treeView1.Size = new System.Drawing.Size(263, 67);
             this.treeView1.TabIndex = 0;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(360, 102);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(287, 102);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(92, 67);
             this.button1.TabIndex = 1;
@@ -72,9 +75,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(360, 12);
+            this.groupBox1.Location = new System.Drawing.Point(287, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(92, 84);
             this.groupBox1.TabIndex = 4;
@@ -127,7 +131,7 @@
             // lblSelected
             // 
             this.lblSelected.AutoSize = true;
-            this.lblSelected.Location = new System.Drawing.Point(174, 9);
+            this.lblSelected.Location = new System.Drawing.Point(135, 9);
             this.lblSelected.Name = "lblSelected";
             this.lblSelected.Size = new System.Drawing.Size(0, 13);
             this.lblSelected.TabIndex = 7;
@@ -144,7 +148,7 @@
             // lblFile
             // 
             this.lblFile.AutoSize = true;
-            this.lblFile.Location = new System.Drawing.Point(174, 40);
+            this.lblFile.Location = new System.Drawing.Point(100, 40);
             this.lblFile.Name = "lblFile";
             this.lblFile.Size = new System.Drawing.Size(0, 13);
             this.lblFile.TabIndex = 9;
@@ -153,7 +157,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(455, 180);
+            this.ClientSize = new System.Drawing.Size(391, 180);
             this.Controls.Add(this.lblFile);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lblSelected);

@@ -89,13 +89,16 @@
             this.passTextBox.PasswordChar = '*';
             this.passTextBox.Size = new System.Drawing.Size(100, 20);
             this.passTextBox.TabIndex = 5;
+            this.passTextBox.UseSystemPasswordChar = true;
             // 
             // passConfirm
             // 
             this.passConfirm.Location = new System.Drawing.Point(109, 56);
             this.passConfirm.Name = "passConfirm";
+            this.passConfirm.PasswordChar = '*';
             this.passConfirm.Size = new System.Drawing.Size(100, 20);
             this.passConfirm.TabIndex = 6;
+            this.passConfirm.UseSystemPasswordChar = true;
             // 
             // typeBox
             // 
