@@ -2,7 +2,6 @@
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Windows.Forms;
@@ -43,8 +42,6 @@ namespace Payments.Views
             axAcroPDF2.src = pathToNewFile;
         }
 
-
-
         private void ObtainSubBussinesRelationated()
         {
             treeView1.Nodes.Clear();
@@ -77,7 +74,7 @@ namespace Payments.Views
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
             string newFormat = formatDate + "_" + "Bill-Signed" + "_" + lblTransID.Text + ".pdf";
-            string path = MainViewModel.GetInstance().NewMain.newpath;
+            string path = MainViewModel.GetInstance().NewMain.rootPath;
             path += "\\" + lblBussiness.Text;
             path += "\\" + "Signed" + "\\" + newFormat;
 
@@ -109,11 +106,9 @@ namespace Payments.Views
             {
                 MessageBox.Show("Please check if the file already exists o... " + ex);
             }
-            MainViewModel.GetInstance().NewMain.FullRefresh();
+            MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
             this.Close();
         }
-
-
 
         private void SearchInvoice(string invoiceID)
         {
@@ -142,7 +137,6 @@ namespace Payments.Views
             reader.Close();
             command.Connection.Close();
             ObtainSubBussinesRelationated();
-
         }
 
         #endregion Methods

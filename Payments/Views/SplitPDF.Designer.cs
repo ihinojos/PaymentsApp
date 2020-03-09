@@ -84,7 +84,6 @@
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(191, 81);
             this.treeView1.TabIndex = 5;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
             // button2
             // 
@@ -104,7 +103,6 @@
             this.label2.Size = new System.Drawing.Size(160, 13);
             this.label2.TabIndex = 7;
             this.label2.Text = "List of the pages for the new file:";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // SplitPDF
             // 

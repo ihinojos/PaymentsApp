@@ -28,7 +28,6 @@ namespace Payments.Views
             axAcroPDF1.src = pathToPutPDF;
             pathToPlaceFiles = pathToPutPDF;
             FillComboBox();
-            this.FormClosed += new FormClosedEventHandler(WhenClosed);
         }
 
         #endregion Constructor
@@ -37,17 +36,11 @@ namespace Payments.Views
 
         private void Split(List<int> pages)
         {
-            // Open the output document
             PdfDocument outputDocument = new PdfDocument
             {
-                //PdfDocument outputDocument2 = new PdfDocument();
-
-                // Show consecutive pages facing. Requires Acrobat 5 or higher.
                 PageLayout = PdfPageLayout.OneColumn
             };
-            //outputDocument2.PageLayout = PdfPageLayout.OneColumn;
 
-            // Open the document to import pages from it.
             PdfDocument inputDocument = PdfReader.Open(pathToPlaceFiles, PdfDocumentOpenMode.Import);
             try
             {
@@ -75,7 +68,6 @@ namespace Payments.Views
                     break;
             }
             Dispose();
-
         }
 
         private void FillComboBox()
@@ -116,24 +108,5 @@ namespace Payments.Views
         }
 
         #endregion Clicks
-
-        #region Events
-
-        private void WhenClosed(object sender, FormClosedEventArgs e)
-        {
-            this.axAcroPDF1.Dispose();
-        }
-
-        #endregion Events
-
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -41,12 +41,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.lblNameBuss = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.lblDateModified = new System.Windows.Forms.Label();
+            this.lblAmuont = new System.Windows.Forms.Label();
+            this.filePathLabel = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.subBussinessLabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnPaymentCaptured = new System.Windows.Forms.Button();
             this.btnMakePayment = new System.Windows.Forms.Button();
             this.btnSigned = new System.Windows.Forms.Button();
-            this.btnCapture = new System.Windows.Forms.Button();
             this.btnChangeFileOfBussiness = new System.Windows.Forms.Button();
+            this.btnCapture = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,13 +66,6 @@
             this.businesssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label3 = new System.Windows.Forms.Label();
             this.rootButton = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.subBussinessLabel = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.filePathLabel = new System.Windows.Forms.Label();
-            this.lblAmuont = new System.Windows.Forms.Label();
-            this.lblDateModified = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -107,7 +108,7 @@
             this.gridControl1.Location = new System.Drawing.Point(191, 137);
             this.gridControl1.MainView = this.gridView1;
             this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(509, 370);
+            this.gridControl1.Size = new System.Drawing.Size(571, 372);
             this.gridControl1.TabIndex = 3;
             this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridView1});
@@ -118,7 +119,10 @@
             this.gridView1.Name = "gridView1";
             this.gridView1.OptionsBehavior.Editable = false;
             this.gridView1.OptionsView.ShowGroupPanel = false;
+            this.gridView1.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.gridView1_RowCellClick);
+            this.gridView1.RowCellStyle += new DevExpress.XtraGrid.Views.Grid.RowCellStyleEventHandler(this.gridView1_RowCellStyle);
             this.gridView1.RowStyle += new DevExpress.XtraGrid.Views.Grid.RowStyleEventHandler(this.gridView1_RowStyle);
+            this.gridView1.DoubleClick += new System.EventHandler(this.gridView1_DoubleClick);
             // 
             // lblTitleResult
             // 
@@ -188,6 +192,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.lblDateModified);
             this.groupBox1.Controls.Add(this.lblAmuont);
@@ -203,10 +208,85 @@
             this.groupBox1.Controls.Add(this.lblSelectedFile);
             this.groupBox1.Location = new System.Drawing.Point(12, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(688, 97);
+            this.groupBox1.Size = new System.Drawing.Size(750, 97);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Invoice Information";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(660, 81);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(81, 13);
+            this.label7.TabIndex = 22;
+            this.label7.Text = "Invoice Amount";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(178, 69);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(75, 13);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "Date modified:";
+            // 
+            // lblDateModified
+            // 
+            this.lblDateModified.AutoSize = true;
+            this.lblDateModified.Location = new System.Drawing.Point(253, 69);
+            this.lblDateModified.Name = "lblDateModified";
+            this.lblDateModified.Size = new System.Drawing.Size(0, 13);
+            this.lblDateModified.TabIndex = 20;
+            // 
+            // lblAmuont
+            // 
+            this.lblAmuont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblAmuont.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F);
+            this.lblAmuont.Location = new System.Drawing.Point(516, 42);
+            this.lblAmuont.Name = "lblAmuont";
+            this.lblAmuont.Size = new System.Drawing.Size(228, 39);
+            this.lblAmuont.TabIndex = 19;
+            this.lblAmuont.Text = "$";
+            this.lblAmuont.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            // 
+            // filePathLabel
+            // 
+            this.filePathLabel.AutoSize = true;
+            this.filePathLabel.Location = new System.Drawing.Point(227, 45);
+            this.filePathLabel.Name = "filePathLabel";
+            this.filePathLabel.Size = new System.Drawing.Size(65, 13);
+            this.filePathLabel.TabIndex = 18;
+            this.filePathLabel.Text = "Select a file.";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(178, 45);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(50, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "File path:";
+            // 
+            // subBussinessLabel
+            // 
+            this.subBussinessLabel.AutoSize = true;
+            this.subBussinessLabel.Location = new System.Drawing.Point(86, 45);
+            this.subBussinessLabel.Name = "subBussinessLabel";
+            this.subBussinessLabel.Size = new System.Drawing.Size(72, 13);
+            this.subBussinessLabel.TabIndex = 16;
+            this.subBussinessLabel.Text = "Not assigned.";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 45);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(79, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Sub Bussiness:";
             // 
             // groupBox2
             // 
@@ -252,16 +332,6 @@
             this.btnSigned.UseVisualStyleBackColor = true;
             this.btnSigned.Click += new System.EventHandler(this.btnSigned_Click_1);
             // 
-            // btnCapture
-            // 
-            this.btnCapture.Location = new System.Drawing.Point(6, 26);
-            this.btnCapture.Name = "btnCapture";
-            this.btnCapture.Size = new System.Drawing.Size(158, 32);
-            this.btnCapture.TabIndex = 12;
-            this.btnCapture.Text = "Capture invoice";
-            this.btnCapture.UseVisualStyleBackColor = true;
-            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
-            // 
             // btnChangeFileOfBussiness
             // 
             this.btnChangeFileOfBussiness.Location = new System.Drawing.Point(6, 178);
@@ -271,6 +341,16 @@
             this.btnChangeFileOfBussiness.Text = "Change file of bussiness";
             this.btnChangeFileOfBussiness.UseVisualStyleBackColor = true;
             this.btnChangeFileOfBussiness.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // btnCapture
+            // 
+            this.btnCapture.Location = new System.Drawing.Point(6, 26);
+            this.btnCapture.Name = "btnCapture";
+            this.btnCapture.Size = new System.Drawing.Size(158, 32);
+            this.btnCapture.TabIndex = 12;
+            this.btnCapture.Text = "Capture invoice";
+            this.btnCapture.UseVisualStyleBackColor = true;
+            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
             // 
             // button1
             // 
@@ -289,7 +369,7 @@
             this.createToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(717, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(779, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -305,14 +385,14 @@
             // setRootPathToolStripMenuItem
             // 
             this.setRootPathToolStripMenuItem.Name = "setRootPathToolStripMenuItem";
-            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.setRootPathToolStripMenuItem.Text = "Set root path";
             this.setRootPathToolStripMenuItem.Click += new System.EventHandler(this.setRootPathToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -329,21 +409,21 @@
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.usersToolStripMenuItem.Text = "Users";
             this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
             // 
             // subBussinessToolStripMenuItem
             // 
             this.subBussinessToolStripMenuItem.Name = "subBussinessToolStripMenuItem";
-            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.subBussinessToolStripMenuItem.Text = "Sub-Bussiness";
             this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.subBussinessToolStripMenuItem_Click);
             // 
             // businesssToolStripMenuItem
             // 
             this.businesssToolStripMenuItem.Name = "businesssToolStripMenuItem";
-            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.businesssToolStripMenuItem.Text = "Business";
             this.businesssToolStripMenuItem.Click += new System.EventHandler(this.businesssToolStripMenuItem_Click);
             // 
@@ -366,75 +446,11 @@
             this.rootButton.UseVisualStyleBackColor = true;
             this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 45);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(79, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Sub Bussiness:";
-            // 
-            // subBussinessLabel
-            // 
-            this.subBussinessLabel.AutoSize = true;
-            this.subBussinessLabel.Location = new System.Drawing.Point(86, 45);
-            this.subBussinessLabel.Name = "subBussinessLabel";
-            this.subBussinessLabel.Size = new System.Drawing.Size(72, 13);
-            this.subBussinessLabel.TabIndex = 16;
-            this.subBussinessLabel.Text = "Not assigned.";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(178, 45);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(50, 13);
-            this.label5.TabIndex = 17;
-            this.label5.Text = "File path:";
-            // 
-            // filePathLabel
-            // 
-            this.filePathLabel.AutoSize = true;
-            this.filePathLabel.Location = new System.Drawing.Point(227, 45);
-            this.filePathLabel.Name = "filePathLabel";
-            this.filePathLabel.Size = new System.Drawing.Size(65, 13);
-            this.filePathLabel.TabIndex = 18;
-            this.filePathLabel.Text = "Select a file.";
-            // 
-            // lblAmuont
-            // 
-            this.lblAmuont.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblAmuont.AutoSize = true;
-            this.lblAmuont.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F);
-            this.lblAmuont.Location = new System.Drawing.Point(477, 53);
-            this.lblAmuont.Name = "lblAmuont";
-            this.lblAmuont.Size = new System.Drawing.Size(32, 36);
-            this.lblAmuont.TabIndex = 19;
-            this.lblAmuont.Text = "$";
-            // 
-            // lblDateModified
-            // 
-            this.lblDateModified.AutoSize = true;
-            this.lblDateModified.Location = new System.Drawing.Point(253, 69);
-            this.lblDateModified.Name = "lblDateModified";
-            this.lblDateModified.Size = new System.Drawing.Size(0, 13);
-            this.lblDateModified.TabIndex = 20;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(178, 69);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(75, 13);
-            this.label6.TabIndex = 21;
-            this.label6.Text = "Date modified:";
-            // 
             // NewMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 519);
+            this.ClientSize = new System.Drawing.Size(779, 521);
             this.Controls.Add(this.rootButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
@@ -500,5 +516,6 @@
         private System.Windows.Forms.Label lblDateModified;
         private System.Windows.Forms.Label lblAmuont;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }

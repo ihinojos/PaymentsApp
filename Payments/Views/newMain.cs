@@ -19,10 +19,13 @@ namespace Payments.Views
         #region Attributes
 
         public string bussinessPath;
-        public string newpath = "";
+        public string rootPath = "";
         public string queryString;
         private readonly SqlConnection connection;
         private string idBussiness;
+        public bool isRoot;
+        public string transId;
+
         #endregion Attributes
 
         #region Constructor
@@ -43,7 +46,7 @@ namespace Payments.Views
         {
             PdfPage page = doc.Pages[0];
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Arial", 14, XFontStyle.Italic);
+            XFont font = new XFont("Helvetica", 14, XFontStyle.Italic);
             gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
             return doc;
         }
@@ -118,13 +121,25 @@ namespace Payments.Views
             return result;
         }
 
-        public void FullRefresh()
+        public void FullRefresh(bool opc)
         {
-            ObtainFiles(newpath);
+            ObtainFiles(rootPath);
             CheckIfStatesFoldersExists();
             DeactivateButtons();
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
-            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+            switch (opc)
+            {
+                case true:
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
+                    DeleteRegisters(bussinessPath);
+                    break;
+
+                case false:
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+                    lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+                    break;
+
+                default: return;
+            }
             DeleteRegisters(bussinessPath);
             LoadTable(queryString);
         }
@@ -154,10 +169,11 @@ namespace Payments.Views
             gv.Columns["amount"].DisplayFormat.FormatType = FormatType.Numeric;
             gv.Columns["amount"].DisplayFormat.FormatString = "c2";
             gv.Columns["transId"].VisibleIndex = 0;
-            gv.RowCellClick += gridView1_RowCellClick;
+            gv.BestFitColumns(true);
             gridControl1.Update();
             gridControl1.Refresh();
         }
+
         public void ObtainFiles(string path)
         {
             string[] Bussiness = Directory.GetDirectories(path, "*.*", SearchOption.TopDirectoryOnly);
@@ -211,10 +227,11 @@ namespace Payments.Views
                 }
             }
         }
+
         private void CheckIfStatesFoldersExists()
         {
             List<string> states = new List<string>();
-            string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
+            string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] toScanFolders = Directory.GetDirectories(dir.ToString(), "*", SearchOption.TopDirectoryOnly);
@@ -256,6 +273,7 @@ namespace Payments.Views
                 }
             }
         }
+
         private int CountFiles(string path)
 
         {
@@ -267,6 +285,7 @@ namespace Payments.Views
             }
             return counter;
         }
+
         private void DeactivateButtons()
         {
             btnMakePayment.Enabled = false;
@@ -275,6 +294,7 @@ namespace Payments.Views
             btnCapture.Enabled = false;
             btnChangeFileOfBussiness.Enabled = false;
         }
+
         private void DeleteRegisters(string path)
         {
             List<string> allFiles = new List<string>();
@@ -305,7 +325,6 @@ namespace Payments.Views
             {
                 if (!allFiles.Contains(record[i]))
                 {
-                    Console.WriteLine("Deleted: " + record[i]);
                     string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
                     SqlCommand commandDelete = new SqlCommand(querydelete, connection);
                     lock (commandDelete)
@@ -316,17 +335,17 @@ namespace Payments.Views
                     }
                 }
             }
-
         }
+
         private void InitializeComboboxBussines()
         {
             comboBox1.Items.Clear();
-            string[] dirs = Directory.GetDirectories(newpath, "*", SearchOption.TopDirectoryOnly);
+            string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
                 string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '"
-                    + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + newpath + "';";
+                    + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + rootPath + "';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -334,7 +353,7 @@ namespace Payments.Views
                 {
                     reader.Close();
                     string queryString2 = "INSERT INTO [t_bussiness]([id],[nameBussiness], [pathBussiness])" +
-                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + newpath + "')";
+                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + rootPath + "')";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
                 }
@@ -346,6 +365,7 @@ namespace Payments.Views
                 command.Connection.Close();
             }
         }
+
         private bool IsThisRoot(string path)
         {
             List<string> states = new List<string>();
@@ -353,6 +373,7 @@ namespace Payments.Views
             foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
             return !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
         }
+
         #endregion Methods
 
         #region Clicks
@@ -427,13 +448,13 @@ namespace Payments.Views
         private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string input = "";
-            if (String.IsNullOrEmpty(newpath)) MessageBox.Show("Please select a root path.");
+            if (String.IsNullOrEmpty(rootPath)) MessageBox.Show("Please select a root path.");
             else
             {
                 if (ShowInputDialog(ref input) == DialogResult.OK)
                 {
-                    Directory.CreateDirectory(newpath + "\\" + input);
-                    ObtainFiles(newpath);
+                    Directory.CreateDirectory(rootPath + "\\" + input);
+                    ObtainFiles(rootPath);
                     InitializeComboboxBussines();
                     CheckIfStatesFoldersExists();
                     DeactivateButtons();
@@ -441,7 +462,7 @@ namespace Payments.Views
                     gridControl1.RefreshDataSource();
                     lblSelectedFile.Text = "Select a file.";
                     lblNameBuss.Text = "Select a business.";
-                    MessageBox.Show("Created: " + newpath + "\\" + input);
+                    MessageBox.Show("Created: " + rootPath + "\\" + input);
                 }
             }
         }
@@ -463,7 +484,7 @@ namespace Payments.Views
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(newpath))
+            if (String.IsNullOrEmpty(rootPath))
             {
                 MessageBox.Show("Please select a root path.");
                 return;
@@ -518,7 +539,7 @@ namespace Payments.Views
                         if (instance != null) instance.Dispose();
                         string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                         string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                        instance = MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path, newpath);
+                        instance = MainViewModel.GetInstance().ChangeBussines = new ChangeFileToNewBussiness(path, rootPath);
                         instance.Show();
                     }
                     else
@@ -533,49 +554,25 @@ namespace Payments.Views
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DeactivateButtons();
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + newpath + "%';";
-            SqlCommand command = new SqlCommand(queryString, connection);
-            command.Connection.Open();
-            var reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                idBussiness = reader[0].ToString();
-                reader.Close();
-            }
-            command.Connection.Close();
-            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
-            lblSelectedFile.Text = "";
-            subBussinessLabel.Text = "";
-            filePathLabel.Text = "";
-            bussinessPath = $"{newpath}\\{comboBox1.SelectedItem.ToString()}\\";
-            bussinessPath = bussinessPath.Replace(@"\\", @"\");
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
-            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
-            LoadTable(queryString);
-            DeleteRegisters(bussinessPath);
-        }
-
         private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
             GridView gv = gridView1;
             lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
             bussinessPath = lblNameBuss.Text = ElementAt(gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString(), 3);
             filePathLabel.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString();
+            transId = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
 
             subBussinessLabel.Text = String.IsNullOrEmpty(gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString()) ? "Not yet assigned" : gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
-            bussinessPath = $"{newpath}\\{lblNameBuss.Text}\\";
+            bussinessPath = $"{rootPath}\\{lblNameBuss.Text}\\";
             bussinessPath = bussinessPath.Replace(@"\\", @"\");
 
-            decimal amount = Decimal.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "amount").ToString());
+            decimal amount = String.IsNullOrEmpty(gv.GetRowCellValue(gv.FocusedRowHandle, "amount").ToString()) ? 0 : Decimal.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "amount").ToString());
             string txtAmnt = String.Format("{0:C}", amount);
             lblAmuont.Text = txtAmnt;
             var date1 = DateTime.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "date_modified").ToString());
             lblDateModified.Text = date1.ToString("F");
 
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + newpath + "%';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + rootPath + "%';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();
@@ -614,6 +611,7 @@ namespace Payments.Views
                 MessageBox.Show("Please select a bussines and a file");
             }
         }
+
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Hope you have a nice day!");
@@ -628,11 +626,12 @@ namespace Payments.Views
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                newpath = dialog.FileName;
-                if (IsThisRoot(newpath))
+                rootPath = dialog.FileName;
+                if (IsThisRoot(rootPath))
                 {
-                    lblTitleResult.Text = (CountFiles(newpath).ToString());
-                    ObtainFiles(newpath);
+                    isRoot = true;
+                    lblTitleResult.Text = (CountFiles(rootPath).ToString());
+                    ObtainFiles(rootPath);
                     InitializeComboboxBussines();
                     CheckIfStatesFoldersExists();
                     DeactivateButtons();
@@ -640,7 +639,7 @@ namespace Payments.Views
                     gridControl1.RefreshDataSource();
                     lblSelectedFile.Text = "Select an invoice.";
                     lblNameBuss.Text = "Select a bussiness.";
-                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
                     LoadTable(queryString);
                     idBussiness = "";
                     rootButton.Enabled = true;
@@ -659,11 +658,12 @@ namespace Payments.Views
 
         private void rootButton_Click(object sender, EventArgs e)
         {
-            ObtainFiles(newpath);
+            isRoot = true;
+            ObtainFiles(rootPath);
             CheckIfStatesFoldersExists();
             DeactivateButtons();
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + newpath + "';";
-            lblTitleResult.Text = (CountFiles(newpath).ToString());
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
+            lblTitleResult.Text = (CountFiles(rootPath).ToString());
             LoadTable(queryString);
         }
 
@@ -674,6 +674,7 @@ namespace Payments.Views
             instance = MainViewModel.GetInstance().AddUser = new UserAddView();
             instance.Show();
         }
+
         #endregion Clicks
 
         #region Events
@@ -694,6 +695,7 @@ namespace Payments.Views
                 }
             }
         }
+
         private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
             GridView View = sender as GridView;
@@ -706,26 +708,67 @@ namespace Payments.Views
                         e.Appearance.BackColor = ColorTranslator.FromHtml("#b2dcef"); // Soap Bubble
                         e.Appearance.BackColor2 = ColorTranslator.FromHtml("#87cefa "); // Transparent Blue
                         break;
+
                     case "waiting-auth":
                         e.Appearance.BackColor = ColorTranslator.FromHtml("#fffe7a"); // Light Yellow
                         e.Appearance.BackColor2 = ColorTranslator.FromHtml("#fada5f"); // Napples Yellow
                         break;
+
                     case "signed":
                         e.Appearance.BackColor = ColorTranslator.FromHtml("#ffcc99"); // Peach Orange
                         e.Appearance.BackColor2 = ColorTranslator.FromHtml("#ffb07c"); // Peach
                         break;
+
                     case "making-payment":
-                        e.Appearance.BackColor = ColorTranslator.FromHtml("#ffc0cb"); //Pink                           
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#ffc0cb"); //Pink
                         e.Appearance.BackColor2 = ColorTranslator.FromHtml("#f2a0a1"); //Plum Blossom
                         break;
+
                     case "payment-captured":
-                        e.Appearance.BackColor = ColorTranslator.FromHtml("#c4fe82"); //Light Pea Green               
+                        e.Appearance.BackColor = ColorTranslator.FromHtml("#c4fe82"); //Light Pea Green
                         e.Appearance.BackColor2 = ColorTranslator.FromHtml("#98d98e"); //Leek
                         break;
                 }
             }
         }
 
+        private void gridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)
+        {
+            GridView view = sender as GridView;
+            if (e.RowHandle == view.FocusedRowHandle)
+            {
+                e.Appearance.BackColor = Color.MidnightBlue; //Midnight Blues - Snowy White
+                e.Appearance.ForeColor = Color.White;
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            isRoot = false;
+            DeactivateButtons();
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + rootPath + "%';";
+            SqlCommand command = new SqlCommand(queryString, connection);
+            command.Connection.Open();
+            var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                idBussiness = reader[0].ToString();
+                reader.Close();
+            }
+            command.Connection.Close();
+            lblNameBuss.Text = comboBox1.SelectedItem.ToString();
+            lblSelectedFile.Text = "";
+            lblAmuont.Text = "";
+            subBussinessLabel.Text = "";
+            lblDateModified.Text = "";
+            filePathLabel.Text = "";
+            bussinessPath = $"{rootPath}\\{comboBox1.SelectedItem.ToString()}\\";
+            bussinessPath = bussinessPath.Replace(@"\\", @"\");
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+            LoadTable(queryString);
+            DeleteRegisters(bussinessPath);
+        }
 
         #endregion Events
     }

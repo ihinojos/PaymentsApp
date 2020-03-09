@@ -19,7 +19,6 @@ namespace Payments.Views
         private string pathToNewFile;
         private T_Invoices[] files;
         private string id;
-        private string incomingFile;
         private string pathNewState;
 
         #endregion Attributes
@@ -39,12 +38,6 @@ namespace Payments.Views
         #endregion Constructor
 
         #region Methods
-
-        private void WhenClosed(object sender, FormClosedEventArgs e)
-        {
-            MainViewModel.GetInstance().NewMain.BringToFront();
-        }
-
 
         private void LoadDocument()
         {
@@ -99,7 +92,7 @@ namespace Payments.Views
 
         private void CreateNewNomenclature()
         {
-            string newPathSigned = MainViewModel.GetInstance().NewMain.newpath;
+            string newPathSigned = MainViewModel.GetInstance().NewMain.rootPath;
             var dateTimeOffset = new DateTimeOffset(DateTime.Now);
             var formatDate = dateTimeOffset.ToUnixTimeSeconds();
             string newFormat = formatDate + "_" + "Bill-Paid-Proof" + "_" + lblTransID.Text + ".pdf";
@@ -152,14 +145,14 @@ namespace Payments.Views
                 }
             }
             MessageBox.Show("Invoice marked as paid correctly");
-            MainViewModel.GetInstance().NewMain.FullRefresh();
+
+            MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
 
             command.Connection.Close();
         }
 
         public void PutCroppedPdf(string file)
         {
-            incomingFile = file;
             axAcroPDF1.src = file;
         }
 
@@ -172,7 +165,6 @@ namespace Payments.Views
             //Mostrar pdfs
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.ShowDialog();
-            incomingFile = openFileDialog1.FileName;
             axAcroPDF1.src = openFileDialog1.FileName;
             lblNameNewFile.Text = NewMain.ElementAt(openFileDialog1.FileName, 1);
             pathToNewFile = openFileDialog1.FileName;
@@ -212,5 +204,14 @@ namespace Payments.Views
         }
 
         #endregion Clicks
+
+        #region Events
+
+        private void WhenClosed(object sender, FormClosedEventArgs e)
+        {
+            MainViewModel.GetInstance().NewMain.BringToFront();
+        }
+
+        #endregion Events
     }
 }

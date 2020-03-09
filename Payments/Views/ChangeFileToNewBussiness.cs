@@ -54,12 +54,13 @@ namespace Payments.Views
         {
             try
             {
+                var instance = MainViewModel.GetInstance().NewMain;
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + NewMain.ElementAt(fileDirectory,1);
+                path = path + "\\incoming\\" + NewMain.ElementAt(fileDirectory, 1);
                 System.IO.File.Move(fileDirectory, path);
                 MessageBox.Show("File moved correctly");
-                MainViewModel.GetInstance().NewMain.FullRefresh();
+                MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
             }
             catch (Exception ex)
             {

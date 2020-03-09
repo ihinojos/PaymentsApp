@@ -110,8 +110,7 @@ namespace Payments.Views
                 }
                 newPathForRenameOld = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat;
                 newPathForRenameNew = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat2;
-                Console.WriteLine("new path for rename new: " + newPathForRenameNew);
-                
+
                 foreach (var item in invoices)
                 {
                     string cadena = item.FileName;
@@ -128,7 +127,7 @@ namespace Payments.Views
                         command.Connection.Close();
                     }
                 }
-                MainViewModel.GetInstance().NewMain.FullRefresh();
+                MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
                 MessageBox.Show("Invoice marked as payment in process");
                 this.Close();
             }
@@ -141,6 +140,17 @@ namespace Payments.Views
         #endregion Methods
 
         #region Clicks
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            CreateNewNomenclature();
+            Cursor.Current = Cursors.Default;
+        }
+
+        #endregion Clicks
+
+        #region Events
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
@@ -180,13 +190,6 @@ namespace Payments.Views
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Cursor.Current = Cursors.WaitCursor;
-            CreateNewNomenclature();
-            Cursor.Current = Cursors.Default;
-        }
-
-        #endregion Clicks
+        #endregion Events
     }
 }

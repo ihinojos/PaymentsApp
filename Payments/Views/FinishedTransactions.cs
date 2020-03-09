@@ -1,5 +1,7 @@
 ﻿using DevExpress.Utils;
-using DevExpress.Utils.Filtering.Internal;
+using DevExpress.XtraGrid;
+using DevExpress.XtraGrid.Columns;
+using DevExpress.XtraGrid.Views.Base;
 using DevExpress.XtraGrid.Views.Grid;
 using Payments.Models;
 using System;
@@ -15,6 +17,7 @@ namespace Payments.Views
 
         private readonly SqlConnection connection;
         private string filePath;
+        private string transId;
 
         #endregion Attributes
 
@@ -24,7 +27,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured' AND folder LIKE '" + MainViewModel.GetInstance().NewMain.newpath + "%';";
+            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured' AND folder LIKE '" + MainViewModel.GetInstance().NewMain.rootPath + "%';";
             LoadTable(query2);
         }
 
@@ -57,12 +60,33 @@ namespace Payments.Views
             gv.Columns["date_modified"].DisplayFormat.FormatString = "g";
             gv.Columns["amount"].DisplayFormat.FormatType = FormatType.Numeric;
             gv.Columns["amount"].DisplayFormat.FormatString = "c2";
-            gv.RowCellClick += gridView1_RowCellClick;
             gridControl1.Update();
             gridControl1.Refresh();
+            transId = MainViewModel.GetInstance().NewMain.transId;
+            if (!String.IsNullOrEmpty(transId))
+            {
+                ColumnView view = gridControl1.MainView as ColumnView;
+                GridColumn transaction = view.Columns["transId"];
+                view.OptionsSelection.MultiSelect = true;
+                view.ClearSelection();
+                int rowHandle = -1;
+                while (rowHandle != GridControl.InvalidRowHandle)
+                {
+                    rowHandle = view.LocateByDisplayText(rowHandle + 1, transaction, transId);
+                    view.FocusedRowHandle = rowHandle;
+                    view.SelectRow(rowHandle);
+                    ShowTree();
+                }
+            }
+        }
 
-
-
+        private void ShowTree()
+        {
+            treeView1.Nodes.Clear();
+            GridView gv = gridView1;
+            lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
+            filePath = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString() + gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
+            treeView1.Nodes.Add(filePath);
         }
 
         #endregion Methods
@@ -71,11 +95,13 @@ namespace Payments.Views
 
         private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
-            treeView1.Nodes.Clear();
-            GridView gv = gridView1;
-            lblSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "transId").ToString();
-            filePath = gv.GetRowCellValue(gv.FocusedRowHandle, "folder").ToString() + gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
-            treeView1.Nodes.Add(filePath);
+            ShowTree();
+        }
+
+        private void showOnDiskButton_Click(object sender, EventArgs e)
+        {
+            string argument = "/select, \"" + filePath + "\"";
+            System.Diagnostics.Process.Start("explorer.exe", argument);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -92,11 +118,5 @@ namespace Payments.Views
         }
 
         #endregion Clicks
-
-        private void showOnDiskButton_Click(object sender, EventArgs e)
-        {
-            string argument = "/select, \"" + filePath + "\"";
-            System.Diagnostics.Process.Start("explorer.exe", argument);
-        }
     }
 }
