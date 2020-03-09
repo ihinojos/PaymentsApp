@@ -129,7 +129,7 @@ namespace Payments.Views
             switch (opc)
             {
                 case true:
-                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
                     DeleteRegisters(bussinessPath);
                     break;
 
@@ -146,6 +146,7 @@ namespace Payments.Views
 
         public void LoadTable(string queryString)
         {
+            Console.WriteLine(queryString);
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             DataTable FullDT = new DataTable();
@@ -372,6 +373,15 @@ namespace Payments.Views
             string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
             return !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
+        }
+
+        private void EmptyLabels()
+        {
+            lblSelectedFile.Text = "";
+            lblAmuont.Text = "";
+            subBussinessLabel.Text = "";
+            lblDateModified.Text = "";
+            filePathLabel.Text = "";
         }
 
         #endregion Methods
@@ -639,7 +649,7 @@ namespace Payments.Views
                     gridControl1.RefreshDataSource();
                     lblSelectedFile.Text = "Select an invoice.";
                     lblNameBuss.Text = "Select a bussiness.";
-                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
+                    queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
                     LoadTable(queryString);
                     idBussiness = "";
                     rootButton.Enabled = true;
@@ -662,7 +672,8 @@ namespace Payments.Views
             ObtainFiles(rootPath);
             CheckIfStatesFoldersExists();
             DeactivateButtons();
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "';";
+            EmptyLabels();
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
             lblTitleResult.Text = (CountFiles(rootPath).ToString());
             LoadTable(queryString);
         }
@@ -673,6 +684,34 @@ namespace Payments.Views
             if (instance != null) instance.Dispose();
             instance = MainViewModel.GetInstance().AddUser = new UserAddView();
             instance.Show();
+        }
+
+        private void gridView1_DoubleClick(object sender, EventArgs e)
+        {
+            string status = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "status_name").ToString();
+            switch (status)
+            {
+                case "incoming":
+                    btnCapture.PerformClick();
+                    break;
+
+                case "waiting-auth":
+                    btnSigned.PerformClick();
+                    break;
+
+                case "signed":
+                    btnMakePayment.PerformClick();
+                    break;
+
+                case "making-payment":
+                    btnPaymentCaptured.PerformClick();
+                    break;
+
+                case "payment-captured":
+                    transId = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString();
+                    button1.PerformClick();
+                    break;
+            }
         }
 
         #endregion Clicks
@@ -746,7 +785,7 @@ namespace Payments.Views
         {
             isRoot = false;
             DeactivateButtons();
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + rootPath + "%';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + rootPath + "\\%';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();
@@ -757,17 +796,12 @@ namespace Payments.Views
             }
             command.Connection.Close();
             lblNameBuss.Text = comboBox1.SelectedItem.ToString();
-            lblSelectedFile.Text = "";
-            lblAmuont.Text = "";
-            subBussinessLabel.Text = "";
-            lblDateModified.Text = "";
-            filePathLabel.Text = "";
-            bussinessPath = $"{rootPath}\\{comboBox1.SelectedItem.ToString()}\\";
-            bussinessPath = bussinessPath.Replace(@"\\", @"\");
+            bussinessPath = ($"{rootPath}\\{comboBox1.SelectedItem.ToString()}\\").Replace(@"\\", @"\");
             queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+            EmptyLabels();
+            DeleteRegisters(bussinessPath);
             lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
             LoadTable(queryString);
-            DeleteRegisters(bussinessPath);
         }
 
         #endregion Events
