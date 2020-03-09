@@ -46,7 +46,7 @@ namespace Payments.Views
         {
             PdfPage page = doc.Pages[0];
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Helvetica", 14, XFontStyle.Italic);
+            XFont font = new XFont("Times New Roman", 14, XFontStyle.Italic);
             gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
             return doc;
         }
@@ -146,7 +146,6 @@ namespace Payments.Views
 
         public void LoadTable(string queryString)
         {
-            Console.WriteLine(queryString);
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             DataTable FullDT = new DataTable();
@@ -346,7 +345,7 @@ namespace Payments.Views
             {
                 string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
                 string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '"
-                    + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + rootPath + "';";
+                    + strlist[strlist.Length - 1] + "' AND pathBussiness = '" + rootPath + "\\';";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -354,7 +353,7 @@ namespace Payments.Views
                 {
                     reader.Close();
                     string queryString2 = "INSERT INTO [t_bussiness]([id],[nameBussiness], [pathBussiness])" +
-                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + rootPath + "')";
+                                                       " VALUES( NEWID(),'" + strlist[strlist.Length - 1] + "', '" + rootPath + "\\')";
                     command.CommandText = queryString2;
                     command.ExecuteNonQuery();
                 }
@@ -581,8 +580,7 @@ namespace Payments.Views
             lblAmuont.Text = txtAmnt;
             var date1 = DateTime.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "date_modified").ToString());
             lblDateModified.Text = date1.ToString("F");
-
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + rootPath + "%';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + rootPath + "';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();

@@ -190,7 +190,7 @@ namespace Payments.Views
                     command.ExecuteNonQuery();
                     command.Connection.Close();
                     LoadTable(queryStringSubBussinesFiles);
-                    MessageBox.Show("Assignation sucessful for the file: " + lblFileSelected.Text + " for the sub-bussiness: " + comboBoxSubBussiness.SelectedItem.ToString());
+                    MessageBox.Show("Assignation sucessful");
                 }
             }
             catch (Exception ex)

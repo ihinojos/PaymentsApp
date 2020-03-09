@@ -27,7 +27,7 @@ namespace Payments.Views
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured' AND folder LIKE '" + MainViewModel.GetInstance().NewMain.rootPath + "%';";
+            string query2 = "SELECT * FROM [t_invoices] WHERE status_name = 'payment-captured' AND folder LIKE '" + MainViewModel.GetInstance().NewMain.rootPath + "\\%';";
             LoadTable(query2);
         }
 
