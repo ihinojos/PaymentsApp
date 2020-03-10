@@ -127,7 +127,7 @@ namespace Payments.Views
                         command.Connection.Close();
                     }
                 }
-                MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
+                MainViewModel.GetInstance().NewMain.FullRefresh();
                 MessageBox.Show("Invoice marked as payment in process");
                 this.Close();
             }

@@ -147,7 +147,7 @@ namespace Payments.Views
             }
             MessageBox.Show("Invoice marked as paid correctly");
 
-            MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
+            MainViewModel.GetInstance().NewMain.FullRefresh();
 
             command.Connection.Close();
         }

@@ -53,7 +53,6 @@ namespace Payments.Views
                 rootButton.Enabled = true;
             }
             else MessageBox.Show("There is no root path selected.");
-
         }
 
         #endregion Constructor
@@ -100,7 +99,7 @@ namespace Payments.Views
                 ClientSize = size,
                 Text = "Enter Bussiness name",
                 Icon = Properties.Resources._32
-        };
+            };
 
             System.Windows.Forms.TextBox textBox = new TextBox
             {
@@ -140,12 +139,12 @@ namespace Payments.Views
             return result;
         }
 
-        public void FullRefresh(bool opc)
+        public void FullRefresh()
         {
             ObtainFiles(rootPath);
             CheckIfStatesFoldersExists();
             DeactivateButtons();
-            switch (opc)
+            switch (isRoot)
             {
                 case true:
                     queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
@@ -653,7 +652,6 @@ namespace Payments.Views
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-               
                 if (IsThisRoot(rootPath))
                 {
                     Properties.Settings.Default.root_path = rootPath = dialog.FileName;

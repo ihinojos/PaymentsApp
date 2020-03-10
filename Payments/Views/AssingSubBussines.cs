@@ -147,7 +147,7 @@ namespace Payments.Views
                     File.Delete(selectedFilePath);
 
                     MessageBox.Show("Invoice captured correctly");
-                    MainViewModel.GetInstance().NewMain.FullRefresh(MainViewModel.GetInstance().NewMain.isRoot);
+                    MainViewModel.GetInstance().NewMain.FullRefresh();
                 }
                 catch (Exception ex)
                 {
