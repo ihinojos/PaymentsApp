@@ -66,7 +66,13 @@ namespace Payments.Views
             gridControl1.DataSource = FullDT;
             gridView1.PopulateColumns();
             gridView1.Columns["nameSub"].Caption = "Sub_Bussiness Name";
-            gridView1.RowCellClick += gridView1_RowCellClick;
+            try
+            {
+                lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
+            }
+            catch (Exception) {
+                
+            }
             gridControl1.Update();
             gridControl1.Refresh();
             command.Connection.Close();
@@ -149,12 +155,6 @@ namespace Payments.Views
                 }
                 this.Close();
             }
-        }
-
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
-        {
-            GridView gv = gridView1;
-            lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "idSubBussiness").ToString();
         }
 
         private void btnAssingTo_Click(object sender, EventArgs e)

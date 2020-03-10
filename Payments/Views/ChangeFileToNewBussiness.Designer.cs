@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ChangeFileToNewBussiness));
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -56,8 +57,9 @@
             this.ClientSize = new System.Drawing.Size(367, 181);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.treeView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ChangeFileToNewBussiness";
-            this.Text = "ChangeFileToNewBussiness";
+            this.Text = "Change Bussiness";
             this.ResumeLayout(false);
 
         }

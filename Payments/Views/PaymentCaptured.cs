@@ -48,7 +48,8 @@ namespace Payments.Views
             if (read.Read())
             {
                 lblTransID.Text = read[5].ToString();
-                lblAmount.Text = "$" + read[6].ToString();
+                decimal amnt = Convert.ToDecimal(read[6].ToString());
+                lblAmount.Text = amnt.ToString("c2");
                 string fileName = read[1].ToString();
                 string folder = read[2].ToString();
                 id = read[0].ToString();

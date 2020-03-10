@@ -36,6 +36,24 @@ namespace Payments.Views
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
             rootButton.Enabled = false;
+            rootPath = Properties.Settings.Default.root_path;
+
+            if (!String.IsNullOrEmpty(rootPath))
+            {
+                lblSelectedFile.Text = "Select an invoice.";
+                lblNameBuss.Text = "Select a bussiness.";
+                queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
+                LoadTable(queryString);
+                idBussiness = "";
+                lblTitleResult.Text = (CountFiles(rootPath).ToString());
+                ObtainFiles(rootPath);
+                InitializeComboboxBussines();
+                CheckIfStatesFoldersExists();
+                DeactivateButtons();
+                rootButton.Enabled = true;
+            }
+            else MessageBox.Show("There is no root path selected.");
+
         }
 
         #endregion Constructor
@@ -80,8 +98,9 @@ namespace Payments.Views
             {
                 FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
                 ClientSize = size,
-                Text = "Enter bussiness name"
-            };
+                Text = "Enter Bussiness name",
+                Icon = Properties.Resources._32
+        };
 
             System.Windows.Forms.TextBox textBox = new TextBox
             {
@@ -634,9 +653,11 @@ namespace Payments.Views
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                rootPath = dialog.FileName;
+               
                 if (IsThisRoot(rootPath))
                 {
+                    Properties.Settings.Default.root_path = rootPath = dialog.FileName;
+                    Properties.Settings.Default.Save();
                     isRoot = true;
                     lblTitleResult.Text = (CountFiles(rootPath).ToString());
                     ObtainFiles(rootPath);

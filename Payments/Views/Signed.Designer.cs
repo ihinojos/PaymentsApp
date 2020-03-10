@@ -279,8 +279,9 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.axAcroPDF1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Signed";
-            this.Text = "Captured";
+            this.Text = "Capture Signed Invoice";
             ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

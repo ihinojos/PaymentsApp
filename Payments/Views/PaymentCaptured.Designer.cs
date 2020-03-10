@@ -260,8 +260,9 @@
             this.Controls.Add(this.label6);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.axAcroPDF2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PaymentCaptured";
-            this.Text = "PaymentCaptured";
+            this.Text = "Capture Proof of Payment";
             ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF2)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewMain));
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.labelTitle = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -385,14 +386,14 @@
             // setRootPathToolStripMenuItem
             // 
             this.setRootPathToolStripMenuItem.Name = "setRootPathToolStripMenuItem";
-            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setRootPathToolStripMenuItem.Text = "Set root path";
             this.setRootPathToolStripMenuItem.Click += new System.EventHandler(this.setRootPathToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -409,22 +410,22 @@
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.usersToolStripMenuItem.Text = "Users";
             this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
             // 
             // subBussinessToolStripMenuItem
             // 
             this.subBussinessToolStripMenuItem.Name = "subBussinessToolStripMenuItem";
-            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subBussinessToolStripMenuItem.Text = "Sub-Bussiness";
             this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.subBussinessToolStripMenuItem_Click);
             // 
             // businesssToolStripMenuItem
             // 
             this.businesssToolStripMenuItem.Name = "businesssToolStripMenuItem";
-            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.businesssToolStripMenuItem.Text = "Business";
+            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.businesssToolStripMenuItem.Text = "Business Folder";
             this.businesssToolStripMenuItem.Click += new System.EventHandler(this.businesssToolStripMenuItem_Click);
             // 
             // label3
@@ -462,9 +463,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "NewMain";
-            this.Text = "newMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Payments";
             ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
