@@ -19,7 +19,6 @@ namespace Payments.Views
         private readonly string idBussiness;
         private readonly string selectedFilePath;
         private readonly string queryStringSubBussinesFiles;
-        private string pathToThisBussinesWaitingAuth;
 
         #endregion Attributes
 
@@ -105,33 +104,16 @@ namespace Payments.Views
             }
             else
             {
-                double amount = Double.Parse(textBoxAmount.Text);
-                string newPathForRename = "";
-                var dateTimeOffset = new DateTimeOffset(DateTime.Now);
-                var formatDate = dateTimeOffset.ToUnixTimeSeconds();
-                string newFormat = formatDate + "_" + "waitingAuth" + "_" + textBoxTransaction.Text.ToString() + ".pdf";
-                string[] strlist = selectedFilePath.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-                for (int i = 0; i < strlist.Length - 2; i++)
-                {
-                    if (i == 0)
-                    {
-                        newPathForRename = strlist[i];
-                    }
-                    else
-                    {
-                        newPathForRename = newPathForRename + "\\" + strlist[i];
-                        pathToThisBussinesWaitingAuth = newPathForRename;
-                    }
-                }
-                newPathForRename = newPathForRename + "\\" + "waiting-auth" + "\\" + newFormat;
-                axAcroPDF1.src = "";
-
                 try
                 {
+                    double amount = Double.Parse(textBoxAmount.Text);
+                    var dateTimeOffset = new DateTimeOffset(DateTime.Now);
+                    var formatDate = dateTimeOffset.ToUnixTimeSeconds();
+                    string newFormat = formatDate + "_" + "waitingAuth" + "_" + textBoxTransaction.Text.ToString() + ".pdf";
+        
                     string query = "UPDATE [t_invoices] SET " +
-                        "fileName = '" + NewMain.ElementAt(newPathForRename, 1) + "', " +
-                        "folder= '" + pathToThisBussinesWaitingAuth + "\\" + "waiting-auth\\" + "'," +
+                        "fileName = '" + newFormat+ "', " +
+                        "folder= '" + MainViewModel.GetInstance().NewMain.bussinessPath +  "waiting-auth\\" + "'," +
                         "status_name = 'waiting-auth'," +
                         "date_modified = GETDATE()," +
                         "transId = '" + textBoxTransaction.Text + "'," +
@@ -143,13 +125,11 @@ namespace Payments.Views
                     command.Connection.Close();
 
                     PdfDocument file = NewMain.AddWaterMark(PdfReader.Open(selectedFilePath, PdfDocumentOpenMode.Modify), "Unsigned invoice");
-                    file.Save(newPathForRename);
+                    file.Save(MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + newFormat);
                     File.Delete(selectedFilePath);
-
                     MessageBox.Show("Invoice captured correctly");
                     MainViewModel.GetInstance().NewMain.FullRefresh();
-                }
-                catch (Exception ex)
+                } catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }

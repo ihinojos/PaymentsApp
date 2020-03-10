@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Payments.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -10,7 +11,7 @@ namespace Payments.Views
         #region Attributes
 
         private readonly SqlConnection connection;
-        private List<string> idBussiness = new List<string>();
+        private readonly List<string> idBussiness = new List<string>();
 
         #endregion Attributes
 
@@ -29,7 +30,7 @@ namespace Payments.Views
 
         private void LoadCombo()
         {
-            string query = "SELECT * FROM [t_bussiness]";
+            string query = "SELECT * FROM [t_bussiness] WHERE [pathBussiness] = '"+MainViewModel.GetInstance().NewMain.rootPath+"\\'";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

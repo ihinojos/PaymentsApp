@@ -63,7 +63,7 @@ namespace Payments.Views
         {
             PdfPage page = doc.Pages[0];
             XGraphics gfx = XGraphics.FromPdfPage(page);
-            XFont font = new XFont("Times New Roman", 14, XFontStyle.Italic);
+            XFont font = new XFont("Helvetica", 14, XFontStyle.Italic);
             gfx.DrawString(text, font, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.TopLeft);
             return doc;
         }
@@ -598,7 +598,7 @@ namespace Payments.Views
             lblAmuont.Text = txtAmnt;
             var date1 = DateTime.Parse(gv.GetRowCellValue(gv.FocusedRowHandle, "date_modified").ToString());
             lblDateModified.Text = date1.ToString("F");
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness LIKE '" + rootPath + "';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + lblNameBuss.Text + "' AND pathBussiness = '" + rootPath + "\\';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();
@@ -802,7 +802,7 @@ namespace Payments.Views
         {
             isRoot = false;
             DeactivateButtons();
-            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness LIKE '" + rootPath + "\\%';";
+            string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness = '" + rootPath + "\\';";
             SqlCommand command = new SqlCommand(queryString, connection);
             command.Connection.Open();
             var reader = command.ExecuteReader();

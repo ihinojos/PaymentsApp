@@ -15,7 +15,6 @@ namespace Payments.Views
         private readonly SqlConnection connection;
         private readonly string invoiceID;
         private T_Invoices[] invoices;
-        private string newFormat;
         private string idTransForQuery2;
         private string newFormat2;
 
@@ -94,21 +93,17 @@ namespace Payments.Views
         {
             try
             {
-                string newPathForRenameOld = "";
                 string newPathForRenameNew = "";
                 var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                 var formatDate = dateTimeOffset.ToUnixTimeSeconds();
                 if (radioButton1.Checked)
                 {
-                    newFormat = formatDate + "_" + "Making-Payment-Unsigned" + "_" + lblSelected.Text + ".pdf";
                     newFormat2 = formatDate + "_" + "Bill-Paying" + "_" + lblSelected.Text + ".pdf";
                 }
                 if (radioButton2.Checked)
                 {
-                    newFormat = formatDate + "_" + "Making-Payment-Unsigned" + "_" + idTransForQuery2 + ".pdf";
                     newFormat2 = formatDate + "_" + "Bill-Paying" + "_" + idTransForQuery2 + ".pdf";
                 }
-                newPathForRenameOld = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat;
                 newPathForRenameNew = MainViewModel.GetInstance().NewMain.bussinessPath + "making-payment" + "\\" + newFormat2;
 
                 foreach (var item in invoices)
