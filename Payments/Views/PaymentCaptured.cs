@@ -109,13 +109,13 @@ namespace Payments.Views
                 while (reader.Read())
                     list.Add(new T_Invoices
                     {
-                        Id = reader[0].ToString(),
-                        FileName = reader[1].ToString(),
-                        Folder = reader[2].ToString(),
-                        Status = reader[3].ToString(),
-                        Date = reader[4].ToString(),
-                        TransId = reader[5].ToString(),
-                        Amount = Double.Parse(reader[6].ToString()),
+                        Id = reader[0].ToString()
+                       ,FileName = reader[1].ToString()
+                       ,Folder = reader[2].ToString()
+                       ,Status = reader[3].ToString()
+                       ,Date = reader[4].ToString()
+                       ,TransId = reader[5].ToString()
+                       ,Amount = Double.Parse(reader[6].ToString())
                     });
                 files = list.ToArray();
                 reader.Close();
@@ -155,6 +155,7 @@ namespace Payments.Views
         public void PutCroppedPdf(string file)
         {
             axAcroPDF1.src = file;
+            pathToNewFile = file;
         }
 
         #endregion Methods

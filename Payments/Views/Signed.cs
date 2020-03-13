@@ -77,10 +77,8 @@ namespace Payments.Views
             string path = MainViewModel.GetInstance().NewMain.rootPath;
             path += "\\" + lblBussiness.Text;
             path += "\\" + "Signed" + "\\" + newFormat;
-
             try
             {
-                //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 folder = folder.Replace("waiting-auth", "signed");
                 string queryStringDelete1 = "UPDATE [t_invoices] SET " +
                     "fileName = '" + newFormat + "', " +
@@ -90,8 +88,6 @@ namespace Payments.Views
                 SqlCommand command = new SqlCommand(queryStringDelete1, connection);
                 command.Connection.Open();
                 command.ExecuteNonQuery();
-                //Hacer update de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
-
                 PdfDocument signed = NewMain.AddWaterMark(PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Modify), "Signed invoice");
                 string tempFile = Path.Combine(Path.GetTempPath(), "signed.pdf");
                 signed.Save(tempFile);
@@ -99,7 +95,6 @@ namespace Payments.Views
                 combined.Save(path);
                 File.Delete(pathToOldFile);
                 File.Delete(tempFile);
-                //Hacer insercion de los cambios recientes, de nomenclatura, nuevo estado y nuevo id de transaccion
                 MessageBox.Show("Invoice signed successfully");
             }
             catch (Exception ex)

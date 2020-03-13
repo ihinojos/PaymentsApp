@@ -62,7 +62,7 @@ namespace Payments.Views
                     command.Connection.Open();
                     int res = command.ExecuteNonQuery();
                     command.Connection.Close();
-                    _ = res != 0 ? MessageBox.Show("Sub Bussiness Created") : MessageBox.Show("There was an error");
+                    _ = res == 1 ? MessageBox.Show("Sub Bussiness Created") : MessageBox.Show("There was an error");
                     this.Dispose();
                 }
             }

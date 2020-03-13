@@ -108,8 +108,7 @@ namespace Payments.Views
 
                 foreach (var item in invoices)
                 {
-                    string cadena = item.FileName;
-                    if (cadena.Contains("Signed"))
+                    if (item.FileName.Contains("Signed"))
                     {
                         string oldRouteSigned = item.Folder + item.FileName;
                         string queryFile = "UPDATE [t_invoices] SET fileName = '" + NewMain.ElementAt(newPathForRenameNew, 1)
