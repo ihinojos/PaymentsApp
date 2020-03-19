@@ -3,6 +3,6 @@
     public static class DB
     {
         //Created connection string for use through the appliction
-        public static string cn = "Server=DESKTOP-LFRCENB\\INTELOGIX;Initial Catalog=TESTPAY;MultipleActiveResultSets=true;Persist Security Info=True;User ID=Intelogix;Password=Intelogix2019!";
+        public static string cn = "Server=DESKTOP-LFRCENB\\INTELOGIX;Initial Catalog=PRODPAY;MultipleActiveResultSets=true;Persist Security Info=True;User ID=Intelogix;Password=Intelogix2019!";
     }
 }

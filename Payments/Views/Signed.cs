@@ -107,7 +107,7 @@ namespace Payments.Views
 
         private void SearchInvoice(string invoiceID)
         {
-            string querystringstatus = "SELECT * FROM [TESTPAY].[dbo].[t_invoices] WHERE [id] = '" + invoiceID + "';";
+            string querystringstatus = "SELECT * FROM [t_invoices] WHERE [id] = '" + invoiceID + "';";
             SqlCommand command = new SqlCommand(querystringstatus, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

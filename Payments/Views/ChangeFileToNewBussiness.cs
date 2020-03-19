@@ -10,8 +10,8 @@ namespace Payments.Views
     {
         #region Attributes
 
-        private readonly string fileDirectory;
-        public readonly string newpath;
+        private readonly string filePath;
+        public readonly string rootPath;
         private readonly List<string> RutasPusibles = new List<string>();
 
         #endregion Attributes
@@ -21,8 +21,8 @@ namespace Payments.Views
         public ChangeFileToNewBussiness(string path, string root)
         {
             InitializeComponent();
-            fileDirectory = path;
-            newpath = root;
+            filePath = path;
+            rootPath = root;
             ScanForAvailableBussiness();
         }
 
@@ -32,14 +32,14 @@ namespace Payments.Views
 
         private void ScanForAvailableBussiness()
         {
-            string[] Bussiness = Directory.GetDirectories(newpath, "*.*", SearchOption.TopDirectoryOnly);
+            string[] Bussiness = Directory.GetDirectories(rootPath, "*.*", SearchOption.TopDirectoryOnly);
             foreach (var item in Bussiness)
             {
                 RutasPusibles.Add(item);
             }
             foreach (var item in RutasPusibles)
             {
-                if (NewMain.ElementAt(item, 1) != NewMain.ElementAt(fileDirectory, 3))
+                if (NewMain.ElementAt(item, 1) != NewMain.ElementAt(filePath, 3))
                 {
                     treeView1.Nodes.Add(item);
                 }
@@ -57,8 +57,9 @@ namespace Payments.Views
                 var instance = MainViewModel.GetInstance().NewMain;
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
-                path = path + "\\incoming\\" + NewMain.ElementAt(fileDirectory, 1);
-                System.IO.File.Move(fileDirectory, path);
+                path = path + "\\incoming\\" + NewMain.ElementAt(filePath, 1);
+                MainViewModel.GetInstance().NewMain.bussinessPath = rootPath + "\\" + NewMain.ElementAt(path, 3)+"\\";
+                System.IO.File.Move(filePath, path);
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();
             }
