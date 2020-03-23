@@ -19,21 +19,22 @@ namespace Payments.Views
         private readonly string idBussiness;
         private readonly string selectedFilePath;
         private readonly string queryStringSubBussinesFiles;
+        private readonly string userDic = MainViewModel.GetInstance().NewMain.userDic;
 
         #endregion Attributes
 
         #region Constructor
 
-        public AssingSubBussines(string fileSelected, string pathToFile, string idBussiness, string id)
+        public AssingSubBussines(string pathToFile, string idBussiness, string id)
         {
             InitializeComponent();
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
-            lblFileSelected.Text = fileSelected;
+            lblFileSelected.Text = Path.GetFileName(pathToFile);
             this.idBussiness = idBussiness;
             LoadCombo("SELECT * FROM [t_subBussiness] WHERE idBussiness = '" + idBussiness + "';");
             idFile = id;
-            selectedFilePath = pathToFile;
-            axAcroPDF1.src = pathToFile;
+            selectedFilePath = userDic + "\\" + pathToFile;
+            axAcroPDF1.src = userDic+"\\"+pathToFile;
             try
             {
                 queryStringSubBussinesFiles = "SELECT s.nameSub FROM [t_invoices] i, [t_subBussiness] s  WHERE i.[id] = '" + idFile + "' AND s.id = i.idSubBussiness;";
@@ -125,7 +126,7 @@ namespace Payments.Views
                     command.Connection.Close();
 
                     PdfDocument file = NewMain.AddWaterMark(PdfReader.Open(selectedFilePath, PdfDocumentOpenMode.Modify), "Unsigned invoice");
-                    file.Save(MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + newFormat);
+                    file.Save(userDic+"\\"+MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + newFormat);
                     File.Delete(selectedFilePath);
                     MessageBox.Show("Invoice captured correctly");
                     MainViewModel.GetInstance().NewMain.FullRefresh();

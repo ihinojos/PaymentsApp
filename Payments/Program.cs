@@ -1,5 +1,6 @@
 ﻿using Payments.Models;
 using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Payments
@@ -19,6 +20,6 @@ namespace Payments
             //Starts application in the log in view.
             Application.Run(instance);
         }
-        
+
     }
 }

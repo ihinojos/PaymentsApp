@@ -2,6 +2,7 @@
 using DevExpress.XtraGrid.Views.Grid;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Payments.Models;
+using Payments.Properties;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System;
@@ -23,8 +24,10 @@ namespace Payments.Views
         public string queryString;
         public string rootPath = "";
         public string transId;
+        public readonly string userDic = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         private readonly SqlConnection connection;
         private string idBussiness;
+
         #endregion Attributes
 
         #region Constructor
@@ -35,7 +38,9 @@ namespace Payments.Views
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
             rootButton.Enabled = false;
-            rootPath = Properties.Settings.Default.root_path;
+
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Dropbox (IE)"))
+                rootPath = Properties.Settings.Default.root_path;
 
             if (!String.IsNullOrEmpty(rootPath))
             {
@@ -45,7 +50,7 @@ namespace Payments.Views
                 queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
                 LoadTable(queryString);
                 idBussiness = "";
-                lblTitleResult.Text = (CountFiles(rootPath).ToString());
+                lblTitleResult.Text = (CountFiles().ToString());
                 InitializeComboboxBussines();
                 CheckIfStatesFoldersExists();
                 rootButton.Enabled = true;
@@ -150,7 +155,7 @@ namespace Payments.Views
 
                 case false:
                     queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
-                    lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+                    lblTitleResult.Text = (CountFiles().ToString());
                     break;
 
                 default: return;
@@ -191,68 +196,63 @@ namespace Payments.Views
 
         public void ObtainFiles()
         {
-            string[] files = Directory.GetFiles(rootPath, "*.*", SearchOption.AllDirectories);
-            foreach (string file in files)
+            List<T_Invoices> cloudFiles = new List<T_Invoices>();
+            string query = "SELECT * FROM [t_invoices] WHERE folder LIKE '" + rootPath + "\\%';";
+            SqlCommand command = new SqlCommand(query, connection);
+            command.Connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
             {
-                string fileName = file;
-                string url = fileName.TrimEnd('\\');
-                url = url.Remove(url.LastIndexOf('\\') + 1);
-                string status = url.TrimEnd('\\');
-                status = ElementAt(status, 1);
-                string[] strlist = fileName.Split(new char[] { '\\' },
-                       20, StringSplitOptions.None);
-                for (int i = 0; i < strlist.Length; i++)
+                cloudFiles.Add(new T_Invoices
                 {
-                    strlist[i] = strlist[i].Replace(((char)39).ToString(), "");
-                    if (Path.GetExtension(strlist[i]) == ".pdf")
-                    {
-                        //Condicion para revisar si ya existe el archivo
-                        string queryString = "SELECT [fileName],[folder] FROM [t_invoices] WHERE fileName = '" + strlist[i] + "' AND folder ='" + url + "';";
-                        SqlCommand command = new SqlCommand(queryString, connection);
-                        command.Connection.Open();
-                        SqlDataReader reader = command.ExecuteReader();
-                        if (!reader.Read())
-                        {
-                            reader.Close();
-                            if (url == (rootPath + "\\"))
-                            {
-                                command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
-                                                       " VALUES( NEWID()," +
-                                                       "'" + strlist[i] + "'," +
-                                                       "'" + url + "'," +
-                                                       "'unassigned'," +
-                                                       "GETDATE()," +
-                                                       "NULL," +
-                                                       "NULL," +
-                                                       "NULL)";
+                    Id = reader[0].ToString(),
+                    FileName = reader[1].ToString(),
+                    Folder = reader[2].ToString()
+                });
+            }
+            reader.Close();
+            string[] files = Directory.GetFiles(userDic + "\\" + rootPath, "*.pdf", SearchOption.AllDirectories);
+            List<String> localFiles = new List<string>(files);
 
-                                command.ExecuteNonQuery();
-                            }
-                            else if (ElementAt(file, 2) == "incoming")
-                            {
-                                command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
-                                                       " VALUES( NEWID()," +
-                                                       "'" + strlist[i] + "'," +
-                                                       "'" + url + "'," +
-                                                       "'" + status + "'," +
-                                                       "GETDATE()," +
-                                                       "NULL," +
-                                                       "NULL," +
-                                                       "NULL)";
-
-                                command.ExecuteNonQuery();
-                            }
-                        }
-                        command.Connection.Close();
-                    }
+            foreach (var file in cloudFiles)
+            {
+                string fullPath = file.Folder + file.FileName;
+                if (localFiles.Contains(userDic + "\\" + fullPath))
+                {
+                    localFiles.Remove(userDic + "\\" + fullPath);
                 }
             }
+
+            foreach (var file in localFiles)
+            {
+
+                string name = Path.GetFileName(file);
+                string path = file.Replace(userDic + "\\", "").Replace(name, "");
+                string state = "";
+                if (path == rootPath + "\\") state = "unassigned";
+                else if (path.Contains("incoming")) state = "incoming";
+                if (!String.IsNullOrEmpty(state))
+                {
+                       command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
+                                           " VALUES( NEWID()," +
+                                           "'" + name + "'," +
+                                           "'" + path + "'," +
+                                           "'" + state + "'," +
+                                           "GETDATE()," +
+                                           "NULL," +
+                                           "NULL," +
+                                           "NULL)";
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            command.Connection.Close();
         }
 
         private void CheckIfStatesFoldersExists()
         {
             List<string> states = new List<string>();
-            string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
+            string[] dirs = Directory.GetDirectories(userDic + "\\" + rootPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] toScanFolders = Directory.GetDirectories(dir.ToString(), "*", SearchOption.TopDirectoryOnly);
@@ -295,9 +295,9 @@ namespace Payments.Views
             }
         }
 
-        private int CountFiles(string path)
+        private int CountFiles()
         {
-            string[] files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(userDic+"\\"+rootPath, "*.*", SearchOption.AllDirectories);
             int counter = 0;
             foreach (var item in files)
             {
@@ -318,7 +318,7 @@ namespace Payments.Views
         private void DeleteMissingRegisters()
         {
             List<string> allFiles = new List<string>();
-            string[] files = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(userDic+"\\"+rootPath, "*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 allFiles.Add(file);
@@ -340,7 +340,7 @@ namespace Payments.Views
             command.Connection.Close();
             for (int i = 0; i < record.Count; i++)
             {
-                if (!allFiles.Contains(record[i]))
+                if (!allFiles.Contains(userDic+"\\"+record[i]))
                 {
                     string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
                     SqlCommand commandDelete = new SqlCommand(querydelete, connection);
@@ -366,7 +366,7 @@ namespace Payments.Views
         private void InitializeComboboxBussines()
         {
             comboBox1.Items.Clear();
-            string[] dirs = Directory.GetDirectories(rootPath, "*", SearchOption.TopDirectoryOnly);
+            string[] dirs = Directory.GetDirectories(userDic + "\\" + rootPath, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in dirs)
             {
                 string[] strlist = dir.Split(new char[] { '\\' }, 20, StringSplitOptions.None);
@@ -394,11 +394,20 @@ namespace Payments.Views
 
         private bool IsThisRoot(string path)
         {
-            List<string> states = new List<string>();
-            string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
-            foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
-            return isRoot = !(states.Contains("incoming") || states.Contains("waiting-auth") || states.Contains("payment-captured") || states.Contains("signed") || states.Contains("waiting-auth"));
+            if (path.Contains(rootPath) && path != rootPath)
+            {
+                List<string> states = new List<string>();
+                string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
+                foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
+                return isRoot = !(states.Contains("incoming") ||
+                    states.Contains("waiting-auth") ||
+                    states.Contains("payment-captured") ||
+                    states.Contains("signed") ||
+                    states.Contains("waiting-auth"));
+            }
+            return false;
         }
+
         #endregion Methods
 
         #region Clicks
@@ -430,7 +439,7 @@ namespace Payments.Views
                     string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                     string id = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "id").ToString();
                     string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                    instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(name, path, idBussiness, id);
+                    instance = MainViewModel.GetInstance().AssingSubBussiness = new AssingSubBussines(path, idBussiness, id);
                     instance.Show();
                 }
                 catch (Exception)
@@ -478,7 +487,7 @@ namespace Payments.Views
             {
                 if (ShowInputDialog(ref input) == DialogResult.OK)
                 {
-                    Directory.CreateDirectory(rootPath + "\\" + input);
+                    Directory.CreateDirectory(userDic + "\\" + rootPath + "\\" + input);
                     ObtainFiles();
                     InitializeComboboxBussines();
                     CheckIfStatesFoldersExists();
@@ -497,7 +506,7 @@ namespace Payments.Views
             try
             {
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
-                string filePath = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
+                string filePath = userDic+"\\"+gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
                 string argument = "/select, \"" + filePath + "\"";
                 System.Diagnostics.Process.Start("explorer.exe", argument);
             }
@@ -542,7 +551,7 @@ namespace Payments.Views
                 var instance = MainViewModel.GetInstance().ViewPdf;
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                 string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(path);
+                instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(userDic+"\\"+path);
                 instance.Show();
             }
             catch (Exception)
@@ -656,6 +665,7 @@ namespace Payments.Views
                     case "making-payment":
                         btnPaymentCaptured.Enabled = true;
                         break;
+
                     case "unassigned":
                         btnChangeFileOfBussiness.Enabled = true;
                         break;
@@ -680,7 +690,7 @@ namespace Payments.Views
             DeactivateButtons();
             EmptyLabels();
             queryString = "EXEC [GetAllInvoiceInfo] @location = '" + rootPath + "\\';";
-            lblTitleResult.Text = (CountFiles(rootPath).ToString());
+            lblTitleResult.Text = (CountFiles().ToString());
             LoadTable(queryString);
         }
 
@@ -688,17 +698,17 @@ namespace Payments.Views
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog
             {
-                InitialDirectory = "C:\\Users",
+                InitialDirectory = userDic+"\\"+rootPath,
                 IsFolderPicker = true
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                if (IsThisRoot(rootPath))
+                if (IsThisRoot(dialog.FileName))
                 {
-                    Properties.Settings.Default.root_path = rootPath = dialog.FileName;
-                    Properties.Settings.Default.Save();
+                    Settings.Default.root_path = rootPath = dialog.FileName.Replace(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\", "");
+                    Settings.Default.Save();
                     isRoot = true;
-                    lblTitleResult.Text = (CountFiles(rootPath).ToString());
+                    lblTitleResult.Text = (CountFiles().ToString());
                     ObtainFiles();
                     InitializeComboboxBussines();
                     CheckIfStatesFoldersExists();
@@ -723,6 +733,7 @@ namespace Payments.Views
             instance = MainViewModel.GetInstance().AddSubBussiness = new SubBussinessAdd();
             instance.Show();
         }
+
         private void usersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var instance = MainViewModel.GetInstance().AddUser;
@@ -730,6 +741,7 @@ namespace Payments.Views
             instance = MainViewModel.GetInstance().AddUser = new UserAddView();
             instance.Show();
         }
+
         #endregion Clicks
 
         #region Events
@@ -754,6 +766,7 @@ namespace Payments.Views
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             isRoot = false;
+            ObtainFiles();
             DeactivateButtons();
             string queryString = "SELECT * FROM [t_bussiness] WHERE nameBussiness = '" + comboBox1.SelectedItem.ToString() + "' AND pathBussiness = '" + rootPath + "\\';";
             SqlCommand command = new SqlCommand(queryString, connection);
@@ -767,11 +780,12 @@ namespace Payments.Views
             command.Connection.Close();
             lblNameBuss.Text = comboBox1.SelectedItem.ToString();
             bussinessPath = ($"{rootPath}\\{comboBox1.SelectedItem.ToString()}\\").Replace(@"\\", @"\");
-            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "';";
+            queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "'";
             EmptyLabels();
             DeleteMissingRegisters();
-            lblTitleResult.Text = (CountFiles(bussinessPath).ToString());
+            lblTitleResult.Text = (CountFiles().ToString());
             LoadTable(queryString);
+
         }
 
         private void gridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)
@@ -819,6 +833,7 @@ namespace Payments.Views
                 }
             }
         }
+
         #endregion Events
     }
 }

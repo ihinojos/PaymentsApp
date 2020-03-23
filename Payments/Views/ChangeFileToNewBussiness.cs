@@ -32,7 +32,7 @@ namespace Payments.Views
 
         private void ScanForAvailableBussiness()
         {
-            string[] Bussiness = Directory.GetDirectories(rootPath, "*.*", SearchOption.TopDirectoryOnly);
+            string[] Bussiness = Directory.GetDirectories(MainViewModel.GetInstance().NewMain.userDic+"\\"+rootPath, "*.*", SearchOption.TopDirectoryOnly);
             foreach (var item in Bussiness)
             {
                 RutasPusibles.Add(item);
@@ -41,7 +41,7 @@ namespace Payments.Views
             {
                 if (NewMain.ElementAt(item, 1) != NewMain.ElementAt(filePath, 3))
                 {
-                    treeView1.Nodes.Add(item);
+                    treeView1.Nodes.Add(item.Replace(MainViewModel.GetInstance().NewMain.userDic + "\\", ""));
                 }
             }
         }
@@ -59,7 +59,8 @@ namespace Payments.Views
                 path = path.Replace("TreeNode: ", "");
                 path = path + "\\incoming\\" + NewMain.ElementAt(filePath, 1);
                 MainViewModel.GetInstance().NewMain.bussinessPath = rootPath + "\\" + NewMain.ElementAt(path, 3)+"\\";
-                System.IO.File.Move(filePath, path);
+                System.IO.File.Move(MainViewModel.GetInstance().NewMain.userDic + "\\" + filePath, MainViewModel.GetInstance().NewMain.userDic + "\\" + path);
+                
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();
             }

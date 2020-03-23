@@ -59,6 +59,6 @@ namespace Payments.Models
             get { return amount; }
             set { amount = value; }
         }
-        
+
     }
 }

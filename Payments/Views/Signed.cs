@@ -92,9 +92,10 @@ namespace Payments.Views
                 string tempFile = Path.Combine(Path.GetTempPath(), "signed.pdf");
                 signed.Save(tempFile);
                 PdfDocument combined = NewMain.Combine(PdfReader.Open(pathToOldFile, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
-                combined.Save(path);
+                combined.Save(MainViewModel.GetInstance().NewMain.userDic + "\\" + path);
                 File.Delete(pathToOldFile);
                 File.Delete(tempFile);
+                if (pathToNewFile.Contains("crop")) File.Delete(pathToNewFile);
                 MessageBox.Show("Invoice signed successfully");
             }
             catch (Exception ex)
@@ -125,7 +126,7 @@ namespace Payments.Views
                     string fileName = reader[1].ToString();
                     folder = reader[2].ToString();
                     lblNameOldFile.Text = fileName;
-                    pathToOldFile = folder + "\\" + fileName;
+                    pathToOldFile = MainViewModel.GetInstance().NewMain.userDic + "\\" + folder + fileName;
                     axAcroPDF1.src = pathToOldFile;
                 }
             }

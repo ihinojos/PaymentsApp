@@ -20,6 +20,7 @@ namespace Payments.Views
         private T_Invoices[] files;
         private string id;
         private string pathNewState;
+        private string userDic = MainViewModel.GetInstance().NewMain.userDic;
 
         #endregion Attributes
 
@@ -56,7 +57,7 @@ namespace Payments.Views
                 lblNameOldFile.Text = fileName;
                 string pathToOldFile = folder + fileName;
                 axAcroPDF2.src = "";
-                axAcroPDF2.src = pathToOldFile;
+                axAcroPDF2.src = userDic+"\\"+pathToOldFile;
             }
             read.Close();
             lblBussiness.Text = bussiness;
@@ -130,19 +131,20 @@ namespace Payments.Views
                         PdfDocument signed = NewMain.AddWaterMark(PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Modify), "Proof of payment");
                         string tempFile = Path.Combine(Path.GetTempPath(), "pop.pdf");
                         signed.Save(tempFile);
-                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
+                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(userDic + "\\"+pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
                         string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.ElementAt(newPathSigned, 1) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
                             " date_modified = GETDATE() WHERE id = '" + item.Id + "';";
                         command.CommandText = queryUpdateSigned;
                         command.ExecuteNonQuery();
-                        outPdf.Save(newPathSigned);
-                        File.Delete(pathito);
+                        outPdf.Save(userDic+"\\"+newPathSigned);
+                        File.Delete(userDic+"\\"+pathito);
                         File.Delete(tempFile);
+                        if (pathToNewFile.Contains("crop")) File.Delete(pathToNewFile);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("We had a problem moving the file, please review if the file already exists or:" + ex);
+                    MessageBox.Show(ex.Message);
                 }
             }
             MessageBox.Show("Invoice marked as paid correctly");

@@ -100,7 +100,7 @@ namespace Payments.Views
 
         private void showOnDiskButton_Click(object sender, EventArgs e)
         {
-            string argument = "/select, \"" + filePath + "\"";
+            string argument = "/select, \"" + MainViewModel.GetInstance().NewMain.userDic + "\\" + filePath + "\"";
             System.Diagnostics.Process.Start("explorer.exe", argument);
         }
 
@@ -108,7 +108,7 @@ namespace Payments.Views
         {
             try
             {
-                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(filePath);
+                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(MainViewModel.GetInstance().NewMain.userDic+"\\"+filePath);
                 instance.Show();
             }
             catch (Exception ex)

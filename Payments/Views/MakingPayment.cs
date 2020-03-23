@@ -17,7 +17,7 @@ namespace Payments.Views
         private T_Invoices[] invoices;
         private string idTransForQuery2;
         private string newFormat2;
-
+        private string userDic = MainViewModel.GetInstance().NewMain.userDic;
         #endregion Attributes
 
         #region Constructor
@@ -117,7 +117,7 @@ namespace Payments.Views
                         SqlCommand command = new SqlCommand(queryFile, connection);
                         command.Connection.Open();
                         command.ExecuteNonQuery();
-                        System.IO.File.Move(oldRouteSigned, newPathForRenameNew);
+                        System.IO.File.Move(userDic+"\\"+oldRouteSigned, userDic+"\\"+newPathForRenameNew);
                         command.Connection.Close();
                     }
                 }
