@@ -136,7 +136,7 @@
             // lblSelectedFileStatic
             // 
             this.lblSelectedFileStatic.AutoSize = true;
-            this.lblSelectedFileStatic.Location = new System.Drawing.Point(178, 22);
+            this.lblSelectedFileStatic.Location = new System.Drawing.Point(176, 22);
             this.lblSelectedFileStatic.Name = "lblSelectedFileStatic";
             this.lblSelectedFileStatic.Size = new System.Drawing.Size(57, 13);
             this.lblSelectedFileStatic.TabIndex = 6;
@@ -145,7 +145,7 @@
             // lblSelectedFile
             // 
             this.lblSelectedFile.AutoSize = true;
-            this.lblSelectedFile.Location = new System.Drawing.Point(234, 22);
+            this.lblSelectedFile.Location = new System.Drawing.Point(232, 22);
             this.lblSelectedFile.Name = "lblSelectedFile";
             this.lblSelectedFile.Size = new System.Drawing.Size(65, 13);
             this.lblSelectedFile.TabIndex = 7;
@@ -229,7 +229,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(178, 69);
+            this.label6.Location = new System.Drawing.Point(176, 69);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 13);
             this.label6.TabIndex = 21;
@@ -238,7 +238,7 @@
             // lblDateModified
             // 
             this.lblDateModified.AutoSize = true;
-            this.lblDateModified.Location = new System.Drawing.Point(253, 69);
+            this.lblDateModified.Location = new System.Drawing.Point(251, 69);
             this.lblDateModified.Name = "lblDateModified";
             this.lblDateModified.Size = new System.Drawing.Size(0, 13);
             this.lblDateModified.TabIndex = 20;
@@ -257,7 +257,7 @@
             // filePathLabel
             // 
             this.filePathLabel.AutoSize = true;
-            this.filePathLabel.Location = new System.Drawing.Point(227, 45);
+            this.filePathLabel.Location = new System.Drawing.Point(225, 45);
             this.filePathLabel.Name = "filePathLabel";
             this.filePathLabel.Size = new System.Drawing.Size(65, 13);
             this.filePathLabel.TabIndex = 18;
@@ -266,7 +266,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(178, 45);
+            this.label5.Location = new System.Drawing.Point(176, 45);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(50, 13);
             this.label5.TabIndex = 17;
@@ -411,21 +411,21 @@
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.usersToolStripMenuItem.Text = "Users";
             this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
             // 
             // subBussinessToolStripMenuItem
             // 
             this.subBussinessToolStripMenuItem.Name = "subBussinessToolStripMenuItem";
-            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subBussinessToolStripMenuItem.Text = "Sub-Bussiness";
             this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.subBussinessToolStripMenuItem_Click);
             // 
             // businesssToolStripMenuItem
             // 
             this.businesssToolStripMenuItem.Name = "businesssToolStripMenuItem";
-            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.businesssToolStripMenuItem.Text = "Business Folder";
             this.businesssToolStripMenuItem.Click += new System.EventHandler(this.businesssToolStripMenuItem_Click);
             // 

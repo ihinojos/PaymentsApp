@@ -614,6 +614,9 @@ namespace Payments.Views
                     transId = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString();
                     button1.PerformClick();
                     break;
+                case "unassigned":
+                    btnChangeFileOfBussiness.PerformClick();
+                    break;
             }
         }
 
