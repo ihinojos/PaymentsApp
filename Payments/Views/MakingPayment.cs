@@ -17,7 +17,7 @@ namespace Payments.Views
         private T_Invoices[] invoices;
         private string idTransForQuery2;
         private string newFormat2;
-        private string userDic = MainViewModel.GetInstance().NewMain.userDic;
+        private readonly string userDic = MainViewModel.GetInstance().NewMain.userDic;
         #endregion Attributes
 
         #region Constructor
@@ -135,7 +135,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
             CreateNewNomenclature();
@@ -146,27 +146,27 @@ namespace Payments.Views
 
         #region Events
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        private void RadioButton2_CheckedChanged(object sender, EventArgs e)
         {
             treeView1.Visible = false;
             lookUpEdit1.Visible = true;
             LoadLookUpEdit();
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void RadioButton1_CheckedChanged(object sender, EventArgs e)
         {
             treeView1.Visible = true;
             lookUpEdit1.Visible = false;
             LoadTree();
         }
 
-        private void lookUpEdit1_EditValueChanged_1(object sender, EventArgs e)
+        private void LookUpEdit1_EditValueChanged_1(object sender, EventArgs e)
         {
             idTransForQuery2 = lookUpEdit1.GetColumnValue("transId").ToString();
             lblSelected.Text = idTransForQuery2;
         }
 
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        private void TreeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (treeView1.SelectedNode.Parent == null)
             {

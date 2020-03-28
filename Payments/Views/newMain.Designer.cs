@@ -81,7 +81,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(158, 21);
             this.comboBox1.TabIndex = 0;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
             // labelTitle
             // 
@@ -120,10 +120,10 @@
             this.gridView1.Name = "gridView1";
             this.gridView1.OptionsBehavior.Editable = false;
             this.gridView1.OptionsView.ShowGroupPanel = false;
-            this.gridView1.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.gridView1_RowCellClick);
-            this.gridView1.RowCellStyle += new DevExpress.XtraGrid.Views.Grid.RowCellStyleEventHandler(this.gridView1_RowCellStyle);
-            this.gridView1.RowStyle += new DevExpress.XtraGrid.Views.Grid.RowStyleEventHandler(this.gridView1_RowStyle);
-            this.gridView1.DoubleClick += new System.EventHandler(this.gridView1_DoubleClick);
+            this.gridView1.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.GridView1_RowCellClick);
+            this.gridView1.RowCellStyle += new DevExpress.XtraGrid.Views.Grid.RowCellStyleEventHandler(this.GridView1_RowCellStyle);
+            this.gridView1.RowStyle += new DevExpress.XtraGrid.Views.Grid.RowStyleEventHandler(this.GridView1_RowStyle);
+            this.gridView1.DoubleClick += new System.EventHandler(this.GridView1_DoubleClick);
             // 
             // lblTitleResult
             // 
@@ -159,7 +159,7 @@
             this.btnViewPDF.TabIndex = 9;
             this.btnViewPDF.Text = "View PDF";
             this.btnViewPDF.UseVisualStyleBackColor = true;
-            this.btnViewPDF.Click += new System.EventHandler(this.button3_Click);
+            this.btnViewPDF.Click += new System.EventHandler(this.Button3_Click);
             // 
             // btnReload
             // 
@@ -169,7 +169,7 @@
             this.btnReload.TabIndex = 12;
             this.btnReload.Text = "Show on Disk";
             this.btnReload.UseVisualStyleBackColor = true;
-            this.btnReload.Click += new System.EventHandler(this.button1_Click_1);
+            this.btnReload.Click += new System.EventHandler(this.Button1_Click_1);
             // 
             // label1
             // 
@@ -312,7 +312,7 @@
             this.btnPaymentCaptured.TabIndex = 15;
             this.btnPaymentCaptured.Text = "Capture proof of payment";
             this.btnPaymentCaptured.UseVisualStyleBackColor = true;
-            this.btnPaymentCaptured.Click += new System.EventHandler(this.btnPaymentCaptured_Click);
+            this.btnPaymentCaptured.Click += new System.EventHandler(this.BtnPaymentCaptured_Click);
             // 
             // btnMakePayment
             // 
@@ -322,7 +322,7 @@
             this.btnMakePayment.TabIndex = 14;
             this.btnMakePayment.Text = "Make payment";
             this.btnMakePayment.UseVisualStyleBackColor = true;
-            this.btnMakePayment.Click += new System.EventHandler(this.button2_Click);
+            this.btnMakePayment.Click += new System.EventHandler(this.Button2_Click);
             // 
             // btnSigned
             // 
@@ -332,7 +332,7 @@
             this.btnSigned.TabIndex = 13;
             this.btnSigned.Text = "Sing invoice";
             this.btnSigned.UseVisualStyleBackColor = true;
-            this.btnSigned.Click += new System.EventHandler(this.btnSigned_Click_1);
+            this.btnSigned.Click += new System.EventHandler(this.BtnSigned_Click_1);
             // 
             // btnChangeFileOfBussiness
             // 
@@ -342,7 +342,7 @@
             this.btnChangeFileOfBussiness.TabIndex = 18;
             this.btnChangeFileOfBussiness.Text = "Change file of bussiness";
             this.btnChangeFileOfBussiness.UseVisualStyleBackColor = true;
-            this.btnChangeFileOfBussiness.Click += new System.EventHandler(this.button5_Click);
+            this.btnChangeFileOfBussiness.Click += new System.EventHandler(this.Button5_Click);
             // 
             // btnCapture
             // 
@@ -352,7 +352,7 @@
             this.btnCapture.TabIndex = 12;
             this.btnCapture.Text = "Capture invoice";
             this.btnCapture.UseVisualStyleBackColor = true;
-            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
+            this.btnCapture.Click += new System.EventHandler(this.BtnCapture_Click);
             // 
             // button1
             // 
@@ -362,7 +362,7 @@
             this.button1.TabIndex = 19;
             this.button1.Text = "View completed transactions";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_2);
+            this.button1.Click += new System.EventHandler(this.Button1_Click_2);
             // 
             // menuStrip1
             // 
@@ -387,16 +387,16 @@
             // setRootPathToolStripMenuItem
             // 
             this.setRootPathToolStripMenuItem.Name = "setRootPathToolStripMenuItem";
-            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.setRootPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setRootPathToolStripMenuItem.Text = "Set root path";
-            this.setRootPathToolStripMenuItem.Click += new System.EventHandler(this.setRootPathToolStripMenuItem_Click);
+            this.setRootPathToolStripMenuItem.Click += new System.EventHandler(this.SetRootPathToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // createToolStripMenuItem
             // 
@@ -411,23 +411,23 @@
             // usersToolStripMenuItem
             // 
             this.usersToolStripMenuItem.Name = "usersToolStripMenuItem";
-            this.usersToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.usersToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.usersToolStripMenuItem.Text = "Users";
-            this.usersToolStripMenuItem.Click += new System.EventHandler(this.usersToolStripMenuItem_Click);
+            this.usersToolStripMenuItem.Click += new System.EventHandler(this.UsersToolStripMenuItem_Click);
             // 
             // subBussinessToolStripMenuItem
             // 
             this.subBussinessToolStripMenuItem.Name = "subBussinessToolStripMenuItem";
-            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.subBussinessToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.subBussinessToolStripMenuItem.Text = "Sub-Bussiness";
-            this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.subBussinessToolStripMenuItem_Click);
+            this.subBussinessToolStripMenuItem.Click += new System.EventHandler(this.SubBussinessToolStripMenuItem_Click);
             // 
             // businesssToolStripMenuItem
             // 
             this.businesssToolStripMenuItem.Name = "businesssToolStripMenuItem";
-            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.businesssToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.businesssToolStripMenuItem.Text = "Business Folder";
-            this.businesssToolStripMenuItem.Click += new System.EventHandler(this.businesssToolStripMenuItem_Click);
+            this.businesssToolStripMenuItem.Click += new System.EventHandler(this.BusinesssToolStripMenuItem_Click);
             // 
             // label3
             // 
@@ -446,7 +446,7 @@
             this.rootButton.TabIndex = 22;
             this.rootButton.Text = "Go back to root";
             this.rootButton.UseVisualStyleBackColor = true;
-            this.rootButton.Click += new System.EventHandler(this.rootButton_Click);
+            this.rootButton.Click += new System.EventHandler(this.RootButton_Click);
             // 
             // NewMain
             // 

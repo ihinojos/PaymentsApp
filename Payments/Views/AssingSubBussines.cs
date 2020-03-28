@@ -66,12 +66,13 @@ namespace Payments.Views
             gridControl1.DataSource = FullDT;
             gridView1.PopulateColumns();
             gridView1.Columns["nameSub"].Caption = "Sub_Bussiness Name";
-            try
+            var name = gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub");
+            if (name == null)
+            {
+                lblSubSelected.Text = "Not assigned";
+            } else
             {
                 lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
-            }
-            catch (Exception) {
-                
             }
             gridControl1.Update();
             gridControl1.Refresh();
@@ -97,7 +98,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void btnCapture_Click(object sender, EventArgs e)
+        private void BtnCapture_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(textBoxTransaction.Text) || String.IsNullOrEmpty(textBoxAmount.Text))
             {
@@ -138,7 +139,7 @@ namespace Payments.Views
             }
         }
 
-        private void btnAssingTo_Click(object sender, EventArgs e)
+        private void BtnAssingTo_Click(object sender, EventArgs e)
         {
             try
             {

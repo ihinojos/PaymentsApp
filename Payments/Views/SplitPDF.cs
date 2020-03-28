@@ -85,13 +85,13 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             Split(pages);
             MessageBox.Show("File creation was successfull");
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             try
             {

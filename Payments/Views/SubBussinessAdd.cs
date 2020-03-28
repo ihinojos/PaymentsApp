@@ -76,7 +76,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void confirmBtn_Click(object sender, EventArgs e)
+        private void ConfirmBtn_Click(object sender, EventArgs e)
         {
             AddSubBussiness();
         }

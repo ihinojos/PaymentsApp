@@ -95,7 +95,7 @@
             this.confirmBtn.TabIndex = 6;
             this.confirmBtn.Text = "Confirm";
             this.confirmBtn.UseVisualStyleBackColor = true;
-            this.confirmBtn.Click += new System.EventHandler(this.confirmBtn_Click);
+            this.confirmBtn.Click += new System.EventHandler(this.ConfirmBtn_Click);
             // 
             // SubBussinessAdd
             // 

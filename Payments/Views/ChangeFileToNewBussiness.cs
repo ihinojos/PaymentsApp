@@ -50,7 +50,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -58,8 +58,8 @@ namespace Payments.Views
                 string path = treeView1.SelectedNode.ToString();
                 path = path.Replace("TreeNode: ", "");
                 path = path + "\\incoming\\" + NewMain.ElementAt(filePath, 1);
-                MainViewModel.GetInstance().NewMain.bussinessPath = rootPath + "\\" + NewMain.ElementAt(path, 3)+"\\";
-                System.IO.File.Move(MainViewModel.GetInstance().NewMain.userDic + "\\" + filePath, MainViewModel.GetInstance().NewMain.userDic + "\\" + path);
+                instance.bussinessPath = rootPath + "\\" + NewMain.ElementAt(path, 3)+"\\";
+                File.Move(instance.userDic + "\\" + filePath, instance.userDic + "\\" + path);
                 
                 MessageBox.Show("File moved correctly");
                 MainViewModel.GetInstance().NewMain.FullRefresh();

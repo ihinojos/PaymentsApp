@@ -221,7 +221,7 @@ namespace Payments.Views
                 {
                     localFiles.Remove(userDic + "\\" + fullPath);
                 }
-            }
+            } 
 
             foreach (var file in localFiles)
             {
@@ -412,7 +412,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (System.Deployment.Application.ApplicationDeployment.IsNetworkDeployed)
             {
@@ -424,7 +424,7 @@ namespace Payments.Views
             }
         }
 
-        private void btnCapture_Click(object sender, EventArgs e)
+        private void BtnCapture_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(idBussiness))
             {
@@ -449,7 +449,7 @@ namespace Payments.Views
             }
         }
 
-        private void btnPaymentCaptured_Click(object sender, EventArgs e)
+        private void BtnPaymentCaptured_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(idBussiness))
             {
@@ -464,7 +464,7 @@ namespace Payments.Views
             }
         }
 
-        private void btnSigned_Click_1(object sender, EventArgs e)
+        private void BtnSigned_Click_1(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(idBussiness))
             {
@@ -479,7 +479,7 @@ namespace Payments.Views
             }
         }
 
-        private void businesssToolStripMenuItem_Click(object sender, EventArgs e)
+        private void BusinesssToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string input = "";
             if (String.IsNullOrEmpty(rootPath)) MessageBox.Show("Please select a root path.");
@@ -501,7 +501,7 @@ namespace Payments.Views
             }
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void Button1_Click_1(object sender, EventArgs e)
         {
             try
             {
@@ -516,7 +516,7 @@ namespace Payments.Views
             }
         }
 
-        private void button1_Click_2(object sender, EventArgs e)
+        private void Button1_Click_2(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(rootPath))
             {
@@ -529,7 +529,7 @@ namespace Payments.Views
             instance.Show();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(idBussiness))
             {
@@ -544,7 +544,7 @@ namespace Payments.Views
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             try
             {
@@ -560,7 +560,7 @@ namespace Payments.Views
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
             try
             {
@@ -589,7 +589,7 @@ namespace Payments.Views
             }
         }
 
-        private void gridView1_DoubleClick(object sender, EventArgs e)
+        private void GridView1_DoubleClick(object sender, EventArgs e)
         {
             string status = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "status_name").ToString();
             switch (status)
@@ -620,7 +620,7 @@ namespace Payments.Views
             }
         }
 
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        private void GridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
             GridView gv = gridView1;
             lblSelectedFile.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "fileName").ToString();
@@ -680,12 +680,7 @@ namespace Payments.Views
             }
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Hope you have a nice day!");
-        }
-
-        private void rootButton_Click(object sender, EventArgs e)
+        private void RootButton_Click(object sender, EventArgs e)
         {
             isRoot = true;
             ObtainFiles();
@@ -697,7 +692,7 @@ namespace Payments.Views
             LoadTable(queryString);
         }
 
-        private void setRootPathToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetRootPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog
             {
@@ -729,7 +724,7 @@ namespace Payments.Views
             }
         }
 
-        private void subBussinessToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SubBussinessToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var instance = MainViewModel.GetInstance().AddSubBussiness;
             if (instance != null) instance.Dispose();
@@ -737,7 +732,7 @@ namespace Payments.Views
             instance.Show();
         }
 
-        private void usersToolStripMenuItem_Click(object sender, EventArgs e)
+        private void UsersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var instance = MainViewModel.GetInstance().AddUser;
             if (instance != null) instance.Dispose();
@@ -766,7 +761,7 @@ namespace Payments.Views
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             isRoot = false;
             ObtainFiles();
@@ -782,7 +777,8 @@ namespace Payments.Views
             }
             command.Connection.Close();
             lblNameBuss.Text = comboBox1.SelectedItem.ToString();
-            bussinessPath = ($"{rootPath}\\{comboBox1.SelectedItem.ToString()}\\").Replace(@"\\", @"\");
+
+            bussinessPath = $"{rootPath}\\{comboBox1.SelectedItem}\\".Replace(@"\\", @"\");
             queryString = "EXEC [GetAllInvoiceInfo] @location = '" + bussinessPath + "'";
             EmptyLabels();
             DeleteMissingRegisters();
@@ -791,7 +787,7 @@ namespace Payments.Views
 
         }
 
-        private void gridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)
+        private void GridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)
         {
             GridView view = sender as GridView;
             if (e.RowHandle == view.FocusedRowHandle)
@@ -801,7 +797,7 @@ namespace Payments.Views
             }
         }
 
-        private void gridView1_RowStyle(object sender, RowStyleEventArgs e)
+        private void GridView1_RowStyle(object sender, RowStyleEventArgs e)
         {
             GridView View = sender as GridView;
             if (e.RowHandle >= 0)

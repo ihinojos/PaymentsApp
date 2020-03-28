@@ -120,7 +120,7 @@
             this.btnAssingTo.TabIndex = 10;
             this.btnAssingTo.Text = "+";
             this.btnAssingTo.UseVisualStyleBackColor = true;
-            this.btnAssingTo.Click += new System.EventHandler(this.btnAssingTo_Click);
+            this.btnAssingTo.Click += new System.EventHandler(this.BtnAssingTo_Click);
             // 
             // comboBoxSubBussiness
             // 
@@ -154,7 +154,7 @@
             this.btnCapture.TabIndex = 15;
             this.btnCapture.Text = "Capture";
             this.btnCapture.UseVisualStyleBackColor = true;
-            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
+            this.btnCapture.Click += new System.EventHandler(this.BtnCapture_Click);
             // 
             // label4
             // 

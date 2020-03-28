@@ -52,7 +52,7 @@
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(263, 67);
             this.treeView1.TabIndex = 0;
-            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.TreeView1_AfterSelect);
             // 
             // button1
             // 
@@ -63,7 +63,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "Stablish state";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // label1
             // 
@@ -96,7 +96,7 @@
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "List";
             this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.RadioButton2_CheckedChanged);
             // 
             // radioButton1
             // 
@@ -108,7 +108,7 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Tree";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            this.radioButton1.CheckedChanged += new System.EventHandler(this.RadioButton1_CheckedChanged);
             // 
             // lookUpEdit1
             // 
@@ -118,7 +118,7 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.lookUpEdit1.Size = new System.Drawing.Size(263, 20);
             this.lookUpEdit1.TabIndex = 5;
-            this.lookUpEdit1.EditValueChanged += new System.EventHandler(this.lookUpEdit1_EditValueChanged_1);
+            this.lookUpEdit1.EditValueChanged += new System.EventHandler(this.LookUpEdit1_EditValueChanged_1);
             // 
             // label2
             // 

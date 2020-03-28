@@ -13,14 +13,14 @@ namespace Payments.Views
     {
         #region Attributes
 
+        private readonly string userDic = MainViewModel.GetInstance().NewMain.userDic;
         private readonly SqlConnection connection;
         private readonly string invoiceID;
         private readonly string bussiness;
         private string pathToNewFile;
+        private string pathNewState;
         private T_Invoices[] files;
         private string id;
-        private string pathNewState;
-        private string userDic = MainViewModel.GetInstance().NewMain.userDic;
 
         #endregion Attributes
 
@@ -57,7 +57,7 @@ namespace Payments.Views
                 lblNameOldFile.Text = fileName;
                 string pathToOldFile = folder + fileName;
                 axAcroPDF2.src = "";
-                axAcroPDF2.src = userDic+"\\"+pathToOldFile;
+                axAcroPDF2.src = userDic + "\\" + pathToOldFile;
             }
             read.Close();
             lblBussiness.Text = bussiness;
@@ -111,12 +111,18 @@ namespace Payments.Views
                     list.Add(new T_Invoices
                     {
                         Id = reader[0].ToString()
-                       ,FileName = reader[1].ToString()
-                       ,Folder = reader[2].ToString()
-                       ,Status = reader[3].ToString()
-                       ,Date = reader[4].ToString()
-                       ,TransId = reader[5].ToString()
-                       ,Amount = Double.Parse(reader[6].ToString())
+                       ,
+                        FileName = reader[1].ToString()
+                       ,
+                        Folder = reader[2].ToString()
+                       ,
+                        Status = reader[3].ToString()
+                       ,
+                        Date = reader[4].ToString()
+                       ,
+                        TransId = reader[5].ToString()
+                       ,
+                        Amount = Double.Parse(reader[6].ToString())
                     });
                 files = list.ToArray();
                 reader.Close();
@@ -131,13 +137,13 @@ namespace Payments.Views
                         PdfDocument signed = NewMain.AddWaterMark(PdfReader.Open(pathToNewFile, PdfDocumentOpenMode.Modify), "Proof of payment");
                         string tempFile = Path.Combine(Path.GetTempPath(), "pop.pdf");
                         signed.Save(tempFile);
-                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(userDic + "\\"+pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
+                        PdfDocument outPdf = NewMain.Combine(PdfReader.Open(userDic + "\\" + pathito, PdfDocumentOpenMode.Import), PdfReader.Open(tempFile, PdfDocumentOpenMode.Import));
                         string queryUpdateSigned = "UPDATE [t_invoices] SET fileName = '" + NewMain.ElementAt(newPathSigned, 1) + "', folder='" + pathNewState + "\\payment-captured\\" + "',status_name='payment-captured', " +
                             " date_modified = GETDATE() WHERE id = '" + item.Id + "';";
                         command.CommandText = queryUpdateSigned;
                         command.ExecuteNonQuery();
-                        outPdf.Save(userDic+"\\"+newPathSigned);
-                        File.Delete(userDic+"\\"+pathito);
+                        outPdf.Save(userDic + "\\" + newPathSigned);
+                        File.Delete(userDic + "\\" + pathito);
                         File.Delete(tempFile);
                         if (pathToNewFile.Contains("crop")) File.Delete(pathToNewFile);
                     }
@@ -164,7 +170,7 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             //Mostrar pdfs
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -175,7 +181,7 @@ namespace Payments.Views
             //Fin Mostrar pdfs
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(pathToNewFile))
             {
@@ -187,7 +193,7 @@ namespace Payments.Views
             else MessageBox.Show("Please select a file first");
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             try
             {
