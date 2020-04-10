@@ -18,6 +18,7 @@ namespace Payments.Views
         private string idTransForQuery2;
         private string newFormat2;
         private readonly string userDic = MainViewModel.GetInstance().NewMain.userDic;
+
         #endregion Attributes
 
         #region Constructor
@@ -117,7 +118,7 @@ namespace Payments.Views
                         SqlCommand command = new SqlCommand(queryFile, connection);
                         command.Connection.Open();
                         command.ExecuteNonQuery();
-                        System.IO.File.Move(userDic+"\\"+oldRouteSigned, userDic+"\\"+newPathForRenameNew);
+                        System.IO.File.Move(userDic + "\\" + oldRouteSigned, userDic + "\\" + newPathForRenameNew);
                         command.Connection.Close();
                     }
                 }

@@ -30,7 +30,7 @@ namespace Payments.Views
 
         private void LoadCombo()
         {
-            string query = "SELECT * FROM [t_bussiness] WHERE [pathBussiness] = '"+MainViewModel.GetInstance().NewMain.rootPath+"\\'";
+            string query = "SELECT * FROM [t_bussiness] WHERE [pathBussiness] = '" + MainViewModel.GetInstance().NewMain.rootPath + "\\'";
             SqlCommand command = new SqlCommand(query, connection);
             command.Connection.Open();
             SqlDataReader reader = command.ExecuteReader();

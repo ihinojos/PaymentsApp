@@ -93,22 +93,22 @@ namespace Payments.Views
 
         #region Clicks
 
-        private void gridView1_RowCellClick(object sender, RowCellClickEventArgs e)
+        private void GridView1_RowCellClick(object sender, RowCellClickEventArgs e)
         {
             ShowTree();
         }
 
-        private void showOnDiskButton_Click(object sender, EventArgs e)
+        private void ShowOnDiskButton_Click(object sender, EventArgs e)
         {
             string argument = "/select, \"" + MainViewModel.GetInstance().NewMain.userDic + "\\" + filePath + "\"";
             System.Diagnostics.Process.Start("explorer.exe", argument);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             try
             {
-                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(MainViewModel.GetInstance().NewMain.userDic+"\\"+filePath);
+                var instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(MainViewModel.GetInstance().NewMain.userDic + "\\" + filePath);
                 instance.Show();
             }
             catch (Exception ex)

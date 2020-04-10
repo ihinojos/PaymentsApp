@@ -1,4 +1,5 @@
-﻿using DevExpress.Utils;
+﻿using DevExpress.LookAndFeel;
+using DevExpress.Utils;
 using DevExpress.XtraGrid.Views.Grid;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Payments.Models;
@@ -35,12 +36,13 @@ namespace Payments.Views
         public NewMain()
         {
             InitializeComponent();
+            UserLookAndFeel.Default.SetSkinStyle(SkinStyle.MetropolisDark);
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             DeactivateButtons();
             rootButton.Enabled = false;
 
             if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "\\Dropbox (IE)"))
-                rootPath = Properties.Settings.Default.root_path;
+                rootPath = Settings.Default.root_path;
 
             if (!String.IsNullOrEmpty(rootPath))
             {
@@ -95,40 +97,41 @@ namespace Payments.Views
 
         public static DialogResult ShowInputDialog(ref string input)
         {
-            System.Drawing.Size size = new System.Drawing.Size(300, 75);
+
+            Size size = new Size(300, 75);
             Form inputBox = new Form
             {
-                FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
                 ClientSize = size,
                 Text = "Enter Bussiness name",
-                Icon = Properties.Resources._32
+                Icon = Resources._32
             };
 
-            System.Windows.Forms.TextBox textBox = new TextBox
+            TextBox textBox = new TextBox
             {
-                Size = new System.Drawing.Size(size.Width - 10, 23),
-                Location = new System.Drawing.Point(5, 5),
+                Size = new Size(size.Width - 10, 23),
+                Location = new Point(5, 5),
                 Text = input
             };
             inputBox.Controls.Add(textBox);
 
             Button okButton = new Button
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK,
+                DialogResult = DialogResult.OK,
                 Name = "okButton",
-                Size = new System.Drawing.Size(75, 23),
+                Size = new Size(75, 23),
                 Text = "&OK",
-                Location = new System.Drawing.Point(size.Width - 80 - 80, 39)
+                Location = new Point(size.Width - 80 - 80, 39)
             };
             inputBox.Controls.Add(okButton);
 
             Button cancelButton = new Button
             {
-                DialogResult = System.Windows.Forms.DialogResult.Cancel,
+                DialogResult = DialogResult.Cancel,
                 Name = "cancelButton",
-                Size = new System.Drawing.Size(75, 23),
+                Size = new Size(75, 23),
                 Text = "&Cancel",
-                Location = new System.Drawing.Point(size.Width - 80, 39)
+                Location = new Point(size.Width - 80, 39)
             };
             inputBox.Controls.Add(cancelButton);
 
@@ -158,7 +161,8 @@ namespace Payments.Views
                     lblTitleResult.Text = (CountFiles().ToString());
                     break;
 
-                default: return;
+                default:
+                    return;
             }
             DeleteMissingRegisters();
             LoadTable(queryString);
@@ -221,11 +225,10 @@ namespace Payments.Views
                 {
                     localFiles.Remove(userDic + "\\" + fullPath);
                 }
-            } 
+            }
 
             foreach (var file in localFiles)
             {
-
                 string name = Path.GetFileName(file);
                 string path = file.Replace(userDic + "\\", "").Replace(name, "");
                 string state = "";
@@ -233,15 +236,15 @@ namespace Payments.Views
                 else if (path.Contains("incoming")) state = "incoming";
                 if (!String.IsNullOrEmpty(state))
                 {
-                       command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
-                                           " VALUES( NEWID()," +
-                                           "'" + name + "'," +
-                                           "'" + path + "'," +
-                                           "'" + state + "'," +
-                                           "GETDATE()," +
-                                           "NULL," +
-                                           "NULL," +
-                                           "NULL)";
+                    command.CommandText = "INSERT INTO [t_invoices]([id],[filename],[folder],[status_name],[date_modified],[transId],[amount],[idSubBussiness])" +
+                                        " VALUES( NEWID()," +
+                                        "'" + name + "'," +
+                                        "'" + path + "'," +
+                                        "'" + state + "'," +
+                                        "GETDATE()," +
+                                        "NULL," +
+                                        "NULL," +
+                                        "NULL)";
 
                     command.ExecuteNonQuery();
                 }
@@ -265,39 +268,39 @@ namespace Payments.Views
                     }
                     if (!states.Contains("incomig"))
                     {
-                        System.IO.Directory.CreateDirectory(dir + "\\incoming");
+                        Directory.CreateDirectory(dir + "\\incoming");
                     }
                     if (!states.Contains("waiting-auth"))
                     {
-                        System.IO.Directory.CreateDirectory(dir + "\\waiting-auth");
+                        Directory.CreateDirectory(dir + "\\waiting-auth");
                     }
                     if (!states.Contains("signed"))
                     {
-                        System.IO.Directory.CreateDirectory(dir + "\\signed");
+                        Directory.CreateDirectory(dir + "\\signed");
                     }
                     if (!states.Contains("making-payment"))
                     {
-                        System.IO.Directory.CreateDirectory(dir + "\\making-payment");
+                        Directory.CreateDirectory(dir + "\\making-payment");
                     }
                     if (!states.Contains("payment-captured"))
                     {
-                        System.IO.Directory.CreateDirectory(dir + "\\payment-captured");
+                        Directory.CreateDirectory(dir + "\\payment-captured");
                     }
                 }
                 else
                 {
-                    System.IO.Directory.CreateDirectory(dir + "\\incoming");
-                    System.IO.Directory.CreateDirectory(dir + "\\waiting-auth");
-                    System.IO.Directory.CreateDirectory(dir + "\\signed");
-                    System.IO.Directory.CreateDirectory(dir + "\\making-payment");
-                    System.IO.Directory.CreateDirectory(dir + "\\payment-captured");
+                    Directory.CreateDirectory(dir + "\\incoming");
+                    Directory.CreateDirectory(dir + "\\waiting-auth");
+                    Directory.CreateDirectory(dir + "\\signed");
+                    Directory.CreateDirectory(dir + "\\making-payment");
+                    Directory.CreateDirectory(dir + "\\payment-captured");
                 }
             }
         }
 
         private int CountFiles()
         {
-            string[] files = Directory.GetFiles(userDic+"\\"+rootPath, "*.*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(userDic + "\\" + rootPath, "*.*", SearchOption.AllDirectories);
             int counter = 0;
             foreach (var item in files)
             {
@@ -318,7 +321,7 @@ namespace Payments.Views
         private void DeleteMissingRegisters()
         {
             List<string> allFiles = new List<string>();
-            string[] files = Directory.GetFiles(userDic+"\\"+rootPath, "*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(userDic + "\\" + rootPath, "*", SearchOption.AllDirectories);
             foreach (var file in files)
             {
                 allFiles.Add(file);
@@ -340,7 +343,7 @@ namespace Payments.Views
             command.Connection.Close();
             for (int i = 0; i < record.Count; i++)
             {
-                if (!allFiles.Contains(userDic+"\\"+record[i]))
+                if (!allFiles.Contains(userDic + "\\" + record[i]))
                 {
                     string querydelete = "DELETE FROM [t_invoices] WHERE [id] = '" + recordId[i] + "';";
                     SqlCommand commandDelete = new SqlCommand(querydelete, connection);
@@ -399,7 +402,7 @@ namespace Payments.Views
                 List<string> states = new List<string>();
                 string[] dirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
                 foreach (var dir in dirs) states.Add(ElementAt(dir, 1));
-                return isRoot = !(states.Contains("incoming") ||
+                return !(states.Contains("incoming") ||
                     states.Contains("waiting-auth") ||
                     states.Contains("payment-captured") ||
                     states.Contains("signed") ||
@@ -506,7 +509,7 @@ namespace Payments.Views
             try
             {
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
-                string filePath = userDic+"\\"+gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
+                string filePath = userDic + "\\" + gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
                 string argument = "/select, \"" + filePath + "\"";
                 System.Diagnostics.Process.Start("explorer.exe", argument);
             }
@@ -551,7 +554,7 @@ namespace Payments.Views
                 var instance = MainViewModel.GetInstance().ViewPdf;
                 string name = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "fileName").ToString();
                 string path = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "folder").ToString() + name;
-                instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(userDic+"\\"+path);
+                instance = MainViewModel.GetInstance().ViewPdf = new ViewPDF(userDic + "\\" + path);
                 instance.Show();
             }
             catch (Exception)
@@ -614,6 +617,7 @@ namespace Payments.Views
                     transId = gridView1.GetRowCellValue(gridView1.FocusedRowHandle, "transId").ToString();
                     button1.PerformClick();
                     break;
+
                 case "unassigned":
                     btnChangeFileOfBussiness.PerformClick();
                     break;
@@ -684,6 +688,7 @@ namespace Payments.Views
         {
             isRoot = true;
             ObtainFiles();
+            DeleteMissingRegisters();
             CheckIfStatesFoldersExists();
             DeactivateButtons();
             EmptyLabels();
@@ -696,7 +701,7 @@ namespace Payments.Views
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog
             {
-                InitialDirectory = userDic+"\\"+rootPath,
+                InitialDirectory = userDic + "\\" + rootPath,
                 IsFolderPicker = true
             };
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
@@ -784,7 +789,6 @@ namespace Payments.Views
             DeleteMissingRegisters();
             lblTitleResult.Text = (CountFiles().ToString());
             LoadTable(queryString);
-
         }
 
         private void GridView1_RowCellStyle(object sender, RowCellStyleEventArgs e)

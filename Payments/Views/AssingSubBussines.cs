@@ -34,7 +34,7 @@ namespace Payments.Views
             LoadCombo("SELECT * FROM [t_subBussiness] WHERE idBussiness = '" + idBussiness + "';");
             idFile = id;
             selectedFilePath = userDic + "\\" + pathToFile;
-            axAcroPDF1.src = userDic+"\\"+pathToFile;
+            axAcroPDF1.src = userDic + "\\" + pathToFile;
             try
             {
                 queryStringSubBussinesFiles = "SELECT s.nameSub FROM [t_invoices] i, [t_subBussiness] s  WHERE i.[id] = '" + idFile + "' AND s.id = i.idSubBussiness;";
@@ -70,7 +70,8 @@ namespace Payments.Views
             if (name == null)
             {
                 lblSubSelected.Text = "Not assigned";
-            } else
+            }
+            else
             {
                 lblSubSelected.Text = gv.GetRowCellValue(gv.FocusedRowHandle, "nameSub").ToString();
             }
@@ -112,10 +113,10 @@ namespace Payments.Views
                     var dateTimeOffset = new DateTimeOffset(DateTime.Now);
                     var formatDate = dateTimeOffset.ToUnixTimeSeconds();
                     string newFormat = formatDate + "_" + "waitingAuth" + "_" + textBoxTransaction.Text.ToString() + ".pdf";
-        
+
                     string query = "UPDATE [t_invoices] SET " +
-                        "fileName = '" + newFormat+ "', " +
-                        "folder= '" + MainViewModel.GetInstance().NewMain.bussinessPath +  "waiting-auth\\" + "'," +
+                        "fileName = '" + newFormat + "', " +
+                        "folder= '" + MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + "'," +
                         "status_name = 'waiting-auth'," +
                         "date_modified = GETDATE()," +
                         "transId = '" + textBoxTransaction.Text + "'," +
@@ -127,11 +128,12 @@ namespace Payments.Views
                     command.Connection.Close();
 
                     PdfDocument file = NewMain.AddWaterMark(PdfReader.Open(selectedFilePath, PdfDocumentOpenMode.Modify), "Unsigned invoice");
-                    file.Save(userDic+"\\"+MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + newFormat);
+                    file.Save(userDic + "\\" + MainViewModel.GetInstance().NewMain.bussinessPath + "waiting-auth\\" + newFormat);
                     File.Delete(selectedFilePath);
                     MessageBox.Show("Invoice captured correctly");
                     MainViewModel.GetInstance().NewMain.FullRefresh();
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }

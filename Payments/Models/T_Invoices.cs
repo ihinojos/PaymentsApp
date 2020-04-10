@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Payments.Models
+﻿namespace Payments.Models
 {
-    class T_Invoices
+    internal class T_Invoices
     {
         #region Attributes
+
         private string id;
         private string fileName;
         private string folder;
@@ -16,7 +11,8 @@ namespace Payments.Models
         private string date_modified;
         private string transID;
         private double amount;
-        #endregion
+
+        #endregion Attributes
 
         public string Id
         {
@@ -59,6 +55,5 @@ namespace Payments.Models
             get { return amount; }
             set { amount = value; }
         }
-
     }
 }

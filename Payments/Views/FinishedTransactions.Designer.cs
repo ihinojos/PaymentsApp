@@ -60,7 +60,7 @@
             this.gridView1.Name = "gridView1";
             this.gridView1.OptionsBehavior.Editable = false;
             this.gridView1.OptionsView.ShowGroupPanel = false;
-            this.gridView1.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.gridView1_RowCellClick);
+            this.gridView1.RowCellClick += new DevExpress.XtraGrid.Views.Grid.RowCellClickEventHandler(this.GridView1_RowCellClick);
             // 
             // button1
             // 
@@ -71,7 +71,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "View PDF";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // treeView1
             // 
@@ -119,7 +119,7 @@
             this.showOnDiskButton.TabIndex = 6;
             this.showOnDiskButton.Text = "Show on disk ";
             this.showOnDiskButton.UseVisualStyleBackColor = true;
-            this.showOnDiskButton.Click += new System.EventHandler(this.showOnDiskButton_Click);
+            this.showOnDiskButton.Click += new System.EventHandler(this.ShowOnDiskButton_Click);
             // 
             // FinishedTransactions
             // 

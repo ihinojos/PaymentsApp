@@ -19,7 +19,7 @@ namespace Payments
         public Login()
         {
             InitializeComponent();
-            AcceptButton = button1; 
+            AcceptButton = button1;
             connection = new SqlConnection(DB.cn.Replace(@"\\", @"\"));
             //FirstRun();
         }

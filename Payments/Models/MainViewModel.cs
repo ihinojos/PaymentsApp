@@ -22,8 +22,6 @@ namespace Payments.Models
 
         #endregion Properties
 
-
-
         #region Constructor
 
         public MainViewModel()
